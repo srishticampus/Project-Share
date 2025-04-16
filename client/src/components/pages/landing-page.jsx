@@ -1,4 +1,4 @@
-import {Link} from "react-router";
+import { Link } from "react-router";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
@@ -34,59 +34,7 @@ export default function LandingPage() {
   const aboutImages = ["https://picsum.photos/600/400", "https://picsum.photos/600/400", "https://picsum.photos/600/400"];
 
   return (
-    <div className="flex flex-col min-h-screen bg-background text-foreground">
-      {/* Header */}
-      <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container mx-auto flex h-14 items-center justify-between px-4">
-          <Link to="#" className="flex items-center space-x-2" prefetch="false">
-            <Code className="h-6 w-6 text-primary" />
-            <span className="font-bold inline-block">ProjectShare</span>
-          </Link>
-          <nav className="flex items-center space-x-6 text-sm font-medium">
-            <Link to="#home" className="transition-colors hover:text-foreground/80 text-foreground/60" prefetch="false">
-              Home
-            </Link>
-            <Link to="#about" className="transition-colors hover:text-foreground/80 text-foreground/60" prefetch="false">
-              About
-            </Link>
-             <Link to="#features" className="transition-colors hover:text-foreground/80 text-foreground/60" prefetch="false">
-              Features
-            </Link>
-            <Link to="#contact" className="transition-colors hover:text-foreground/80 text-foreground/60" prefetch="false">
-              Contact Us
-            </Link>
-          </nav>
-          <div className="flex items-center space-x-4">
-             <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" className="flex items-center gap-1">
-                  Login
-                  <ChevronDown className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem asChild>
-                  <Link to="/login/admin" prefetch="false">Admin</Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link to="/login/creator" prefetch="false">Project Creator</Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link to="/login/collaborator" prefetch="false">Collaborator</Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link to="/login/mentor" prefetch="false">Mentor/Expert</Link>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-             <Button asChild>
-               <Link to="/register" prefetch="false">Sign Up</Link>
-             </Button>
-          </div>
-        </div>
-      </header>
-
-      <main className="flex-1">
+    <main className="flex-1">
         {/* Home Section (Hero) */}
         <section id="home" className="w-full py-8 md:py-16 lg:py-24 bg-muted/40">
           <div className="container mx-auto px-4 md:px-6">
@@ -265,20 +213,6 @@ export default function LandingPage() {
              </div>
           </div>
         </section>
-      </main>
-
-      {/* Footer */}
-      <footer className="flex flex-col gap-2 sm:flex-row py-6 w-full shrink-0 items-center justify-between px-4 md:px-6 border-t">
-        <p className="text-xs text-muted-foreground">&amp;copy; {new Date().getFullYear()} ProjectShare. All rights reserved.</p>
-        <nav className="flex gap-4 sm:gap-6">
-          <Link to="/terms" className="text-xs hover:underline underline-offset-4 text-muted-foreground" prefetch="false">
-            Terms of Service
-          </Link>
-          <Link to="/privacy" className="text-xs hover:underline underline-offset-4 text-muted-foreground" prefetch="false">
-            Privacy Policy
-          </Link>
-        </nav>
-      </footer>
-    </div>
+    </main>
   );
 }
