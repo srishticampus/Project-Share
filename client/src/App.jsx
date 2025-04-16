@@ -2,6 +2,10 @@ import React from 'react';
 import { Route, Routes } from 'react-router';
 import LandingPage from './components/pages/landing-page';
 import Layout from './components/pages/layout';
+import AdminLogin from './components/pages/login/admin';
+import CreatorLogin from './components/pages/login/creator';
+import CollaboratorLogin from './components/pages/login/collaborator';
+import MentorLogin from './components/pages/login/mentor';
 
 function Projects() {
   return <div>Projects Page</div>;
@@ -13,22 +17,6 @@ function Collaborators() {
 
 function Register() {
   return <div>Register Page</div>;
-}
-
-function LoginAdmin() {
-  return <div>Login Admin Page</div>;
-}
-
-function LoginCreator() {
-  return <div>Login Creator Page</div>;
-}
-
-function LoginCollaborator() {
-  return <div>Login Collaborator Page</div>;
-}
-
-function LoginMentor() {
-  return <div>Login Mentor Page</div>;
 }
 
 function Terms() {
@@ -47,10 +35,10 @@ function App() {
         <Route path="/projects" element={<Projects />} />
         <Route path="/collaborators" element={<Collaborators />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/login/admin" element={<LoginAdmin />} />
-        <Route path="/login/creator" element={<LoginCreator />} />
-        <Route path="/login/collaborator" element={<LoginCollaborator />} />
-        <Route path="/login/mentor" element={<LoginMentor />} />
+        <Route path="/login/admin" element={<AdminLogin />} />
+        <Route path="/login/creator" element={<CreatorLogin />} />
+        <Route path="/login/collaborator" element={<CollaboratorLogin />} />
+        <Route path="/login/mentor" element={<MentorLogin />} />
         <Route path="/terms" element={<Terms />} />
         <Route path="/privacy" element={<Privacy />} />
       </Route>
