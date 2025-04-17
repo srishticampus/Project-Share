@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -11,6 +11,7 @@ const CreatorRegister = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -24,7 +25,7 @@ const CreatorRegister = () => {
     // Placeholder for actual API call
     try {
       console.log("Registration attempt:", { name, email, username, password });
-      const response = await fetch("/api/auth/register/creator", { // Updated endpoint
+      const response = await fetch("http://localhost:3000/api/auth/register/creator", { // Updated endpoint
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -39,6 +40,7 @@ const CreatorRegister = () => {
       const data = await response.json();
       console.log("Registration successful:", data);
       // Redirect to creator dashboard or set authentication token
+      navigate("/creator/dashboard");
     } catch (err) {
       setError(err.message || "Registration failed");
     }
