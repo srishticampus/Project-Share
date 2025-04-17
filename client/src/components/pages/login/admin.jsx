@@ -87,7 +87,7 @@ const AdminLogin = () => {
           </Link>
         </div>
         <div className="text-center mt-4">
-          <Link to="/register" className="text-sm text-blue-500 hover:underline">
+          <Link to="/register/admin" className="text-sm text-blue-500 hover:underline">
             New to ProjectShare? Register now
           </Link>
         </div>
