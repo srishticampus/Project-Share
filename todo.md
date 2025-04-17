@@ -103,17 +103,17 @@
 
 ## Module 3: Project Creator Role
 ### Authentication & Profile Setup
-- [ ] Implement Project Creator Registration API Endpoint
-- [ ] Implement Project Creator Registration Page (Frontend Form & Logic)
-  - [ ] Name Field
-  - [ ] Photo Upload Field (Basic Implementation)
-  - [ ] Contact Number Field
-  - [ ] Email ID Field
-  - [ ] Password Field (masked)
-  - [ ] Confirm Password Field
-  - [ ] Skills/Expertise Multiselect Field
-  - [ ] Bio Textarea
-  - [ ] Register Button
+- [x] Implement Project Creator Registration API Endpoint
+- [x] Implement Project Creator Registration Page (Frontend Form & Logic)
+  - [x] Name Field
+  - [x] Photo Upload Field (Basic Implementation)
+  - [x] Contact Number Field
+  - [x] Email ID Field
+  - [x] Password Field (masked)
+  - [x] Confirm Password Field
+  - [x] Skills/Expertise Multiselect Field
+  - [x] Bio Textarea
+  - [x] Register Button
 - [x] Implement Project Creator Login API Endpoint
 - [x] Implement Project Creator Login Page (Frontend Form & Logic)
   - [x] Username Field
@@ -210,8 +210,8 @@
 
 ## Module 4: Collaborator Role
 ### Authentication & Profile Setup
-- [ ] Implement Collaborator Registration API Endpoint
-- [ ] Implement Collaborator Registration Page (Frontend Form & Logic)
+- [x] Implement Collaborator Registration API Endpoint
+- [x] Implement Collaborator Registration Page (Frontend Form & Logic)
   - [ ] Name Field
   - [ ] Photo Upload Field
   - [ ] Contact Number Field
@@ -302,8 +302,8 @@
 
 ## Module 5: Mentor/Expert Role
 ### Authentication & Profile Setup
-- [ ] Implement Mentor/Expert Registration API Endpoint (marks as pending approval)
-- [ ] Implement Mentor/Expert Registration Page (Frontend Form & Logic)
+- [x] Implement Mentor/Expert Registration API Endpoint (marks as pending approval)
+- [x] Implement Mentor/Expert Registration Page (Frontend Form & Logic)
   - [ ] Name Field
   - [ ] Photo Upload Field
   - [ ] Contact Number Field
@@ -396,8 +396,8 @@
 - [ ] Implement "View My Articles" Page (Frontend)
   - [ ] Display List of Created Articles (Title, Publication Date)
   - [ ] Add Edit Button for each article
-  - [ ] Implement Article Deletion API Endpoint
-  - [ ] Add Delete Button for each article (calls API)
+- [ ] Implement Article Deletion API Endpoint
+- [ ] Add Delete Button for each article (calls API)
     - [ ] Add Confirmation Dialog for Deletion
 
 ### Communication

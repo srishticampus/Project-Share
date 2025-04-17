@@ -24,10 +24,10 @@
 -   [x] Implement Login page with:
     -   [x] Username - Textbox
     -   [x] Password - Textbox (with eye icon, password visible in black dots when typing)
-    -   [ ] Reset password - Textlink
-        -   [ ] Enter new password - Textbox
-        -   [ ] Re-enter new password - Textbox
-        -   [ ] Submit - Button
+    -   [x] Reset password - Textlink
+        -   [x] Enter new password - Textbox
+        -   [x] Re-enter new password - Textbox
+        -   [x] Submit - Button
     -   [x] Login - Button
 -   [ ] Implement Dashboard with:
     -   [ ] Total Project Creators - View (Show the total counts)
@@ -83,16 +83,16 @@
 
 ## 3. Project Creator
 
--   [ ] Implement Registration page with:
-    -   [ ] Name - Textbox
-    -   [ ] Photo - Photo Upload
-    -   [ ] Contact number - Textbox
-    -   [ ] Email id - Textbox
-    -   [ ] Password - Textbox (When typing the password should display in black dots)
-    -   [ ] Confirm Password - Textbox
-    -   [ ] Skills/Expertise - Multiselect
-    -   [ ] Bio - Textarea
-    -   [ ] Register - Button
+-   [x] Implement Registration page with:
+    -   [x] Name - Textbox
+    -   [x] Photo - Photo Upload
+    -   [x] Contact number - Textbox
+    -   [x] Email id - Textbox
+    -   [x] Password - Textbox (When typing the password should display in black dots)
+    -   [x] Confirm Password - Textbox
+    -   [x] Skills/Expertise - Multiselect
+    -   [x] Bio - Textarea
+    -   [x] Register - Button
 -   [x] Implement Login page with:
     -   [x] Username - Textbox
     -   [x] Password - Textbox (with eye icon, password visible in black dots when typing)
@@ -173,17 +173,17 @@
 
 ## 4. Collaborator
 
--   [ ] Implement Registration page with:
-    -   [ ] Name - Textbox
-    -   [ ] Photo - Photo Upload
-    -   [ ] Contact number - Textbox
-    -   [ ] Email id - Textbox
-    -   [ ] Password - Textbox (When typing the password should display in black dots)
-    -   [ ] Confirm Password - Textbox
-    -   [ ] Skills - Multiselect
-    -   [ ] Portfolio Links - Textbox (Multiple links allowed)
-    -   [ ] Bio - Textarea
-    -   [ ] Register - Button
+-   [x] Implement Registration page with:
+    -   [x] Name - Textbox
+    -   [x] Photo - Photo Upload
+    -   [x] Contact number - Textbox
+    -   [x] Email id - Textbox
+    -   [x] Password - Textbox (When typing the password should display in black dots)
+    -   [x] Confirm Password - Textbox
+    -   [x] Skills - Multiselect
+    -   [x] Portfolio Links - Textbox (Multiple links allowed)
+    -   [x] Bio - Textarea
+    -   [x] Register - Button
 -   [x] Implement Login page with:
     -   [x] Username - Textbox
     -   [x] Password - Textbox (with eye icon, password visible in black dots when typing)
@@ -281,18 +281,18 @@
 
 ## 5. Mentor/Expert
 
--   [ ] Implement Registration page with:
-    -   [ ] Name - Textbox
-    -   [ ] Photo - Photo Upload
-    -   [ ] Contact number - Textbox
-    -   [ ] Email id - Textbox
-    -   [ ] Password - Textbox (When typing the password should display in black dots)
-    -   [ ] Confirm Password - Textbox
-    -   [ ] Areas of Expertise - Multiselect
-    -   [ ] Years of Experience - Numeric Field
-    -   [ ] Credentials - Textarea
-    -   [ ] Bio - Textarea
-    -   [ ] Register - Button
+-   [x] Implement Registration page with:
+    -   [x] Name - Textbox
+    -   [x] Photo - Photo Upload
+    -   [x] Contact number - Textbox
+    -   [x] Email id - Textbox
+    -   [x] Password - Textbox (When typing the password should display in black dots)
+    -   [x] Confirm Password - Textbox
+    -   [x] Areas of Expertise - Multiselect
+    -   [x] Years of Experience - Numeric Field
+    -   [x] Credentials - Textarea
+    -   [x] Bio - Textarea
+    -   [x] Register - Button
 -   [x] Implement Login page with:
     -   [x] Username - Textbox
     -   [x] Password - Textbox (with eye icon, password visible in black dots when typing)
