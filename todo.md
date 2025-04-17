@@ -13,10 +13,10 @@
 - [x] Implement Header with Website Name and Logo
 - [x] Implement Image Slideshow (Hero Section)
 - [x] Implement Login Dropdown
-  - [ ] Add Admin Login Link
-  - [ ] Add Project Creator Login Link
-  - [ ] Add Collaborator Login Link
-  - [ ] Add Mentor/Expert Login Link
+  - [x] Add Admin Login Link
+  - [x] Add Project Creator Login Link
+  - [x] Add Collaborator Login Link
+  - [x] Add Mentor/Expert Login Link
 - [x] Implement Home Section
   - [x] Add Image Slideshow
   - [x] Add Description ("How ProjectShare Can Help You?")
@@ -31,9 +31,9 @@
 ### Authentication & Setup
 - [x] Implement Admin Login Page API Endpoint
 - [x] Implement Admin Login Page Frontend Form & Logic
-  - [ ] Username Field
-  - [ ] Password Field (masked) with Show/Hide Toggle (Eye Icon)
-  - [ ] Login Button
+  - [x] Username Field
+  - [x] Password Field (masked) with Show/Hide Toggle (Eye Icon)
+  - [x] Login Button
 - [ ] Implement Admin Password Reset Functionality (API & Frontend)
   - [ ] "Reset Password" Link
   - [ ] New Password Field
@@ -116,9 +116,9 @@
   - [ ] Register Button
 - [x] Implement Project Creator Login API Endpoint
 - [x] Implement Project Creator Login Page (Frontend Form & Logic)
-  - [ ] Username Field
-  - [ ] Password Field (masked) with Show/Hide Toggle (Eye Icon)
-  - [ ] Login Button
+  - [x] Username Field
+  - [x] Password Field (masked) with Show/Hide Toggle (Eye Icon)
+  - [x] Login Button
 - [ ] Implement Project Creator Forgot Password Functionality (API & Frontend)
   - [ ] "Forgot Password" Link
   - [ ] New Password Field
@@ -224,9 +224,9 @@
   - [ ] Register Button
 - [x] Implement Collaborator Login API Endpoint
 - [x] Implement Collaborator Login Page (Frontend Form & Logic)
-  - [ ] Username Field
-  - [ ] Password Field (masked) with Show/Hide Toggle (Eye Icon)
-  - [ ] Login Button
+  - [x] Username Field
+  - [x] Password Field (masked) with Show/Hide Toggle (Eye Icon)
+  - [x] Login Button
 - [ ] Implement Collaborator Forgot Password Functionality (API & Frontend)
   - [ ] "Forgot Password" Link
   - [ ] New Password Field
@@ -317,9 +317,9 @@
   - [ ] Register Button (Submits for Admin Approval)
 - [x] Implement Mentor/Expert Login API Endpoint (checks for approval status)
 - [x] Implement Mentor/Expert Login Page (Frontend Form & Logic)
-  - [ ] Username Field
-  - [ ] Password Field (masked) with Show/Hide Toggle (Eye Icon)
-  - [ ] Login Button
+  - [x] Username Field
+  - [x] Password Field (masked) with Show/Hide Toggle (Eye Icon)
+  - [x] Login Button
 - [ ] Implement Mentor/Expert Forgot Password Functionality (API & Frontend)
   - [ ] "Forgot Password" Link
   - [ ] New Password Field

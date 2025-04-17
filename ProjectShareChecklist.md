@@ -5,10 +5,10 @@
 -   [x] Implement Website name with logo (Common page when opening the website)
 -   [x] Implement Image slideshow animation
 -   [x] Implement Login dropdown with links to:
-    -   [ ] Admin
-    -   [ ] Project Creators
-    -   [ ] Collaborators
-    -   [ ] Mentors/Experts
+    -   [x] Admin
+    -   [x] Project Creators
+    -   [x] Collaborators
+    -   [x] Mentors/Experts
 -   [x] Implement Home section with:
     -   [x] Image slideshow animation
     -   [x] Add Description ("How ProjectShare Can Help You?") - Textarea
