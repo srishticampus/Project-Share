@@ -8,6 +8,7 @@ import {
   TableCell,
   TableCaption,
 } from "@/components/ui/table"
+import { Button } from '@/components/ui/button';
 
 function MentorRequests() {
   const mentorRequests = [
@@ -56,8 +57,8 @@ function MentorRequests() {
                 <TableCell>{request.expertise}</TableCell>
                 <TableCell>{request.experience}</TableCell>
                 <TableCell>
-                  <button>Approve</button>
-                  <button>Reject</button>
+                  <Button>Approve</Button>
+                  <Button>Reject</Button>
                 </TableCell>
               </TableRow>
             ))}
