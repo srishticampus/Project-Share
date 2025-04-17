@@ -24,6 +24,8 @@ import ProjectsPage from './components/pages/admin/Projects';
 import Users from './components/pages/admin/Users';
 import ContentModeration from './components/pages/admin/ContentModeration';
 import Analytics from './components/pages/admin/Analytics';
+import CreatorDashboardPage from './components/pages/creator/CreatorDashboardPage';
+import CreatorLayout from './components/pages/creator/CreatorLayout';
 
 function Projects() {
   return <div>Projects Page</div>;
@@ -43,6 +45,26 @@ function Terms() {
 
 function Privacy() {
   return <div>Privacy Policy</div>;
+}
+
+function CreatorProjects() {
+  return <div>Creator Projects Page</div>;
+}
+
+function CreatorTasks() {
+  return <div>Creator Tasks Page</div>;
+}
+
+function CreatorApplications() {
+  return <div>Creator Applications Page</div>;
+}
+
+function CreatorChat() {
+  return <div>Creator Chat Page</div>;
+}
+
+function CreatorMentors() {
+  return <div>Creator Mentors Page</div>;
 }
 
 function App() {
@@ -69,17 +91,27 @@ function App() {
         <Route path="reset-password" element={<ResetPassword />} />
         <Route path="terms" element={<Terms />} />
         <Route path="privacy" element={<Privacy />} />
+        <Route path="/creator" element={<CreatorLayout />}>
+          <Route path="dashboard" element={<CreatorDashboardPage />} />
+          <Route path="projects" element={<CreatorProjects />} />
+          <Route path="tasks" element={<CreatorTasks />} />
+          <Route path="applications" element={<CreatorApplications />} />
+          <Route path="chat" element={<CreatorChat />} />
+          <Route path="mentors" element={<CreatorMentors />} />
+        </Route>
         <Route path="*" element={<NotFound />} />
       </Route>
 
       <Route path="/admin" element={<AdminLayout />}>
-        <Route index element={<AdminDashboard />} />
-        <Route path="mentor-requests" element={<MentorRequests />} />
-        <Route path="projects" element={<ProjectsPage />} />
-        <Route path="users" element={<Users />} />
-        <Route path="content-moderation" element={<ContentModeration />} />
-        <Route path="analytics" element={<Analytics />} />
+          <Route index element={<AdminDashboard />} />
+          <Route path="mentor-requests" element={<MentorRequests />} />
+          <Route path="projects" element={<ProjectsPage />} />
+          <Route path="users" element={<Users />} />
+          <Route path="content-moderation" element={<ContentModeration />} />
+          <Route path="analytics" element={<Analytics />} />
       </Route>
+
+      
     </Routes>
   );
 }
