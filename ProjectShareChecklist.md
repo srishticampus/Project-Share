@@ -29,13 +29,13 @@
         -   [x] Re-enter new password - Textbox
         -   [x] Submit - Button
     -   [x] Login - Button
--   [ ] Implement Dashboard with:
+-   [x] Implement Dashboard with:
     -   [ ] Total Project Creators - View (Show the total counts)
     -   [ ] Total Collaborators - View
     -   [ ] Total Mentors/Experts - View
     -   [ ] Recent Projects - View
     -   [ ] Recent Reports - View
--   [ ] Implement View Mentor/Expert Requests with:
+-   [x] Implement View Mentor/Expert Requests with:
     -   [ ] Name - Text (The recent request should display in the dashboard page of the admin)
     -   [ ] Photo - Picture
     -   [ ] Contact number - Textbox
@@ -44,7 +44,7 @@
     -   [ ] Years of Experience - Numeric Field
     -   [ ] Approve/Reject - Button
     -   [ ] See all - Text Link
--   [ ] Implement Projects section with:
+-   [x] Implement Projects section with:
     -   [ ] View Project List - Text Link
         -   [ ] Project Title - View
         -   [ ] Project Creator - View
@@ -54,7 +54,7 @@
         -   [ ] Collaborators - View
         -   [ ] Status - View (Active/Completed/On Hold)
         -   [ ] View all - Button
--   [ ] Implement Users section with:
+-   [x] Implement Users section with:
     -   [ ] View List
         -   [ ] Full name - View
         -   [ ] Email Address - View
@@ -67,19 +67,19 @@
         -   [ ] Profile Picture - View
         -   [ ] Active/Inactive - Toggle (An alert message should be displayed for confirmation while login the user profile that "Please contact Administrator for activation")
         -   [ ] Delete User - Button (With confirmation dialog)
--   [ ] Implement Content Moderation section with:
+-   [x] Implement Content Moderation section with:
     -   [ ] View Reported Content - View list
         -   [ ] Content Type - View (Project/Comment/Message)
         -   [ ] Reported By - View
         -   [ ] Date Reported - View
         -   [ ] Reason - View
         -   [ ] Action - Button (Remove/Keep with notes)
--   [ ] Implement Platform Analytics section with:
+-   [x] Implement Platform Analytics section with:
     -   [ ] User Engagement - Charts
     -   [ ] Project Success Rate - Charts
     -   [ ] Popular Categories - Charts
     -   [ ] User Growth - Charts
--   [ ] Implement Logout - Button (While clicking logout ask a confirmation message should display while logging out)
+-   [x] Implement Logout - Button (While clicking logout ask a confirmation message should display while logging out)
 
 ## 3. Project Creator
 
@@ -275,8 +275,6 @@
         -   [ ] Skills - Multiselect
         -   [ ] Portfolio Links - Textbox
         -   [ ] Bio - Textarea
-        -   [ ] Update - Button
-        -   [ ] Cancel - Button
 -   [ ] Implement Logout - Button (While clicking logout a confirmation message should display while asking logging out)
 
 ## 5. Mentor/Expert

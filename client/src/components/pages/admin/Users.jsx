@@ -8,9 +8,13 @@ import {
   TableCell,
   TableCaption,
 } from "@/components/ui/table"
+import { Button } from '@/components/ui/button';
+import { Avatar } from "@/components/ui/avatar"
+import { useState } from 'react';
+import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog"
 
 function Users() {
-  const users = [
+  const [users, setUsers] = useState([
     {
       fullName: "John Doe",
       email: "john.doe@example.com",
@@ -20,7 +24,7 @@ function Users() {
       city: "New York",
       contactNumber: "123-456-7890",
       userType: "Project Creator",
-      profilePicture: "url",
+      profilePicture: "https://github.com/shadcn.png",
       active: true,
     },
     {
@@ -32,10 +36,27 @@ function Users() {
       city: "Toronto",
       contactNumber: "987-654-3210",
       userType: "Collaborator",
-      profilePicture: "url",
+      profilePicture: "https://github.com/shadcn.png",
       active: false,
     },
-  ];
+  ]);
+
+  const handleDeleteUser = (email) => {
+    // Display confirmation dialog
+    const confirmDelete = window.confirm("Are you sure you want to delete this user?");
+    if (confirmDelete) {
+      // Delete the user
+      setUsers(users.filter((user) => user.email !== email));
+    }
+  };
+
+  const handleToggleActive = (email) => {
+    setUsers(
+      users.map((user) =>
+        user.email === email ? { ...user, active: !user.active } : user
+      )
+    );
+  };
 
   return (
     <main className="flex-1 px-6 pb-6 overflow-x-auto">
@@ -69,10 +90,21 @@ function Users() {
                 <TableCell>{user.city}</TableCell>
                 <TableCell>{user.contactNumber}</TableCell>
                 <TableCell>{user.userType}</TableCell>
-                <TableCell>{user.profilePicture}</TableCell>
-                <TableCell>{user.active ? "Yes" : "No"}</TableCell>
+                <TableCell><Avatar src={user.profilePicture} alt={user.fullName} /></TableCell>
                 <TableCell>
-                  <button>Delete</button>
+                  <input
+                    type="checkbox"
+                    checked={user.active}
+                    onChange={() => {
+                      handleToggleActive(user.email);
+                      alert(
+                        "Please contact Administrator for activation"
+                      );
+                    }}
+                  />
+                </TableCell>
+                <TableCell>
+                  <Button onClick={() => handleDeleteUser(user.email)}>Delete</Button>
                 </TableCell>
               </TableRow>
             ))}

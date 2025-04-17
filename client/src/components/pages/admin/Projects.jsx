@@ -8,6 +8,8 @@ import {
   TableCell,
   TableCaption,
 } from "@/components/ui/table"
+import { Button } from '@/components/ui/button';
+import { Link } from 'react-router';
 
 function Projects() {
   const projects = [
@@ -60,12 +62,13 @@ function Projects() {
                 <TableCell>{project.collaborators}</TableCell>
                 <TableCell>{project.status}</TableCell>
                 <TableCell>
-                  <button>View</button>
+                  <Button>View</Button>
                 </TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
+        <Link to="/admin/projects" className="text-blue-500">View all</Link>
       </div>
     </main>
   );

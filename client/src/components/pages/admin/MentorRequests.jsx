@@ -9,12 +9,14 @@ import {
   TableCaption,
 } from "@/components/ui/table"
 import { Button } from '@/components/ui/button';
+import { Avatar } from "@/components/ui/avatar"
+import { Link } from 'react-router';
 
 function MentorRequests() {
   const mentorRequests = [
     {
       name: "John Doe",
-      photo: "url",
+      photo: "https://github.com/shadcn.png",
       contactNumber: "123-456-7890",
       email: "john.doe@example.com",
       expertise: "Software Engineering",
@@ -22,7 +24,7 @@ function MentorRequests() {
     },
     {
       name: "Jane Smith",
-      photo: "url",
+      photo: "https://github.com/shadcn.png",
       contactNumber: "987-654-3210",
       email: "jane.smith@example.com",
       expertise: "Data Science",
@@ -51,7 +53,7 @@ function MentorRequests() {
             {mentorRequests.map((request) => (
               <TableRow key={request.email}>
                 <TableCell>{request.name}</TableCell>
-                <TableCell>{request.photo}</TableCell>
+                <TableCell><Avatar src={request.photo} alt={request.name} /></TableCell>
                 <TableCell>{request.contactNumber}</TableCell>
                 <TableCell>{request.email}</TableCell>
                 <TableCell>{request.expertise}</TableCell>
@@ -64,6 +66,7 @@ function MentorRequests() {
             ))}
           </TableBody>
         </Table>
+        <Link to="/admin/mentor-requests" className="text-blue-500">See all</Link>
       </div>
     </main>
   );

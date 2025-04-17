@@ -39,7 +39,7 @@ const menuItems = [
   },
   {
     text: "Mentor/Expert Requests",
-    path: "/admin/mentor-requests", 
+    path: "/admin/mentor-requests",
     icon: FileText,
   },
   {
@@ -66,7 +66,7 @@ const menuItems = [
 
 function AppSidebar() {
   const { pathname } = useLocation();
-  
+
   return (
     <Sidebar className="border-none" collapsible="icon">
       <SidebarContent>
@@ -106,6 +106,11 @@ function AppSidebar() {
 }
 
 export default function AdminLayout() {
+  const handleLogout = () => {
+    alert("Logging out...");
+    // Add actual logout logic here
+  };
+
   return (
     <SidebarProvider>
       <div className="flex h-screen w-full bg-[#F6F7F9]">
@@ -117,7 +122,7 @@ export default function AdminLayout() {
               <SidebarTrigger size="32" />
               <h1 className="text-xl text-gray-900">Admin Dashboard</h1>
             </div>
-            
+
             <Dialog>
               <DialogTrigger asChild>
                 <button className="flex items-center text-gray-700 hover:text-gray-900">
@@ -133,7 +138,7 @@ export default function AdminLayout() {
                   <Button variant="outline" className="w-28">
                     Cancel
                   </Button>
-                  <Button className="w-28 bg-red-600 hover:bg-red-700">
+                  <Button className="w-28 bg-red-600 hover:bg-red-700" onClick={handleLogout}>
                     Confirm
                   </Button>
                 </DialogFooter>

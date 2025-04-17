@@ -8,6 +8,7 @@ import {
   TableCell,
   TableCaption,
 } from "@/components/ui/table"
+import { Button } from '@/components/ui/button';
 
 function ContentModeration() {
   const reports = [
@@ -24,6 +25,26 @@ function ContentModeration() {
       reason: "Spam",
     },
   ];
+
+  const handleRemoveReport = (contentType, reportedBy, dateReported) => {
+    const confirmRemove = window.confirm(
+      `Are you sure you want to remove the reported ${contentType} reported by ${reportedBy} on ${dateReported}?`
+    );
+    if (confirmRemove) {
+      // Remove the report
+      alert(`Reported ${contentType} removed.`);
+    }
+  };
+
+  const handleKeepReport = (contentType, reportedBy, dateReported) => {
+    const notes = prompt(
+      `Enter notes for keeping the reported ${contentType} reported by ${reportedBy} on ${dateReported}:`
+    );
+    if (notes) {
+      // Keep the report with notes
+      alert(`Reported ${contentType} kept with notes: ${notes}`);
+    }
+  };
 
   return (
     <main className="flex-1 px-6 pb-6  overflow-x-auto">
@@ -48,8 +69,12 @@ function ContentModeration() {
                 <TableCell>{report.dateReported}</TableCell>
                 <TableCell>{report.reason}</TableCell>
                 <TableCell>
-                  <button>Remove</button>
-                  <button>Keep</button>
+                  <Button onClick={() => handleRemoveReport(report.contentType, report.reportedBy, report.dateReported)}>
+                    Remove
+                  </Button>
+                  <Button onClick={() => handleKeepReport(report.contentType, report.reportedBy, report.dateReported)}>
+                    Keep
+                  </Button>
                 </TableCell>
               </TableRow>
             ))}
