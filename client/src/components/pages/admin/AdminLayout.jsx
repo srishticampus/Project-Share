@@ -111,7 +111,7 @@ export default function AdminLayout() {
       <div className="flex h-screen w-full bg-[#F6F7F9]">
         <AppSidebar />
 
-        <div className="flex flex-col w-full">
+        <div className="flex flex-col w-[calc(100%-var(--sidebar-width))]">
           <header className="flex justify-between items-center p-4 m-6 bg-white rounded-lg">
             <div className="flex items-center gap-4">
               <SidebarTrigger size="32" />
@@ -128,9 +128,6 @@ export default function AdminLayout() {
               <DialogContent>
                 <DialogHeader>
                   <DialogTitle>Logout Confirmation</DialogTitle>
-                  <DialogDescription>
-                    Are you sure you want to log out of the admin panel?
-                  </DialogDescription>
                 </DialogHeader>
                 <DialogFooter className="flex justify-center gap-4">
                   <Button variant="outline" className="w-28">

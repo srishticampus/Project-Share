@@ -17,6 +17,13 @@ import About from './components/pages/About';
 import Features from './components/pages/Features';
 import Contact from './components/pages/Contact';
 import NotFound from './components/pages/NotFound';
+import AdminLayout from './components/pages/admin/AdminLayout';
+import AdminDashboard from './components/pages/admin/AdminDashboard';
+import MentorRequests from './components/pages/admin/MentorRequests';
+import ProjectsPage from './components/pages/admin/Projects';
+import Users from './components/pages/admin/Users';
+import ContentModeration from './components/pages/admin/ContentModeration';
+import Analytics from './components/pages/admin/Analytics';
 
 function Projects() {
   return <div>Projects Page</div>;
@@ -63,6 +70,15 @@ function App() {
         <Route path="terms" element={<Terms />} />
         <Route path="privacy" element={<Privacy />} />
         <Route path="*" element={<NotFound />} />
+      </Route>
+
+      <Route path="/admin" element={<AdminLayout />}>
+        <Route index element={<AdminDashboard />} />
+        <Route path="mentor-requests" element={<MentorRequests />} />
+        <Route path="projects" element={<ProjectsPage />} />
+        <Route path="users" element={<Users />} />
+        <Route path="content-moderation" element={<ContentModeration />} />
+        <Route path="analytics" element={<Analytics />} />
       </Route>
     </Routes>
   );
