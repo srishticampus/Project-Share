@@ -1,5 +1,6 @@
 import React from 'react';
 import { Card } from "@/components/ui/card"
+import { Link } from 'react-router';
 
 function AdminDashboard() {
   return (
@@ -42,6 +43,11 @@ function AdminDashboard() {
                 <li>Report 2</li>
                 <li>Report 3</li>
               </ul>
+            </div>
+          </Card>
+          <Card>
+            <div className="p-4">
+              <Link to="/admin/profile">View Profile</Link>
             </div>
           </Card>
         </div>

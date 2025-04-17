@@ -2,6 +2,7 @@ import React from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { ChartContainer, ChartTooltip, ChartTooltipContent, ChartLegend, ChartLegendContent } from "@/components/ui/chart"
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, BarChart, Bar, ResponsiveContainer } from 'recharts';
+import { Link } from 'react-router';
 
 const CreatorDashboardPage = () => {
   // Dummy data for the charts
@@ -71,6 +72,11 @@ const CreatorDashboardPage = () => {
             </ChartContainer>
           </CardContent>
         </Card>
+        <Card>
+            <div className="p-4">
+              <Link to="/creator/profile">View Profile</Link>
+            </div>
+          </Card>
       </div>
     </main>
   );

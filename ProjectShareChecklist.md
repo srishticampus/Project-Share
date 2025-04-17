@@ -102,7 +102,7 @@
         -   [ ] Re-enter new password - Textbox
         -   [ ] Submit - Button
     -   [ ] New To ProjectShare! Register now - Button Link Text
--   [ ] Implement Dashboard with:
+-   [x] Implement Dashboard with:
     -   [ ] Total Projects - View (Show the total counts)
     -   [ ] Active Projects - View
     -   [ ] Completed Projects - View

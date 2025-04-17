@@ -26,6 +26,14 @@ import ContentModeration from './components/pages/admin/ContentModeration';
 import Analytics from './components/pages/admin/Analytics';
 import CreatorDashboardPage from './components/pages/creator/CreatorDashboardPage';
 import CreatorLayout from './components/pages/creator/CreatorLayout';
+import CollaboratorDashboardPage from './components/pages/collaborator/CollaboratorDashboardPage';
+import MentorDashboardPage from './components/pages/mentor/MentorDashboardPage';
+import AdminProfile from './components/pages/admin/Profile';
+import CreatorProfile from './components/pages/creator/Profile';
+import CollaboratorProfile from './components/pages/collaborator/Profile';
+import MentorProfile from './components/pages/mentor/Profile';
+import CollaboratorLayout from './components/pages/collaborator/CollaboratorLayout';
+import MentorLayout from './components/pages/mentor/MentorLayout';
 
 function Projects() {
   return <div>Projects Page</div>;
@@ -91,24 +99,37 @@ function App() {
         <Route path="reset-password" element={<ResetPassword />} />
         <Route path="terms" element={<Terms />} />
         <Route path="privacy" element={<Privacy />} />
-        <Route path="/creator" element={<CreatorLayout />}>
-          <Route path="dashboard" element={<CreatorDashboardPage />} />
-          <Route path="projects" element={<CreatorProjects />} />
-          <Route path="tasks" element={<CreatorTasks />} />
-          <Route path="applications" element={<CreatorApplications />} />
-          <Route path="chat" element={<CreatorChat />} />
-          <Route path="mentors" element={<CreatorMentors />} />
-        </Route>
-        <Route path="*" element={<NotFound />} />
+
+      <Route path="/creator" element={<CreatorLayout />}>
+        <Route path="dashboard" element={<CreatorDashboardPage />} />
+        <Route path="projects" element={<CreatorProjects />} />
+        <Route path="tasks" element={<CreatorTasks />} />
+        <Route path="applications" element={<CreatorApplications />} />
+        <Route path="chat" element={<CreatorChat />} />
+        <Route path="mentors" element={<CreatorMentors />} />
+        <Route path="profile" element={<CreatorProfile />} />
       </Route>
 
+      <Route path="/collaborator" element={<CollaboratorLayout />}>
+        <Route path="dashboard" element={<CollaboratorDashboardPage />} />
+        <Route path="profile" element={<CollaboratorProfile />} />
+      </Route>
+
+      <Route path="/mentor" element={<MentorLayout />}>
+        <Route path="dashboard" element={<MentorDashboardPage />} />
+        <Route path="profile" element={<MentorProfile />} />
+      </Route>
+      <Route path="*" element={<NotFound />} />
+    </Route>
+
       <Route path="/admin" element={<AdminLayout />}>
-          <Route index element={<AdminDashboard />} />
-          <Route path="mentor-requests" element={<MentorRequests />} />
-          <Route path="projects" element={<ProjectsPage />} />
-          <Route path="users" element={<Users />} />
-          <Route path="content-moderation" element={<ContentModeration />} />
-          <Route path="analytics" element={<Analytics />} />
+        <Route index element={<AdminDashboard />} />
+        <Route path="mentor-requests" element={<MentorRequests />} />
+        <Route path="projects" element={<ProjectsPage />} />
+        <Route path="users" element={<Users />} />
+        <Route path="content-moderation" element={<ContentModeration />} />
+        <Route path="analytics" element={<Analytics />} />
+        <Route path="profile" element={<AdminProfile />} />
       </Route>
 
       
