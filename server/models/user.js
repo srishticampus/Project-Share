@@ -16,8 +16,32 @@ const UserSchema = new mongoose.Schema({
   },
   role: {
     type: String,
-    enum: ["adopter", "foster", "rescue", "admin", "pet_owner"],
-    default: "adopter",
+    enum: ["admin", "creator", "collaborator", "mentor"],
+    default: "collaborator",
+  },
+  photo: {
+    type: String, // URL to the profile picture
+  },
+  contactNumber: {
+    type: String,
+  },
+  skills: {
+    type: [String], // Array of skills/expertise
+  },
+  portfolioLinks: {
+    type: [String], // Array of portfolio links (for collaborators)
+  },
+  areasOfExpertise: {
+    type: [String], // Array of expertise areas (for mentors)
+  },
+  yearsOfExperience: {
+    type: Number, // Years of experience (for mentors)
+  },
+  credentials: {
+    type: String, // Credentials or qualifications (for mentors)
+  },
+  bio: {
+    type: String,
   },
   isVerified: {
     type: Boolean,
