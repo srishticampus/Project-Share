@@ -37,7 +37,7 @@ const AdminLogin = () => {
           </Button>
         </form>
         <div className="text-center mt-4">
-          <Link to="/forgot-password" className="text-sm text-blue-500 hover:underline">
+          <Link to="/login/forgot-password" className="text-sm text-blue-500 hover:underline">
             Forgot Password?
           </Link>
         </div>

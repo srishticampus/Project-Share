@@ -6,6 +6,12 @@ import AdminLogin from './components/pages/login/admin';
 import CreatorLogin from './components/pages/login/creator';
 import CollaboratorLogin from './components/pages/login/collaborator';
 import MentorLogin from './components/pages/login/mentor';
+import AdminRegister from './components/pages/register/admin';
+import CreatorRegister from './components/pages/register/creator';
+import CollaboratorRegister from './components/pages/register/collaborator';
+import MentorRegister from './components/pages/register/mentor';
+import ForgotPassword from './components/pages/login/ForgotPassword';
+import ResetPassword from './components/pages/login/ResetPassword';
 
 function Projects() {
   return <div>Projects Page</div>;
@@ -30,17 +36,23 @@ function Privacy() {
 function App() {
   return (
     <Routes>
-      <Route path="/" element={<Layout />}>
+      <Route path="/" element={<Layout />} >
         <Route index element={<LandingPage />} />
-        <Route path="/projects" element={<Projects />} />
-        <Route path="/collaborators" element={<Collaborators />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/login/admin" element={<AdminLogin />} />
-        <Route path="/login/creator" element={<CreatorLogin />} />
-        <Route path="/login/collaborator" element={<CollaboratorLogin />} />
-        <Route path="/login/mentor" element={<MentorLogin />} />
-        <Route path="/terms" element={<Terms />} />
-        <Route path="/privacy" element={<Privacy />} />
+        <Route path="projects" element={<Projects />} />
+        <Route path="collaborators" element={<Collaborators />} />
+        <Route path="register" element={<Register />} />
+        <Route path="login/admin" element={<AdminLogin />} />
+        <Route path="login/creator" element={<CreatorLogin />} />
+        <Route path="login/collaborator" element={<CollaboratorLogin />} />
+        <Route path="login/mentor" element={<MentorLogin />} />
+        <Route path="register/admin" element={<AdminRegister />} />
+        <Route path="register/creator" element={<CreatorRegister />} />
+        <Route path="register/collaborator" element={<CollaboratorRegister />} />
+        <Route path="register/mentor" element={<MentorRegister />} />
+        <Route path="login/forgot-password" element={<ForgotPassword />} />
+        <Route path="reset-password" element={<ResetPassword />} />
+        <Route path="terms" element={<Terms />} />
+        <Route path="privacy" element={<Privacy />} />
       </Route>
     </Routes>
   );
