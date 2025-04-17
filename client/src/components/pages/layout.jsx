@@ -21,16 +21,16 @@ export default function Layout() {
               <span className="font-bold inline-block">ProjectShare</span>
             </Link>
             <nav className="hidden md:flex items-center space-x-6 text-sm font-medium">
-              <Link to="/#home" className="transition-colors hover:text-foreground/80 text-foreground/60" prefetch="false">
+              <Link to="/" className="transition-colors hover:text-foreground/80 text-foreground/60" prefetch="false">
                 Home
               </Link>
-              <Link to="/#about" className="transition-colors hover:text-foreground/80 text-foreground/60" prefetch="false">
+              <Link to="/about" className="transition-colors hover:text-foreground/80 text-foreground/60" prefetch="false">
                 About
               </Link>
-               <Link to="/#features" className="transition-colors hover:text-foreground/80 text-foreground/60" prefetch="false">
+               <Link to="/features" className="transition-colors hover:text-foreground/80 text-foreground/60" prefetch="false">
                 Features
               </Link>
-              <Link to="/#contact" className="transition-colors hover:text-foreground/80 text-foreground/60" prefetch="false">
+              <Link to="/contact" className="transition-colors hover:text-foreground/80 text-foreground/60" prefetch="false">
                 Contact Us
               </Link>
             </nav>
@@ -96,16 +96,16 @@ export default function Layout() {
           {isMobileMenuOpen && (
             <div className="md:hidden absolute top-14 left-0 w-full bg-background border-b z-50">
               <div className="flex flex-col p-4 space-y-2">
-                <Link to="/#home" className="block transition-colors hover:text-foreground/80 text-foreground/60" prefetch="false" onClick={toggleMobileMenu}>
+                <Link to="/" className="block transition-colors hover:text-foreground/80 text-foreground/60" prefetch="false" onClick={toggleMobileMenu}>
                   Home
                 </Link>
-                <Link to="/#about" className="block transition-colors hover:text-foreground/80 text-foreground/60" prefetch="false" onClick={toggleMobileMenu}>
+                <Link to="/about" className="block transition-colors hover:text-foreground/80 text-foreground/60" prefetch="false" onClick={toggleMobileMenu}>
                   About
                 </Link>
-                <Link to="/#features" className="block transition-colors hover:text-foreground/80 text-foreground/60" prefetch="false" onClick={toggleMobileMenu}>
+                <Link to="/features" className="block transition-colors hover:text-foreground/80 text-foreground/60" prefetch="false" onClick={toggleMobileMenu}>
                   Features
                 </Link>
-                <Link to="/#contact" className="block transition-colors hover:text-foreground/80 text-foreground/60" prefetch="false" onClick={toggleMobileMenu}>
+                <Link to="/contact" className="block transition-colors hover:text-foreground/80 text-foreground/60" prefetch="false" onClick={toggleMobileMenu}>
                   Contact Us
                 </Link>
                 <DropdownMenu>

@@ -12,6 +12,11 @@ import CollaboratorRegister from './components/pages/register/collaborator';
 import MentorRegister from './components/pages/register/mentor';
 import ForgotPassword from './components/pages/login/ForgotPassword';
 import ResetPassword from './components/pages/login/ResetPassword';
+import Home from './components/pages/Home';
+import About from './components/pages/About';
+import Features from './components/pages/Features';
+import Contact from './components/pages/Contact';
+import NotFound from './components/pages/NotFound';
 
 function Projects() {
   return <div>Projects Page</div>;
@@ -38,6 +43,10 @@ function App() {
     <Routes>
       <Route path="/" element={<Layout />} >
         <Route index element={<LandingPage />} />
+        <Route path="home" element={<Home />} />
+        <Route path="about" element={<About />} />
+        <Route path="features" element={<Features />} />
+        <Route path="contact" element={<Contact />} />
         <Route path="projects" element={<Projects />} />
         <Route path="collaborators" element={<Collaborators />} />
         <Route path="register" element={<Register />} />
@@ -53,6 +62,7 @@ function App() {
         <Route path="reset-password" element={<ResetPassword />} />
         <Route path="terms" element={<Terms />} />
         <Route path="privacy" element={<Privacy />} />
+        <Route path="*" element={<NotFound />} />
       </Route>
     </Routes>
   );
