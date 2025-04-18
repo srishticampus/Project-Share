@@ -117,7 +117,7 @@ export default function CreatorLayout() {
       <div className="flex h-screen w-full bg-[#F6F7F9]">
         <AppSidebar />
 
-        <div className="flex flex-col w-[calc(100%-var(--sidebar-width))] bg-sidebar border-sidebar-border flex w-full flex-col rounded-lg border m-2  p-4 shadow-sm">
+        <div className="flex flex-col w-[calc(100%-var(--sidebar-width))] bg-sidebar border-sidebar-border flex flex-col rounded-lg border m-2  p-4 shadow-sm">
           <Outlet />
         </div>
       </div>

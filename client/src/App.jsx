@@ -26,6 +26,7 @@ import ContentModeration from './components/pages/admin/ContentModeration';
 import Analytics from './components/pages/admin/Analytics';
 import CreatorDashboardPage from './components/pages/creator/CreatorDashboardPage';
 import CreatorLayout from './components/pages/creator/CreatorLayout';
+import ProjectManagement from './components/pages/creator/ProjectManagement'; // Import the new component
 import CollaboratorDashboardPage from './components/pages/collaborator/CollaboratorDashboardPage';
 import MentorDashboardPage from './components/pages/mentor/MentorDashboardPage';
 import AdminProfile from './components/pages/admin/Profile';
@@ -55,9 +56,7 @@ function Privacy() {
   return <div>Privacy Policy</div>;
 }
 
-function CreatorProjects() {
-  return <div>Creator Projects Page</div>;
-}
+// Removed CreatorProjects placeholder function
 
 function CreatorTasks() {
   return <div>Creator Tasks Page</div>;
@@ -100,27 +99,27 @@ function App() {
         <Route path="terms" element={<Terms />} />
         <Route path="privacy" element={<Privacy />} />
 
-      <Route path="/creator" element={<CreatorLayout />}>
-        <Route path="dashboard" element={<CreatorDashboardPage />} />
-        <Route path="projects" element={<CreatorProjects />} />
-        <Route path="tasks" element={<CreatorTasks />} />
-        <Route path="applications" element={<CreatorApplications />} />
-        <Route path="chat" element={<CreatorChat />} />
-        <Route path="mentors" element={<CreatorMentors />} />
-        <Route path="profile" element={<CreatorProfile />} />
-      </Route>
+        <Route path="/creator" element={<CreatorLayout />}>
+          <Route path="dashboard" element={<CreatorDashboardPage />} />
+          <Route path="projects" element={<ProjectManagement />} />
+          <Route path="tasks" element={<CreatorTasks />} />
+          <Route path="applications" element={<CreatorApplications />} />
+          <Route path="chat" element={<CreatorChat />} />
+          <Route path="mentors" element={<CreatorMentors />} />
+          <Route path="profile" element={<CreatorProfile />} />
+        </Route>
 
-      <Route path="/collaborator" element={<CollaboratorLayout />}>
-        <Route path="dashboard" element={<CollaboratorDashboardPage />} />
-        <Route path="profile" element={<CollaboratorProfile />} />
-      </Route>
+        <Route path="/collaborator" element={<CollaboratorLayout />}>
+          <Route path="dashboard" element={<CollaboratorDashboardPage />} />
+          <Route path="profile" element={<CollaboratorProfile />} />
+        </Route>
 
-      <Route path="/mentor" element={<MentorLayout />}>
-        <Route path="dashboard" element={<MentorDashboardPage />} />
-        <Route path="profile" element={<MentorProfile />} />
+        <Route path="/mentor" element={<MentorLayout />}>
+          <Route path="dashboard" element={<MentorDashboardPage />} />
+          <Route path="profile" element={<MentorProfile />} />
+        </Route>
+        <Route path="*" element={<NotFound />} />
       </Route>
-      <Route path="*" element={<NotFound />} />
-    </Route>
 
       <Route path="/admin" element={<AdminLayout />}>
         <Route index element={<AdminDashboard />} />
@@ -132,7 +131,7 @@ function App() {
         <Route path="profile" element={<AdminProfile />} />
       </Route>
 
-      
+
     </Routes>
   );
 }
