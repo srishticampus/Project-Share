@@ -16,7 +16,7 @@ const CreatorLogin = () => {
     // Placeholder for actual API call
     try {
       console.log("Login attempt:", { email, password });
-      const response = await fetch("/api/auth/login", { // Updated endpoint
+      const response = await fetch("http://localhost:3000/api/auth/login", { // Updated endpoint
         method: "POST",
         headers: {
           "Content-Type": "application/json",
