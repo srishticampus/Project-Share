@@ -75,9 +75,9 @@ export default function Layout() {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                  <DropdownMenuItem asChild>
+                  {/* <DropdownMenuItem asChild>
                     <Link to="/register/admin" prefetch="false">Admin</Link>
-                  </DropdownMenuItem>
+                  </DropdownMenuItem> */}
                   <DropdownMenuItem asChild>
                     <Link to="/register/creator" prefetch="false">Project Creator</Link>
                   </DropdownMenuItem>
@@ -138,9 +138,9 @@ export default function Layout() {
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
-                    <DropdownMenuItem asChild>
+                    {/* <DropdownMenuItem asChild>
                       <Link to="/register/admin" prefetch="false" onClick={toggleMobileMenu}>Admin</Link>
-                    </DropdownMenuItem>
+                    </DropdownMenuItem> */}
                     <DropdownMenuItem asChild>
                       <Link to="/register/creator" prefetch="false" onClick={toggleMobileMenu}>Project Creator</Link>
                     </DropdownMenuItem>

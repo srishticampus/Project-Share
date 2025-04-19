@@ -17,7 +17,6 @@ router.post(
   [
     body('name', 'Name is required').not().isEmpty(),
     body('email', 'Please include a valid email').isEmail(),
-    body('username', 'Username is required').not().isEmpty(),
     body('password', 'Please enter a password with 6 or more characters').isLength({ min: 6 }),
   ],
   async (req, res) => {
@@ -26,7 +25,7 @@ router.post(
       return res.status(400).json({ errors: errors.array() });
     }
 
-    const { name, email, username, password } = req.body;
+    const { name, email, password } = req.body;
 
     try {
       // See if user exists
@@ -41,7 +40,6 @@ router.post(
       user = new User({
         name,
         email,
-        username,
         password,
         role: 'mentor',
       });

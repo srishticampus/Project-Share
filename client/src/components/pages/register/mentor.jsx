@@ -7,7 +7,6 @@ import { Label } from "@/components/ui/label";
 const MentorRegister = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
@@ -24,23 +23,42 @@ const MentorRegister = () => {
 
     // Placeholder for actual API call
     try {
-      console.log("Registration attempt:", { name, email, username, password });
+      console.log("Registration attempt:", { name, email, password }); // Removed username
       const response = await fetch("http://localhost:3000/api/auth/register/mentor", { // Updated endpoint
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ name, email, username, password }),
+        body: JSON.stringify({ name, email, password }), // Removed username
       });
 
       if (!response.ok) {
-        throw new Error("Registration failed");
+        // Try to parse error message from server if available
+        let errorMsg = "Registration failed";
+        try {
+          const errorData = await response.json();
+          errorMsg = errorData.message || errorMsg;
+        } catch (parseError) {
+          // Ignore if response is not JSON
+        }
+        throw new Error(errorMsg);
       }
 
       const data = await response.json();
       console.log("Registration successful:", data);
-      // Redirect to mentor dashboard or set authentication token
-      navigate("/mentor/dashboard");
+
+      // Check if a token is returned and store it
+      if (data.token) {
+        localStorage.setItem("token", data.token);
+        // Redirect to mentor dashboard after storing token
+        navigate("/mentor/dashboard");
+      } else {
+        // Handle case where registration is successful but no token is returned (optional)
+        console.warn("Registration successful, but no token received.");
+        // Decide if navigation should still happen or show an error/message
+        setError("Registration complete, but login might be required.");
+        // Or navigate to login page: navigate("/login/mentor");
+      }
     } catch (err) {
       setError(err.message || "Registration failed");
     }
@@ -78,19 +96,7 @@ const MentorRegister = () => {
               onChange={(e) => setEmail(e.target.value)}
             />
           </div>
-          <div>
-            <Label htmlFor="username" className="block text-sm font-medium text-gray-700">
-              Username
-            </Label>
-            <Input
-              type="text"
-              id="username"
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-              placeholder="Enter your username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-            />
-          </div>
+          {/* Removed Username Input Field */}
           <div>
             <Label htmlFor="password" className="block text-sm font-medium text-gray-700">
               Password

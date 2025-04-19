@@ -90,7 +90,7 @@ function App() {
         <Route path="login/creator" element={<CreatorLogin />} />
         <Route path="login/collaborator" element={<CollaboratorLogin />} />
         <Route path="login/mentor" element={<MentorLogin />} />
-        <Route path="register/admin" element={<AdminRegister />} />
+        {/* <Route path="register/admin" element={<AdminRegister />} /> */}
         <Route path="register/creator" element={<CreatorRegister />} />
         <Route path="register/collaborator" element={<CollaboratorRegister />} />
         <Route path="register/mentor" element={<MentorRegister />} />
