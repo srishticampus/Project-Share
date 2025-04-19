@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/table"
 import { Button } from "@/components/ui/button"
 import apiClient from '@/lib/apiClient';
+import { Edit, Trash2 } from 'lucide-react';
 
 const Task = ({ tasks, onEditTask }) => {
     const handleEditTask = (task) => {
@@ -55,10 +56,10 @@ const Task = ({ tasks, onEditTask }) => {
                         <TableCell>{task.dueDate ? new Date(task.dueDate).toLocaleDateString() : 'No due date'}</TableCell>
                         <TableCell>
                             <Button size="sm" onClick={() => handleEditTask(task)}>
-                                Edit
+                                <Edit className="h-4 w-4" />
                             </Button>
                             <Button size="sm" variant="destructive" onClick={() => handleDeleteTask(task._id)}>
-                                Delete
+                                <Trash2 className="h-4 w-4" />
                             </Button>
                         </TableCell>
                     </TableRow>
