@@ -25,6 +25,14 @@ const CollaboratorLogin = () => {
 
       if (data.token) {
         localStorage.setItem("token", data.token);
+
+        // Fetch user profile to get the role
+        const profileResponse = await apiClient.get('/auth/profile');
+        const profileData = profileResponse.data;
+        const userRole = profileData.role; // Assuming the role is in profileData.role
+
+        localStorage.setItem('role', userRole);
+
         window.location.href = "/collaborator/dashboard";
       } else {
         setError("Login failed: Token not received");

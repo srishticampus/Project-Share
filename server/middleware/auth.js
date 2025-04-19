@@ -25,8 +25,11 @@ export const protect = async (req, res, next) => {
       req.user = await User.findById(decoded.user.id).select('-password');
 
       if (!req.user) {
+         console.log('User not found in database'); // Add this line
          return res.status(401).json({ message: 'Not authorized, user not found' });
       }
+
+      console.log('User found:', req.user); // Add this line
 
       next(); // Proceed to the next middleware or route handler
     } catch (error) {

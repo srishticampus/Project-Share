@@ -35,6 +35,8 @@ import CollaboratorProfile from './components/pages/collaborator/Profile';
 import MentorProfile from './components/pages/mentor/Profile';
 import CollaboratorLayout from './components/pages/collaborator/CollaboratorLayout';
 import MentorLayout from './components/pages/mentor/MentorLayout';
+import CreatorTasks from './components/pages/creator/CreatorTasks';
+import Login from './components/pages/login/Login';
 
 function Projects() {
   return <div>Projects Page</div>;
@@ -58,9 +60,9 @@ function Privacy() {
 
 // Removed CreatorProjects placeholder function
 
-function CreatorTasks() {
-  return <div>Creator Tasks Page</div>;
-}
+// function CreatorTasks() {
+//   return <div>Creator Tasks Page</div>;
+// }
 
 function CreatorApplications() {
   return <div>Creator Applications Page</div>;
@@ -90,6 +92,7 @@ function App() {
         <Route path="login/creator" element={<CreatorLogin />} />
         <Route path="login/collaborator" element={<CollaboratorLogin />} />
         <Route path="login/mentor" element={<MentorLogin />} />
+        <Route path="login" element={<Login />} />
         {/* <Route path="register/admin" element={<AdminRegister />} /> */}
         <Route path="register/creator" element={<CreatorRegister />} />
         <Route path="register/collaborator" element={<CollaboratorRegister />} />

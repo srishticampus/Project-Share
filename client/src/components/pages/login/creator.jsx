@@ -29,6 +29,14 @@ const CreatorLogin = () => {
       if (data.token) {
         // Store the token in local storage
         localStorage.setItem("token", data.token);
+
+        // Fetch user profile to get the role
+        const profileResponse = await apiClient.get('/auth/profile');
+        const profileData = profileResponse.data;
+        const userRole = profileData.role; // Assuming the role is in profileData.role
+
+        localStorage.setItem('role', userRole);
+
         // Redirect to the creator dashboard
         // Consider using useNavigate from react-router-dom for SPA navigation
         window.location.href = "/creator/dashboard";
