@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router"; // Note: 'react-router' might need updating to 'react-router-dom' v6+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import apiClient from '@/lib/apiClient'; // Import the configured axios instance
 
 const CollaboratorRegister = () => {
   const [name, setName] = useState("");
@@ -10,6 +11,7 @@ const CollaboratorRegister = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false); // Added loading state
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -20,38 +22,22 @@ const CollaboratorRegister = () => {
       setError("Passwords do not match");
       return;
     }
+    setLoading(true); // Set loading true
 
-    // Placeholder for actual API call
     try {
-      console.log("Registration attempt:", { name, email, password }); // Removed username
-      const response = await fetch("http://localhost:3000/api/auth/register/collaborator", { // Updated endpoint
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ name, email, password }), // Removed username
-      });
+      console.log("Registration attempt:", { name, email, password });
+      // Use apiClient.post - baseURL, Content-Type, and token (if exists) are handled
+      const response = await apiClient.post("/auth/register/collaborator", { name, email, password });
 
-      if (!response.ok) {
-        // Try to parse error message from server if available
-        let errorMsg = "Registration failed";
-        try {
-          const errorData = await response.json();
-          errorMsg = errorData.message || errorMsg;
-        } catch (parseError) {
-          // Ignore if response is not JSON
-        }
-        throw new Error(errorMsg);
-      }
-
-      const data = await response.json();
+      // Axios provides data directly in response.data
+      const data = response.data;
       console.log("Registration successful:", data);
 
       // Check if a token is returned and store it
       if (data.token) {
         localStorage.setItem("token", data.token);
         // Redirect to collaborator dashboard after storing token
-        navigate("/collaborator/dashboard");
+        navigate("/collaborator/dashboard"); // Using navigate from react-router
       } else {
         // Handle case where registration is successful but no token is returned (optional)
         console.warn("Registration successful, but no token received.");
@@ -60,7 +46,12 @@ const CollaboratorRegister = () => {
         // Or navigate to login page: navigate("/login/collaborator");
       }
     } catch (err) {
-      setError(err.message || "Registration failed");
+      console.error("Registration error:", err);
+      // Use Axios error structure for more specific messages
+      const errorMsg = err.response?.data?.message || err.message || "Registration failed";
+      setError(errorMsg);
+    } finally {
+      setLoading(false); // Set loading false
     }
   };
 
@@ -69,7 +60,7 @@ const CollaboratorRegister = () => {
       <div className="w-full max-w-md bg-white rounded-lg shadow-md p-8">
         <h2 className="text-2xl font-semibold text-center mb-4">Collaborator Registration</h2>
         <form className="space-y-6" onSubmit={handleSubmit}>
-          {error && <p className="text-red-500">{error}</p>}
+          {error && <p className="text-red-500 text-center mb-4">{error}</p>} {/* Centered error */}
           <div>
             <Label htmlFor="name" className="block text-sm font-medium text-gray-700">
               Full Name
@@ -81,6 +72,8 @@ const CollaboratorRegister = () => {
               placeholder="Enter your full name"
               value={name}
               onChange={(e) => setName(e.target.value)}
+              required
+              disabled={loading} // Disable input when loading
             />
           </div>
           <div>
@@ -94,6 +87,8 @@ const CollaboratorRegister = () => {
               placeholder="Enter your email address"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              required
+              disabled={loading} // Disable input when loading
             />
           </div>
           {/* Removed Username Input Field */}
@@ -108,6 +103,8 @@ const CollaboratorRegister = () => {
               placeholder="Enter your password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              required
+              disabled={loading} // Disable input when loading
             />
           </div>
           <div>
@@ -121,10 +118,12 @@ const CollaboratorRegister = () => {
               placeholder="Confirm your password"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
+              required
+              disabled={loading} // Disable input when loading
             />
           </div>
-          <Button type="submit" className="w-full">
-            Register
+          <Button type="submit" className="w-full" disabled={loading}>
+            {loading ? 'Registering...' : 'Register'} {/* Show loading text */}
           </Button>
         </form>
         <div className="text-center mt-4">

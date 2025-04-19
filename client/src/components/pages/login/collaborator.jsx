@@ -3,45 +3,38 @@ import { Link } from "react-router";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import apiClient from '@/lib/apiClient';
 
 const CollaboratorLogin = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+    setLoading(true);
 
-    // Placeholder for actual API call
     try {
       console.log("Login attempt:", { email, password });
-      const response = await fetch("http://localhost:3000/api/auth/login", { // Updated endpoint
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password }),
-      });
+      const response = await apiClient.post("/auth/login", { email, password });
 
-      if (!response.ok) {
-        throw new Error("Invalid credentials");
-      }
-
-      const data = await response.json();
+      const data = response.data;
       console.log("Login successful:", data);
-      // Redirect to collaborator dashboard or set authentication token
-      // Assuming the server returns a token
+
       if (data.token) {
-        // Store the token in local storage or a cookie
         localStorage.setItem("token", data.token);
-        // Redirect to the collaborator dashboard
         window.location.href = "/collaborator/dashboard";
       } else {
         setError("Login failed: Token not received");
       }
     } catch (err) {
-      setError(err.message || "Login failed");
+      console.error("Login error:", err);
+      const errorMsg = err.response?.data?.message || err.message || "Login failed";
+      setError(errorMsg);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -77,8 +70,8 @@ const CollaboratorLogin = () => {
               onChange={(e) => setPassword(e.target.value)}
             />
           </div>
-          <Button type="submit" className="w-full">
-            Login
+          <Button type="submit" className="w-full" disabled={loading}>
+            {loading ? 'Logging in...' : 'Login'}
           </Button>
         </form>
         <div className="text-center mt-4">

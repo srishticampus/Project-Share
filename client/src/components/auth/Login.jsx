@@ -12,6 +12,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import apiClient from '@/lib/apiClient'; // Import the configured axios instance
 
 function Login() {
   const [email, setEmail] = useState('');
@@ -26,26 +27,16 @@ function Login() {
     setLoading(true);
 
     try {
-      const response = await fetch('/api/auth/login', { // Assuming proxy or same origin
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
-      });
+      // Use apiClient.post - baseURL and Content-Type are handled automatically
+      const response = await apiClient.post('/auth/login', { email, password });
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        // Handle specific errors from backend if available
-        const errorMsg = data.errors ? data.errors.map(e => e.msg).join(', ') : (data.message || 'Login failed');
-        throw new Error(errorMsg);
-      }
+      // Axios provides data directly in response.data
+      const data = response.data;
 
       // Login successful
       console.log('Login successful:', data);
       // Store the token (e.g., in localStorage)
-      localStorage.setItem('token', data.token);
+      localStorage.setItem('token', data.token); // Assuming the token is in data.token
 
       // @TODO: Redirect user to dashboard or appropriate page
       // navigate('/dashboard'); // Example redirect
@@ -57,7 +48,11 @@ function Login() {
 
     } catch (err) {
       console.error('Login error:', err);
-      setError(err.message || 'An error occurred during login.');
+      // Axios errors often have response data with backend messages
+      const errorMsg = err.response?.data?.errors
+        ? err.response.data.errors.map(e => e.msg).join(', ')
+        : err.response?.data?.message || err.message || 'An error occurred during login.';
+      setError(errorMsg);
     } finally {
       setLoading(false);
     }

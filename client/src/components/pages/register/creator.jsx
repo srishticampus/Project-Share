@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import apiClient from '@/lib/apiClient';
 
 const CreatorRegister = () => {
   const [name, setName] = useState("");
@@ -10,6 +11,7 @@ const CreatorRegister = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -20,47 +22,28 @@ const CreatorRegister = () => {
       setError("Passwords do not match");
       return;
     }
+    setLoading(true);
 
-    // Placeholder for actual API call
     try {
-      console.log("Registration attempt:", { name, email, password }); // Removed username
-      const response = await fetch("http://localhost:3000/api/auth/register/creator", { // Updated endpoint
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ name, email, password }), // Removed username
-      });
+      console.log("Registration attempt:", { name, email, password });
+      const response = await apiClient.post("/auth/register/creator", { name, email, password });
 
-      if (!response.ok) {
-        // Try to parse error message from server if available
-        let errorMsg = "Registration failed";
-        try {
-          const errorData = await response.json();
-          errorMsg = errorData.message || errorMsg;
-        } catch (parseError) {
-          // Ignore if response is not JSON
-        }
-        throw new Error(errorMsg);
-      }
-
-      const data = await response.json();
+      const data = response.data;
       console.log("Registration successful:", data);
 
-      // Check if a token is returned and store it
       if (data.token) {
         localStorage.setItem("token", data.token);
-        // Redirect to creator dashboard after storing token
         navigate("/creator/dashboard");
       } else {
-        // Handle case where registration is successful but no token is returned (optional)
         console.warn("Registration successful, but no token received.");
-        // Decide if navigation should still happen or show an error/message
         setError("Registration complete, but login might be required.");
-        // Or navigate to login page: navigate("/login/creator");
       }
     } catch (err) {
-      setError(err.message || "Registration failed");
+      console.error("Registration error:", err);
+      const errorMsg = err.response?.data?.message || err.message || "Registration failed";
+      setError(errorMsg);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -69,7 +52,7 @@ const CreatorRegister = () => {
       <div className="w-full max-w-md bg-white rounded-lg shadow-md p-8">
         <h2 className="text-2xl font-semibold text-center mb-4">Project Creator Registration</h2>
         <form className="space-y-6" onSubmit={handleSubmit}>
-          {error && <p className="text-red-500">{error}</p>}
+          {error && <p className="text-red-500 text-center mb-4">{error}</p>}
           <div>
             <Label htmlFor="name" className="block text-sm font-medium text-gray-700">
               Full Name
@@ -96,7 +79,6 @@ const CreatorRegister = () => {
               onChange={(e) => setEmail(e.target.value)}
             />
           </div>
-          {/* Removed Username Input Field */}
           <div>
             <Label htmlFor="password" className="block text-sm font-medium text-gray-700">
               Password
@@ -123,8 +105,8 @@ const CreatorRegister = () => {
               onChange={(e) => setConfirmPassword(e.target.value)}
             />
           </div>
-          <Button type="submit" className="w-full">
-            Register
+          <Button type="submit" className="w-full" disabled={loading}>
+           {loading ? 'Registering...' : 'Register'}
           </Button>
         </form>
         <div className="text-center mt-4">
