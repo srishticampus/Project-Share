@@ -13,7 +13,7 @@ app.use(cors()); // Enable CORS for all origins (adjust in production)
 
 // Logging
 app.use(morgan("dev")); // Dev logging to console
-// app.use(logger()); // Pino logging
+app.use(logger({transport:{target:"pino-pretty"}})); // Pino logging
 
 // create a rotating write stream for file logging
 const accessLogStream = createStream("access.log", {
