@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Table,
   TableHeader,
@@ -10,52 +10,45 @@ import {
 } from "@/components/ui/table"
 import { Button } from '@/components/ui/button';
 import { Avatar } from "@/components/ui/avatar"
-import { useState } from 'react';
 import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog"
+import { apiClient } from '@/lib/apiClient';
 
 function Users() {
-  const [users, setUsers] = useState([
-    {
-      fullName: "John Doe",
-      email: "john.doe@example.com",
-      dob: "1990-01-01",
-      gender: "Male",
-      country: "USA",
-      city: "New York",
-      contactNumber: "123-456-7890",
-      userType: "Project Creator",
-      profilePicture: "https://github.com/shadcn.png",
-      active: true,
-    },
-    {
-      fullName: "Jane Smith",
-      email: "jane.smith@example.com",
-      dob: "1992-02-02",
-      gender: "Female",
-      country: "Canada",
-      city: "Toronto",
-      contactNumber: "987-654-3210",
-      userType: "Collaborator",
-      profilePicture: "https://github.com/shadcn.png",
-      active: false,
-    },
-  ]);
+  const [users, setUsers] = useState([]);
 
-  const handleDeleteUser = (email) => {
-    // Display confirmation dialog
-    const confirmDelete = window.confirm("Are you sure you want to delete this user?");
-    if (confirmDelete) {
-      // Delete the user
-      setUsers(users.filter((user) => user.email !== email));
+  useEffect(() => {
+    fetchUsers();
+  }, []);
+
+  const fetchUsers = async () => {
+    try {
+      const response = await apiClient.get('/admin/users');
+      setUsers(response.data);
+    } catch (error) {
+      console.error('Failed to fetch users:', error);
     }
   };
 
-  const handleToggleActive = (email) => {
-    setUsers(
-      users.map((user) =>
-        user.email === email ? { ...user, active: !user.active } : user
-      )
-    );
+  const handleDeleteUser = async (id) => {
+    // Display confirmation dialog
+    const confirmDelete = window.confirm("Are you sure you want to delete this user?");
+    if (confirmDelete) {
+      try {
+        await apiClient.delete(`/admin/users/${id}`);
+        fetchUsers(); // Refresh user list after deletion
+      } catch (error) {
+        console.error('Failed to delete user:', error);
+      }
+    }
+  };
+
+  const handleToggleActive = async (id, active) => {
+    try {
+      await apiClient.put(`/admin/users/${id}`, { active: !active });
+      fetchUsers(); // Refresh user list after toggle
+    } catch (error) {
+      console.error('Failed to toggle active:', error);
+    }
   };
 
   return (
@@ -96,7 +89,7 @@ function Users() {
                     type="checkbox"
                     checked={user.active}
                     onChange={() => {
-                      handleToggleActive(user.email);
+                      handleToggleActive(user.id, user.active);
                       alert(
                         "Please contact Administrator for activation"
                       );
@@ -104,7 +97,7 @@ function Users() {
                   />
                 </TableCell>
                 <TableCell>
-                  <Button onClick={() => handleDeleteUser(user.email)}>Delete</Button>
+                  <Button onClick={() => handleDeleteUser(user.id)}>Delete</Button>
                 </TableCell>
               </TableRow>
             ))}
