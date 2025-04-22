@@ -95,7 +95,9 @@ function CreatorTasks() {
     const handleDeleteTask = async (taskId) => {
         try {
             await apiClient.delete(`/creator/tasks/${taskId}`);
-            setTasks(tasks.filter((task) => task._id !== taskId));
+            // After successful deletion, re-fetch tasks
+            const data = await getTasksByProject(projectId);
+            setTasks(data.tasks);
         } catch (error) {
             console.error('Error deleting task:', error);
             alert('Failed to delete task.');

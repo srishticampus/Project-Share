@@ -12,7 +12,7 @@ import { Button } from "@/components/ui/button"
 import apiClient from '@/lib/apiClient';
 import { Edit, Trash2 } from 'lucide-react';
 
-const Task = ({ tasks, onEditTask }) => {
+const Task = ({ tasks, onEditTask,onDeleteTask }) => {
     const handleEditTask = (task) => {
         // Implement edit logic here
         console.log(`Edit task with ID: ${task._id}`);
@@ -21,9 +21,11 @@ const Task = ({ tasks, onEditTask }) => {
 
     const handleDeleteTask = async (taskId) => {
         try {
-            await apiClient.delete(`/creator/tasks/${taskId}`);
+            // await apiClient.delete(`/creator/tasks/${taskId}`);
             // Update the tasks state in the parent component
             // tasks = tasks.filter((task) => task._id !== taskId); // This line won't work, need to update state in parent
+            // on delete refresh the tasks
+            onDeleteTask(taskId);
             console.log(`Task with ID: ${taskId} deleted successfully`);
         } catch (error) {
             console.error('Error deleting task:', error);
