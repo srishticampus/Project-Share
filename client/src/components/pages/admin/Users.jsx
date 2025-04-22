@@ -11,7 +11,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Avatar } from "@/components/ui/avatar"
 import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog"
-import { apiClient } from '@/lib/apiClient';
+import  apiClient from '@/lib/apiClient';
 
 function Users() {
   const [users, setUsers] = useState([]);
