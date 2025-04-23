@@ -65,7 +65,7 @@ function ProjectDetails() {
               <p>Name: {project.creator.name}</p>
               <p>Email: {project.creator.email}</p>
               <p>Bio: {project.creator.bio}</p>
-              <p>Links: {project.creator.portfolioLinks.map((link) => <a href={link} target="_blank" rel="noreferrer">{link}</a>)}</p>
+              <p>Links: {project?.creator?.portfolioLinks?.map((link) => <a href={link} target="_blank" rel="noreferrer">{link}</a>)}</p>
             </div>
           )}
           {tasks && tasks.length > 0 && (
