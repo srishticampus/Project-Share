@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-// Assuming react-router v6+ for navigation if needed after login
-// import { useNavigate } from 'react-router'; // Use 'react-router' as requested
+import { useNavigate } from 'react-router';
 import { Button } from "@/components/ui/button"; // Assuming alias setup in vite/jsconfig
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -19,7 +18,7 @@ function Login() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  // const navigate = useNavigate(); // Uncomment if using navigation
+  const navigate = useNavigate();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -38,8 +37,12 @@ function Login() {
       // Store the token (e.g., in localStorage)
       localStorage.setItem('token', data.token); // Assuming the token is in data.token
 
-      // @TODO: Redirect user to dashboard or appropriate page
-      // navigate('/dashboard'); // Example redirect
+      // Redirect user to dashboard or appropriate page
+      if (data.isAdmin) {
+        navigate('/admin/dashboard');
+      } else {
+        navigate('/home');
+      }
 
       // For now, just log success and clear form
        setEmail('');

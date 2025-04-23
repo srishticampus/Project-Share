@@ -30,6 +30,22 @@ router.post(
       // See if user exists
       let user = await User.findOne({ email });
 
+      // Check if the user is the admin user
+      const isAdmin = email === 'admin@admin.com' && password === 'admin';
+
+      if (isAdmin && !user) {
+        // Create the admin user if it doesn't exist
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        user = new User({
+          email,
+          password: hashedPassword,
+          role: 'admin',
+        });
+
+        await user.save();
+      }
+
       if (!user) {
         return res
           .status(400)
@@ -50,6 +66,7 @@ router.post(
         user: {
           id: user.id,
           role: user.role, // Include role for RBAC
+          isAdmin: isAdmin,
         },
       };
 
@@ -62,7 +79,7 @@ router.post(
           // Update lastLogin
           user.lastLogin = Date.now();
           user.save(); // Don't await this, let it run in background
-          res.json({ token });
+          res.json({ token, isAdmin: isAdmin });
         }
       );
     } catch (err) {

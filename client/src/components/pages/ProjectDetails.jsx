@@ -81,7 +81,7 @@ function ProjectDetails() {
                         <p className="text-sm">Username: {task.createdBy.name}</p>
                         <p className="text-sm">Email: {task.createdBy.email}</p>
                         <p className="text-sm">Bio: {task.createdBy.bio}</p>
-                        <p className="text-sm">Portfolio Links: {task.createdBy.portfolioLinks.map((link) => <a href={link} target="_blank" rel="noreferrer">{link}</a>)}</p>
+                        <p className="text-sm">Portfolio Links: {task.createdBy?.portfolioLinks?.map((link) => <a href={link} target="_blank" rel="noreferrer">{link}</a>)}</p>
                       </div>
                     )}
                   </li>
