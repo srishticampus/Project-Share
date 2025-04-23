@@ -41,4 +41,15 @@ apiClient.interceptors.response.use(
   }
 );
 
+const getProject = async (id) => {
+  try {
+    const response = await apiClient.get(`/projects/${id}`);
+    return response.data; // The API now returns { project, tasks }
+  } catch (error) {
+    console.error('Error fetching project:', error);
+    throw error; // Re-throw the error for the component to handle
+  }
+};
+
 export default apiClient;
+export { getProject };

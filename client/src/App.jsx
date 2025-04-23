@@ -1,26 +1,21 @@
 import React from 'react';
 import { Route, Routes } from 'react-router';
-import LandingPage from './components/pages/landing-page';
 import Layout from './components/pages/layout';
-import AdminLogin from './components/pages/login/admin';
-import CreatorLogin from './components/pages/login/creator';
-import CollaboratorLogin from './components/pages/login/collaborator';
-import MentorLogin from './components/pages/login/mentor';
-import AdminRegister from './components/pages/register/admin';
+import Home from './components/pages/Home';
+import About from './components/pages/About';
+import Contact from './components/pages/Contact';
+import Features from './components/pages/Features';
+import NotFound from './components/pages/NotFound';
+import LandingPage from './components/pages/landing-page';
 import CreatorRegister from './components/pages/register/creator';
 import CollaboratorRegister from './components/pages/register/collaborator';
 import MentorRegister from './components/pages/register/mentor';
 import ForgotPassword from './components/pages/login/ForgotPassword';
 import ResetPassword from './components/pages/login/ResetPassword';
-import Home from './components/pages/Home';
-import About from './components/pages/About';
-import Features from './components/pages/Features';
-import Contact from './components/pages/Contact';
-import NotFound from './components/pages/NotFound';
 import AdminLayout from './components/pages/admin/AdminLayout';
 import AdminDashboard from './components/pages/admin/AdminDashboard';
 import MentorRequests from './components/pages/admin/MentorRequests';
-import ProjectsPage from './components/pages/admin/Projects';
+import AdminProjectsPage from './components/pages/admin/Projects';
 import Users from './components/pages/admin/Users';
 import ContentModeration from './components/pages/admin/ContentModeration';
 import Analytics from './components/pages/admin/Analytics';
@@ -29,18 +24,21 @@ import CreatorLayout from './components/pages/creator/CreatorLayout';
 import ProjectManagement from './components/pages/creator/ProjectManagement'; // Import the new component
 import CollaboratorDashboardPage from './components/pages/collaborator/CollaboratorDashboardPage';
 import MentorDashboardPage from './components/pages/mentor/MentorDashboardPage';
+import AdminLogin from './components/pages/login/admin';
 import AdminProfile from './components/pages/admin/Profile';
+import CreatorLogin from './components/pages/login/creator';
 import CreatorProfile from './components/pages/creator/Profile';
+import CollaboratorLogin from './components/pages/login/collaborator';
 import CollaboratorProfile from './components/pages/collaborator/Profile';
+import MentorLogin from './components/pages/login/mentor';
 import MentorProfile from './components/pages/mentor/Profile';
 import CollaboratorLayout from './components/pages/collaborator/CollaboratorLayout';
 import MentorLayout from './components/pages/mentor/MentorLayout';
 import CreatorTasks from './components/pages/creator/CreatorTasks';
 import Login from './components/pages/login/Login';
-
-function Projects() {
-  return <div>Projects Page</div>;
-}
+import Projects from './components/pages/Projects'; // Import the new Projects component
+import ProjectDetails from './components/pages/ProjectDetails';
+import ContactSubmissions from './components/pages/admin/ContactSubmissions';
 
 function Collaborators() {
   return <div>Collaborators Page</div>;
@@ -86,6 +84,7 @@ function App() {
         <Route path="features" element={<Features />} />
         <Route path="contact" element={<Contact />} />
         <Route path="projects" element={<Projects />} />
+        <Route path="/projects/:id" element={<ProjectDetails />} /> {/* Add the new route */}
         <Route path="collaborators" element={<Collaborators />} />
         <Route path="register" element={<Register />} />
         <Route path="login/admin" element={<AdminLogin />} />
@@ -127,11 +126,12 @@ function App() {
       <Route path="/admin" element={<AdminLayout />}>
         <Route index element={<AdminDashboard />} />
         <Route path="mentor-requests" element={<MentorRequests />} />
-        <Route path="projects" element={<ProjectsPage />} />
+        <Route path="projects" element={<AdminProjectsPage />} />
         <Route path="users" element={<Users />} />
         <Route path="content-moderation" element={<ContentModeration />} />
         <Route path="analytics" element={<Analytics />} />
         <Route path="profile" element={<AdminProfile />} />
+        <Route path="contact-submissions" element={<ContactSubmissions />} />
       </Route>
 
 

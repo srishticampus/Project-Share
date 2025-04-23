@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router"; // Note: 'react-router' might need updating to 'react-router-dom' v6+
+import { Link } from "react-router";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -38,7 +38,7 @@ const MentorLogin = () => {
         localStorage.setItem('role', userRole);
 
         // Redirect to the mentor dashboard
-        // Consider using useNavigate from react-router-dom for SPA navigation
+        // Consider using useNavigate from react-router for SPA navigation
         window.location.href = "/mentor/dashboard";
       } else {
         // This case might not be necessary if the server always returns a token on success

@@ -62,6 +62,11 @@ const menuItems = [
     path: "/admin/analytics",
     icon: BarChart3,
   },
+  {
+    text: "Contact Submissions",
+    path: "/admin/contact-submissions",
+    icon: FileText,
+  },
 ];
 
 function AppSidebar() {

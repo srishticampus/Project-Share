@@ -60,6 +60,9 @@ export default function Layout() {
               <Link to="/contact" className="transition-colors hover:text-foreground/80 text-foreground/60" prefetch="false">
                 Contact Us
               </Link>
+              <Link to="/projects" className="transition-colors hover:text-foreground/80 text-foreground/60" prefetch="false">
+                Projects
+              </Link>
             </nav>
 
             {/* Mobile Menu Button */}
@@ -171,6 +174,9 @@ export default function Layout() {
                 </Link>
                 <Link to="/contact" className="block transition-colors hover:text-foreground/80 text-foreground/60" prefetch="false" onClick={toggleMobileMenu}>
                   Contact Us
+                </Link>
+                <Link to="/projects" className="block transition-colors hover:text-foreground/80 text-foreground/60" prefetch="false" onClick={toggleMobileMenu}>
+                  Projects
                 </Link>
                 {isLoggedIn ? (
                   <>
