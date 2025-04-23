@@ -38,6 +38,7 @@ router.post(
         const hashedPassword = await bcrypt.hash(password, 10);
 
         user = new User({
+          name: 'Admin', // Set the name to "Admin"
           email,
           password: hashedPassword,
           role: 'admin',

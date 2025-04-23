@@ -39,7 +39,7 @@ function Login() {
 
       // Redirect user to dashboard or appropriate page
       if (data.isAdmin) {
-        navigate('/admin/dashboard');
+        navigate('/admin');
       } else {
         navigate('/home');
       }

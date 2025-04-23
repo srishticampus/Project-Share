@@ -33,7 +33,7 @@ const AdminRegister = () => {
 
       if (data.token) {
         localStorage.setItem("token", data.token);
-        navigate("/admin/dashboard");
+        navigate("/admin");
       } else {
         console.warn("Registration successful, but no token received.");
         setError("Registration complete, but login might be required.");
