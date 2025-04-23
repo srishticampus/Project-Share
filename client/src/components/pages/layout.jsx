@@ -180,7 +180,7 @@ export default function Layout() {
                 </Link>
                 {isLoggedIn ? (
                   <>
-                    <Link to={getProfileLink()} className="block transition-colors hover:text-foreground/80 text-foreground/60" prefetch="false" onClick={toggleMobileMenu}>
+                    <Link to={getProfileLink(userRole)} className="block transition-colors hover:text-foreground/80 text-foreground/60" prefetch="false" onClick={toggleMobileMenu}>
                       My Profile
                     </Link>
                     <Link to="/settings" className="block transition-colors hover:text-foreground/80 text-foreground/60" prefetch="false" onClick={toggleMobileMenu}>

@@ -95,7 +95,6 @@ function Projects() {
             ))}
           </TableBody>
         </Table>
-        <Link to="/admin/projects" className="text-blue-500">View all</Link>
       </div>
     </main>
   );
