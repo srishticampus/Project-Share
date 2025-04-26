@@ -4,6 +4,7 @@ import {
   updateProject,
   deleteProject,
 } from './projectController.js';
+import { getDashboardStats } from './dashboardController.js';
 
 // import {
 //   getAllUsers,
@@ -21,6 +22,9 @@ router.put('/projects/:id', updateProject);
 
 // Delete a project
 router.delete('/projects/:id', deleteProject);
+
+// Get dashboard statistics
+router.get('/dashboard', getDashboardStats);
 
 // // Get all users
 // router.get('/users', getAllUsers);

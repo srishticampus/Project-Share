@@ -148,7 +148,9 @@ export default function AdminLayout() {
                 </DialogHeader>
                 <DialogFooter className="flex justify-center gap-4">
                   <Button variant="outline" className="w-28">
-                    Cancel
+                    <DialogClose>
+                      Cancel
+                    </DialogClose>
                   </Button>
                   <Button className="w-28 bg-red-600 hover:bg-red-700" onClick={handleLogout}>
                     Confirm
