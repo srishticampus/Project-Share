@@ -30,6 +30,7 @@ import {
   DialogClose
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { useState, useEffect } from "react";
 
 const menuItems = [
   {
@@ -111,9 +112,15 @@ function AppSidebar() {
 }
 
 export default function AdminLayout() {
+  const [isLoggedIn, setIsLoggedIn] = useState(true);
+  const [userRole, setUserRole] = useState('admin');
+
   const handleLogout = () => {
-    alert("Logging out...");
-    // Add actual logout logic here
+    localStorage.removeItem('token');
+    localStorage.removeItem('role');
+    setIsLoggedIn(false);
+    setUserRole(null);
+    window.location.href = '/'; // Redirect to home after logout
   };
 
   return (
