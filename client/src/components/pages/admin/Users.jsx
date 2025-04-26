@@ -15,15 +15,22 @@ import  apiClient from '@/lib/apiClient';
 
 function Users() {
   const [users, setUsers] = useState([]);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [limit, setLimit] = useState(10);
+  const [totalUsers, setTotalUsers] = useState(0);
 
   useEffect(() => {
     fetchUsers();
-  }, []);
+  }, [page, limit]);
 
   const fetchUsers = async () => {
     try {
-      const response = await apiClient.get('/admin/users');
-      setUsers(response.data);
+      const response = await apiClient.get(`/admin/users?page=${page}&limit=${limit}`);
+      console.log(response.data);
+      setUsers(response.data.users);
+      setTotalPages(response.data.totalPages);
+      setTotalUsers(response.data.totalUsers);
     } catch (error) {
       console.error('Failed to fetch users:', error);
     }
@@ -44,11 +51,24 @@ function Users() {
 
   const handleToggleActive = async (id, active) => {
     try {
-      await apiClient.put(`/admin/users/${id}`, { active: !active });
+      await apiClient.put(`/admin/users/${id}`, { isVerified: !active });
       fetchUsers(); // Refresh user list after toggle
     } catch (error) {
       console.error('Failed to toggle active:', error);
     }
+  };
+
+  const handlePreviousPage = () => {
+    setPage((prevPage) => Math.max(prevPage - 1, 1));
+  };
+
+  const handleNextPage = () => {
+    setPage((prevPage) => Math.min(prevPage + 1, totalPages));
+  };
+
+  const handleLimitChange = (e) => {
+    setLimit(parseInt(e.target.value));
+    setPage(1); // Reset to first page when limit changes
   };
 
   return (
@@ -59,50 +79,56 @@ function Users() {
           <TableCaption>A list of users.</TableCaption>
           <TableHeader>
             <TableRow>
-              <TableHead>Full Name</TableHead>
+              <TableHead>Name</TableHead>
               <TableHead>Email</TableHead>
-              <TableHead>Date of Birth</TableHead>
-              <TableHead>Gender</TableHead>
-              <TableHead>Country</TableHead>
-              <TableHead>City</TableHead>
-              <TableHead>Contact Number</TableHead>
-              <TableHead>User Type</TableHead>
-              <TableHead>Profile Picture</TableHead>
-              <TableHead>Active</TableHead>
+              <TableHead>Role</TableHead>
+              <TableHead>Verified</TableHead>
+              <TableHead>Last Login</TableHead>
               <TableHead>Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {users.map((user) => (
+            {users && users?.map((user) => (
               <TableRow key={user.email}>
-                <TableCell>{user.fullName}</TableCell>
+                <TableCell>{user.name}</TableCell>
                 <TableCell>{user.email}</TableCell>
-                <TableCell>{user.dob}</TableCell>
-                <TableCell>{user.gender}</TableCell>
-                <TableCell>{user.country}</TableCell>
-                <TableCell>{user.city}</TableCell>
-                <TableCell>{user.contactNumber}</TableCell>
-                <TableCell>{user.userType}</TableCell>
-                <TableCell><Avatar src={user.profilePicture} alt={user.fullName} /></TableCell>
+                <TableCell>{user.role}</TableCell>
+                <TableCell>{user.isVerified ? 'Yes' : 'No'}</TableCell>
+                <TableCell>{user.lastLogin}</TableCell>
                 <TableCell>
-                  <input
-                    type="checkbox"
-                    checked={user.active}
-                    onChange={() => {
-                      handleToggleActive(user.id, user.active);
-                      alert(
-                        "Please contact Administrator for activation"
-                      );
-                    }}
-                  />
-                </TableCell>
-                <TableCell>
-                  <Button onClick={() => handleDeleteUser(user.id)}>Delete</Button>
+                  <Button onClick={() => handleDeleteUser(user._id)}>Delete</Button>
                 </TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
+        <div className="flex items-center justify-between mt-4">
+          <Button onClick={handlePreviousPage} disabled={page === 1}>
+            Previous
+          </Button>
+          <span>
+            Page {page} of {totalPages} (Total Users: {totalUsers})
+          </span>
+          <Button onClick={handleNextPage} disabled={page === totalPages}>
+            Next
+          </Button>
+          <div>
+            <label htmlFor="limit" className="mr-2">
+              Users per page:
+            </label>
+            <select
+              id="limit"
+              value={limit}
+              onChange={handleLimitChange}
+              className="border rounded px-2 py-1"
+            >
+              <option value="5">5</option>
+              <option value="10">10</option>
+              <option value="20">20</option>
+              <option value="50">50</option>
+            </select>
+          </div>
+        </div>
       </div>
     </main>
   );

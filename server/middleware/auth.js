@@ -72,3 +72,6 @@ export const authorize = (...roles) => {
     next(); // Role is authorized, proceed
   };
 };
+
+// Middleware to specifically authorize admin role
+export const admin = authorize('admin');

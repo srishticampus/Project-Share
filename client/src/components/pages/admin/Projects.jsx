@@ -65,7 +65,7 @@ function Projects() {
               <TableHead>Description</TableHead>
               <TableHead>Required Skills</TableHead>
               <TableHead>Collaborators</TableHead>
-              <TableHead>Status</TableHead>
+              <TableHead >Status</TableHead>
               <TableHead>Actions</TableHead>
             </TableRow>
           </TableHeader>
@@ -82,6 +82,7 @@ function Projects() {
                   <Input
                     type="text"
                     value={project.status}
+                    className="w-[100px]"
                     onChange={(e) =>
                       handleUpdateStatus(project._id, e.target.value)
                     }
