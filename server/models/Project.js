@@ -43,7 +43,7 @@ const ProjectSchema = new mongoose.Schema({
 
 // Virtual for collaborators count
 ProjectSchema.virtual('collaboratorsCount').get(function() {
-  return this.collaborators.length;
+  return (this.collaborators || []).length;
 });
 
 export default mongoose.model("Project", ProjectSchema);

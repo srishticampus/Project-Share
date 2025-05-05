@@ -254,7 +254,9 @@ export default function Layout() {
           )}
         </header>
 
-        <Outlet/>
+        <div className="flex-1"> {/* Make the main content area flexible */}
+          <Outlet/>
+        </div>
 
           {/* Footer */}
       <footer className="flex flex-col gap-2 sm:flex-row py-6 w-full shrink-0 items-center justify-between px-4 md:px-6 border-t">

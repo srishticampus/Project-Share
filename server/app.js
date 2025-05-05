@@ -26,7 +26,17 @@ app.use(morgan("combined", { stream: accessLogStream }));
 // Body Parser Middleware
 app.use(express.json()); // To parse JSON request bodies
 
+import fs from 'fs';
+import path from 'path';
+
+// Check if uploads directory exists, create if not
+const uploadsDir = path.join(process.cwd(), 'uploads');
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir);
+}
+
 // Mount API Routes
+app.use('/uploads', express.static('uploads')); // Serve the uploads directory as static
 app.use("/api", apiRouter);
 
 // Basic 404 Handler

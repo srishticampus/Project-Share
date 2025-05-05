@@ -207,7 +207,7 @@ function ProjectManagement() {
                   <TableCell className="hidden lg:table-cell">
                     {project.techStack.map(tech => <Badge key={tech} variant="secondary" className="mr-1 mb-1">{tech}</Badge>)}
                   </TableCell>
-                  <TableCell className="hidden sm:table-cell text-center">{project.collaborators}</TableCell>
+                  <TableCell className="hidden sm:table-cell text-center">{project.collaborators.length}</TableCell>
                   <TableCell className="text-right">
                     {/* Edit Dialog Trigger */}
                     <Dialog open={isEditDialogOpen && currentProject?.id === project.id} onOpenChange={(isOpen) => { if (!isOpen) { setIsEditDialogOpen(false); setCurrentProject(null); } else { openEditDialog(project); } }}>

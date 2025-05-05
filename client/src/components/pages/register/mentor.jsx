@@ -48,7 +48,7 @@ const MentorRegister = () => {
   };
 
   return (
-    <div className="container mx-auto flex items-center justify-center h-screen">
+    <div className="container mx-auto flex items-center justify-center">
       <div className="w-full max-w-md bg-white rounded-lg shadow-md p-8">
         <h2 className="text-2xl font-semibold text-center mb-4">Mentor/Expert Registration</h2>
         <form className="space-y-6" onSubmit={handleSubmit}>

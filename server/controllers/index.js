@@ -3,6 +3,7 @@ import authRoutes from './auth/index.js';
 import creatorRoutes from './creator/index.js';
 import adminRoutes from './admin/index.js';
 import projectRoutes from './projectController.js'; // Import the new project routes
+import collaboratorRoutes from './collaborator/collaboratorController.js'; // Import collaborator routes
 import { protect } from '../middleware/auth.js';
 import {createMessage,deleteMessage,getMessages} from './messageController.js';
 import { createApplication, updateApplicationStatus } from './applicationController.js';
@@ -17,6 +18,9 @@ router.use('/creator', protect, creatorRoutes);
 
 // Admin routes with authentication
 router.use('/admin', protect, adminRoutes);
+
+// Collaborator routes with authentication
+router.use('/collaborator', protect, collaboratorRoutes);
 
 // Project routes
 router.use('/projects', projectRoutes); // Use the new project routes

@@ -1,17 +1,23 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router"; // Never use "react-router-dom" for routing, always use "react-router"
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import apiClient from '@/lib/apiClient'; // Import the configured axios instance
+import { Textarea } from "@/components/ui/textarea"; // Import Textarea
+import apiClient from '@/lib/apiClient';
 
 const CollaboratorRegister = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [contactNumber, setContactNumber] = useState("");
+  const [skills, setSkills] = useState(""); // TODO: Implement as multiselect
+  const [portfolioLinks, setPortfolioLinks] = useState(""); // TODO: Implement to handle multiple links
+  const [bio, setBio] = useState("");
+  const [photo, setPhoto] = useState(null); // State for photo file
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false); // Added loading state
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -22,45 +28,49 @@ const CollaboratorRegister = () => {
       setError("Passwords do not match");
       return;
     }
-    setLoading(true); // Set loading true
+    setLoading(true);
+
+    // TODO: Handle photo upload and get URL/identifier
+    // For now, sending other data
 
     try {
-      console.log("Registration attempt:", { name, email, password });
-      // Use apiClient.post - baseURL, Content-Type, and token (if exists) are handled
-      const response = await apiClient.post("/auth/register/collaborator", { name, email, password });
+      console.log("Registration attempt:", { name, email, password, contactNumber, skills, portfolioLinks, bio });
+      const response = await apiClient.post("/auth/register/collaborator", {
+        name,
+        email,
+        password,
+        contactNumber,
+        skills: skills.split(',').map(skill => skill.trim()), // Basic split for now
+        portfolioLinks: portfolioLinks.split(',').map(link => link.trim()), // Basic split for now
+        bio,
+        // photo: photoUrl, // Add photo URL/identifier here
+      });
 
-      // Axios provides data directly in response.data
       const data = response.data;
       console.log("Registration successful:", data);
 
-      // Check if a token is returned and store it
       if (data.token) {
         localStorage.setItem("token", data.token);
-        // Redirect to collaborator dashboard after storing token
-        navigate("/collaborator/dashboard"); // Using navigate from react-router
+        navigate("/collaborator/dashboard");
       } else {
-        // Handle case where registration is successful but no token is returned (optional)
         console.warn("Registration successful, but no token received.");
-        // Decide if navigation should still happen or show an error/message
         setError("Registration complete, but login might be required.");
-        // Or navigate to login page: navigate("/login/collaborator");
       }
     } catch (err) {
       console.error("Registration error:", err);
-      // Use Axios error structure for more specific messages
       const errorMsg = err.response && err.response.data && err.response.data.errors && err.response.data.errors[0] && err.response.data.errors[0].msg ? err.response.data.errors[0].msg : err.response && err.response.data && err.response.data.message ? err.response.data.message : err.message || "An unexpected error occurred.";
       setError(errorMsg);
     } finally {
-      setLoading(false); // Set loading false
+      setLoading(false);
     }
   };
 
   return (
-    <div className="container mx-auto flex items-center justify-center h-screen">
+    <div className="container mx-auto flex items-center justify-center">
       <div className="w-full max-w-md bg-white rounded-lg shadow-md p-8">
         <h2 className="text-2xl font-semibold text-center mb-4">Collaborator Registration</h2>
         <form className="space-y-6" onSubmit={handleSubmit}>
-          {error && <p className="text-red-500 text-center mb-4">{error}</p>} {/* Centered error */}
+          {error && <p className="text-red-500 text-center mb-4">{error}</p>}
           <div>
             <Label htmlFor="name" className="block text-sm font-medium text-gray-700">
               Full Name
@@ -72,8 +82,6 @@ const CollaboratorRegister = () => {
               placeholder="Enter your full name"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              required
-              disabled={loading} // Disable input when loading
             />
           </div>
           <div>
@@ -87,11 +95,8 @@ const CollaboratorRegister = () => {
               placeholder="Enter your email address"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              required
-              disabled={loading} // Disable input when loading
             />
           </div>
-          {/* Removed Username Input Field */}
           <div>
             <Label htmlFor="password" className="block text-sm font-medium text-gray-700">
               Password
@@ -103,8 +108,6 @@ const CollaboratorRegister = () => {
               placeholder="Enter your password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              required
-              disabled={loading} // Disable input when loading
             />
           </div>
           <div>
@@ -118,12 +121,72 @@ const CollaboratorRegister = () => {
               placeholder="Confirm your password"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
-              required
-              disabled={loading} // Disable input when loading
+            />
+          </div>
+           <div>
+            <Label htmlFor="contactNumber" className="block text-sm font-medium text-gray-700">
+              Contact Number
+            </Label>
+            <Input
+              type="text"
+              id="contactNumber"
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+              placeholder="Enter your contact number"
+              value={contactNumber}
+              onChange={(e) => setContactNumber(e.target.value)}
+            />
+          </div>
+           <div>
+            <Label htmlFor="skills" className="block text-sm font-medium text-gray-700">
+              Skills (Comma-separated)
+            </Label>
+            <Input
+              type="text"
+              id="skills"
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+              placeholder="Enter your skills (e.g., React, Node.js)"
+              value={skills}
+              onChange={(e) => setSkills(e.target.value)}
+            />
+          </div>
+           <div>
+            <Label htmlFor="portfolioLinks" className="block text-sm font-medium text-gray-700">
+              Portfolio Links (Comma-separated URLs)
+            </Label>
+            <Input
+              type="text"
+              id="portfolioLinks"
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+              placeholder="Enter your portfolio links (e.g., https://github.com/user, https://linkedin.com/in/user)"
+              value={portfolioLinks}
+              onChange={(e) => setPortfolioLinks(e.target.value)}
+            />
+          </div>
+           <div>
+            <Label htmlFor="bio" className="block text-sm font-medium text-gray-700">
+              Bio
+            </Label>
+            <Textarea
+              id="bio"
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+              placeholder="Tell us about yourself"
+              value={bio}
+              onChange={(e) => setBio(e.target.value)}
+            />
+          </div>
+           <div>
+            <Label htmlFor="photo" className="block text-sm font-medium text-gray-700">
+              Profile Photo
+            </Label>
+            <Input
+              type="file"
+              id="photo"
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+              onChange={(e) => setPhoto(e.target.files[0])}
             />
           </div>
           <Button type="submit" className="w-full" disabled={loading}>
-            {loading ? 'Registering...' : 'Register'} {/* Show loading text */}
+           {loading ? 'Registering...' : 'Register'}
           </Button>
         </form>
         <div className="text-center mt-4">

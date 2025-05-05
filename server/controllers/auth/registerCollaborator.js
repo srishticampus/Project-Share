@@ -17,8 +17,17 @@ router.post(
   [
     body('name', 'Name is required').not().isEmpty(),
     body('email', 'Please include a valid email').isEmail(),
-    // Removed username validation
     body('password', 'Please enter a password with 6 or more characters').isLength({ min: 6 }),
+    body('contactNumber', 'Contact number is required').not().isEmpty(),
+    body('skills', 'Skills are required').isArray().notEmpty(),
+    body('bio', 'Bio is required').not().isEmpty(),
+    body('portfolioLinks', 'Portfolio links must be an array of URLs').optional().isArray().custom(value => {
+      if (value.some(link => !/^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/.test(link))) {
+        throw new Error('Invalid portfolio link format');
+      }
+      return true;
+    }),
+    // Photo is optional, no server-side validation needed for file upload itself
   ],
   async (req, res) => {
     const errors = validationResult(req);
@@ -26,7 +35,7 @@ router.post(
       return res.status(400).json({ errors: errors.array() });
     }
 
-    const { name, email, password } = req.body; // Removed username
+    const { name, email, password, contactNumber, skills, portfolioLinks, bio, photo } = req.body;
 
     try {
       // See if user exists
@@ -41,8 +50,12 @@ router.post(
       user = new User({
         name,
         email,
-        // Removed username
         password,
+        contactNumber,
+        skills,
+        portfolioLinks,
+        bio,
+        photo, // Assuming photo is a URL or identifier after upload
         role: 'collaborator',
       });
 

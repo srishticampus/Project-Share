@@ -1,62 +1,114 @@
 import React, { useState, useEffect } from 'react';
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
-import { Label } from "@/components/ui/label"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { fetchUserProfile, updateUserProfile } from '@/services/userService';
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import apiClient from '@/lib/apiClient'; // Assuming an API client
 
 function CollaboratorProfile() {
-  const [profileData, setProfileData] = useState(null);
+  const [profile, setProfile] = useState(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedProfile, setEditedProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [isEditMode, setIsEditMode] = useState(false);
-  const [editProfileData, setEditProfileData] = useState(null);
+
+  // Dummy data for now
+  const dummyProfile = {
+    name: 'Collaborator User',
+    photo: null, // Placeholder for photo URL
+    contactNumber: '123-456-7890',
+    email: 'collaborator@example.com',
+    skills: ['React', 'Node.js', 'MongoDB'],
+    portfolioLinks: ['https://github.com/collaborator', 'https://linkedin.com/in/collaborator'],
+    bio: 'Experienced collaborator ready to contribute to exciting projects.',
+  };
 
   useEffect(() => {
-    const getProfile = async () => {
+    const fetchProfile = async () => {
       try {
-        const data = await fetchUserProfile();
-        setProfileData(data);
-        setEditProfileData(data); // Initialize edit data with fetched data
+        const response = await apiClient.get('/collaborator/profile');
+        setProfile(response.data);
+        setEditedProfile(response.data); // Initialize edited state
       } catch (error) {
-        setError(error);
-        console.error("Failed to fetch profile:", error);
+        console.error('Error fetching profile:', error);
+        setError('Failed to fetch profile.');
       } finally {
         setLoading(false);
       }
     };
+    fetchProfile();
 
-    getProfile();
   }, []);
 
-  const handleEditClick = () => {
-    setIsEditMode(true);
+  const handleEditToggle = () => {
+    setIsEditing(!isEditing);
+    // If cancelling, revert changes
+    if (isEditing) {
+      setEditedProfile(profile);
+    }
   };
 
-  const handleCancelClick = () => {
-    setIsEditMode(false);
-    setEditProfileData(profileData); // Revert changes
+  const handleInputChange = (e) => {
+    const { id, value } = e.target;
+    setEditedProfile({
+      ...editedProfile,
+      [id]: value,
+    });
   };
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setEditProfileData(prevData => ({
-      ...prevData,
-      [name]: value,
-    }));
+  const handleSkillsChange = (e) => {
+    // Basic comma-separated handling for now
+    setEditedProfile({
+      ...editedProfile,
+      skills: e.target.value.split(',').map(skill => skill.trim()),
+    });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handlePortfolioLinksChange = (e) => {
+    // Basic comma-separated handling for now
+    setEditedProfile({
+      ...editedProfile,
+      portfolioLinks: e.target.value.split(',').map(link => link.trim()),
+    });
+  };
+
+  const handlePhotoChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setEditedProfile({
+        ...editedProfile,
+        photo: URL.createObjectURL(file), // Store the URL for preview
+      });
+    }
+  };
+
+
+  const handleUpdateProfile = async () => {
     try {
-      await updateUserProfile(editProfileData);
-      setProfileData(editProfileData); // Update displayed data
-      setIsEditMode(false);
+      const formData = new FormData();
+      formData.append('name', editedProfile.name);
+      formData.append('contactNumber', editedProfile.contactNumber);
+      formData.append('skills', editedProfile.skills);
+      formData.append('portfolioLinks', editedProfile.portfolioLinks);
+      formData.append('bio', editedProfile.bio);
+
+      if (editedProfile.photo) {
+        formData.append('photo', editedProfile.photo);
+      }
+
+      await apiClient.put('/collaborator/profile', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      setProfile(editedProfile); // Update main state on success
+      setIsEditing(false);
+      console.log('Profile updated successfully.');
     } catch (error) {
-      setError(error);
-      console.error("Failed to update profile:", error);
+      console.error('Error updating profile:', error);
+      setError('Failed to update profile.');
     }
   };
 
@@ -65,81 +117,136 @@ function CollaboratorProfile() {
   }
 
   if (error) {
-    return <div>Error loading profile: {error.message}</div>;
+    return <div>Error: {error}</div>;
   }
 
-  if (!profileData) {
-    return <div>No profile data found.</div>;
+  if (!profile) {
+    return <div>Profile not found.</div>;
   }
 
   return (
-    <div className="container mx-auto flex justify-center">
-      <Card className="w-[500px]">
-        <CardHeader>
-          <CardTitle className="text-2xl">Collaborator Profile</CardTitle>
-        </CardHeader>
-        <CardContent className="grid gap-4">
-          {isEditMode ? (
-            <form onSubmit={handleSubmit} className="grid gap-4">
-              <div>
-                <Label className="text-lg font-bold" htmlFor="name">Full Name</Label>
-                <Input type="text" id="name" name="name" value={editProfileData.name || ''} onChange={handleChange} />
-              </div>
-              <div>
-                <Label className="text-lg font-bold" htmlFor="email">Email Address</Label>
-                <Input type="email" id="email" name="email" value={editProfileData.email || ''} onChange={handleChange} />
-              </div>
-              <div>
-                <Label className="text-lg font-bold" htmlFor="bio">Bio</Label>
-                <Textarea id="bio" name="bio" value={editProfileData.bio || ''} onChange={handleChange} />
-              </div>
-              <div className="flex justify-end gap-2">
-                <Button variant="secondary" type="button" onClick={handleCancelClick}>Cancel</Button>
-                <Button type="submit">Save</Button>
-              </div>
-            </form>
-          ) : (
-            <>
-              <div>
-                <Label className="text-lg font-bold" htmlFor="name">Full Name</Label>
-                <p className="text-gray-500">{profileData.name}</p>
-              </div>
-              <div>
-                <Label className="text-lg font-bold" htmlFor="email">Email Address</Label>
-                <p className="text-gray-500">{profileData.email}</p>
-              </div>
-              <div>
-                <Label className="text-lg font-bold" htmlFor="skills">Skills</Label>
-                <div className="flex gap-1">
-                  {profileData.skills && profileData.skills.map((skill) => (
-                    <Badge key={skill}>{skill}</Badge>
-                  ))}
+    <main className="flex-1 px-6 pb-6">
+      <div className="bg-white rounded-lg h-full p-6">
+        <h1 className="text-2xl font-semibold mb-4">My Profile</h1>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Profile Information</CardTitle>
+          </CardHeader>
+          <CardContent className=""> 
+            {isEditing ? (
+              <div className="grid gap-4">
+                <div>
+                  <Label htmlFor="name">Full Name:</Label>
+                  <Input
+                    id="name"
+                    type="text"
+                    value={editedProfile.name}
+                    onChange={handleInputChange}
+                  />
+                </div>
+                 <div>
+                  <Label htmlFor="photo">Profile Photo:</Label>
+                  <Input
+                    id="photo"
+                    type="file"
+                    onChange={handlePhotoChange}
+                  />
+                  {editedProfile.photo && (
+                    <img
+                      src={editedProfile.photo.startsWith('blob:') ? editedProfile.photo : `http://localhost:3000/${editedProfile.photo}`}
+                      alt="Profile Preview"
+                      className="mt-2 h-20 w-20 rounded-full object-cover"
+                    />
+                  )}
+                </div>
+                <div>
+                  <Label htmlFor="contactNumber">Contact Number:</Label>
+                  <Input
+                    id="contactNumber"
+                    type="text"
+                    value={editedProfile.contactNumber}
+                    onChange={handleInputChange}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="email">Email Address:</Label>
+                   {/* Email is typically not editable or requires a different verification process */}
+                  <Input
+                    id="email"
+                    type="email"
+                    value={editedProfile.email}
+                    disabled // Disable email editing for now
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="skills">Skills (Comma-separated):</Label>
+                  <Input
+                    id="skills"
+                    type="text"
+                    value={editedProfile.skills.join(', ')}
+                    onChange={handleSkillsChange}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="portfolioLinks">Portfolio Links (Comma-separated URLs):</Label>
+                  <Input
+                    id="portfolioLinks"
+                    type="text"
+                    value={editedProfile.portfolioLinks.join(', ')}
+                    onChange={handlePortfolioLinksChange}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="bio">Bio:</Label>
+                  <Textarea
+                    id="bio"
+                    placeholder="Tell us about yourself..."
+                    value={editedProfile.bio}
+                    onChange={handleInputChange}
+                  />
+                </div>
+                <div className="flex space-x-2">
+                  <Button onClick={handleUpdateProfile}>Update</Button>
+                  <Button variant="outline" onClick={handleEditToggle}>Cancel</Button>
                 </div>
               </div>
-              <div>
-                <Label className="text-lg font-bold" htmlFor="portfolioLinks">Portfolio Links</Label>
-                {profileData.portfolioLinks && profileData.portfolioLinks.map((link, index) => (
-                  <p key={index} className="text-gray-500">
-                    <a href={link} target="_blank" rel="noopener noreferrer">
-                      My Portfolio {index + 1}
-                    </a>
-                  </p>
-                ))}
+            ) : (
+              <div className="grid gap-4">
+                <div>
+                  <p><strong>Name:</strong> {profile?.name}</p>
+                </div>
+                 <div>
+                  {profile?.photo && (
+                    <img
+                      src={profile.photo.startsWith('blob:') ? profile.photo : `http://localhost:3000/${profile.photo}`}
+                      alt="Profile"
+                      className="h-20 w-20 rounded-full object-cover"
+                    />
+                  )}
+                </div>
+                <div>
+                  <p><strong>Contact Number:</strong> {profile?.contactNumber}</p>
+                </div>
+                <div>
+                  <p><strong>Email Address:</strong> {profile?.email}</p>
+                </div>
+                <div>
+                  <p><strong>Skills:</strong> {profile?.skills?.join(', ')}</p>
+                </div>
+                <div>
+                  <p><strong>Portfolio Links:</strong> {profile?.portfolioLinks?.join(', ')}</p>
+                </div>
+                <div>
+                  <p><strong>Bio:</strong> {profile?.bio}</p>
+                </div>
+                <Button onClick={handleEditToggle}>Edit</Button>
               </div>
-              <div>
-                <Label className="text-lg font-bold" htmlFor="lastLogin">Last Login</Label>
-                <p className="text-gray-500">{new Date(profileData.lastLogin).toLocaleString()}</p>
-              </div>
-              <div>
-                <Label className="text-lg font-bold" htmlFor="bio">Bio</Label>
-                <p className="text-gray-500">{profileData.bio}</p>
-              </div>
-              <Button onClick={handleEditClick}>Edit Profile</Button>
-            </>
-          )}
-        </CardContent>
-      </Card>
-    </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+    </main>
   );
 }
 

@@ -19,6 +19,7 @@ export const protect = async (req, res, next) => {
 
       // Verify token
       const decoded = jwt.verify(token, JWT_SECRET);
+      console.log('Decoded token:', decoded);
 
       // Get user from the token payload's ID, excluding password
       // Ensure user still exists

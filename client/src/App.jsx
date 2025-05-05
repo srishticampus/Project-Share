@@ -39,6 +39,14 @@ import Login from './components/pages/login/Login';
 import Projects from './components/pages/Projects'; // Import the new Projects component
 import ProjectDetails from './components/pages/ProjectDetails';
 import ContactSubmissions from './components/pages/admin/ContactSubmissions';
+import BrowseProjects from './components/pages/collaborator/BrowseProjects'; // Import new collaborator components
+import AppliedProjects from './components/pages/collaborator/AppliedProjects';
+import ActiveProjects from './components/pages/collaborator/ActiveProjects';
+import CompletedProjects from './components/pages/collaborator/CompletedProjects';
+import Portfolio from './components/pages/collaborator/Portfolio';
+import ChatWithCreators from './components/pages/collaborator/ChatWithCreators';
+import ConnectWithMentors from './components/pages/collaborator/ConnectWithMentors';
+import CollaboratorProjectDetails from './components/pages/collaborator/ProjectDetails'; // Rename to avoid conflict
 
 function Collaborators() {
   return <div>Collaborators Page</div>;
@@ -111,7 +119,15 @@ function App() {
 
         <Route path="/collaborator" element={<CollaboratorLayout />}>
           <Route path="dashboard" element={<CollaboratorDashboardPage />} />
+          <Route path="browse-projects" element={<BrowseProjects />} />
+          <Route path="my-projects/applied" element={<AppliedProjects />} />
+          <Route path="my-projects/active" element={<ActiveProjects />} />
+          <Route path="my-projects/completed" element={<CompletedProjects />} />
+          <Route path="portfolio" element={<Portfolio />} />
+          <Route path="chat-with-creators" element={<ChatWithCreators />} />
+          <Route path="connect-with-mentors" element={<ConnectWithMentors />} />
           <Route path="profile" element={<CollaboratorProfile />} />
+          <Route path="projects/:projectId" element={<CollaboratorProjectDetails />} /> {/* Route for collaborator project details */}
         </Route>
 
         <Route path="/mentor" element={<MentorLayout />}>

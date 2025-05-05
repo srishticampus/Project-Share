@@ -27,9 +27,9 @@ export const createApplication = async (req, res) => {
       applicantId,
       message,
     });
+    console.log("Application being saved:", application);
 
     await application.save();
-
     res.status(201).json({
       success: true,
       data: application,
@@ -102,12 +102,16 @@ export const updateApplicationStatus = async (req, res) => {
     application.status = status;
     await application.save();
 
-    // If accepted, add the applicant as a collaborator to the project
+    // If accepted, add the applicant as a collaborator to the project and set project status to Active
     if (status === 'Accepted') {
       if (!project.collaborators.includes(application.applicantId)) {
         project.collaborators.push(application.applicantId);
-        await project.save();
       }
+      // Set project status to 'In Progress' if it's not already 'Completed'
+      if (project.status !== 'Completed') {
+        project.status = 'In Progress';
+      }
+      await project.save();
     }
 
     res.status(200).json({
