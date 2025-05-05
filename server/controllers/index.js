@@ -5,6 +5,7 @@ import adminRoutes from './admin/index.js';
 import projectRoutes from './projectController.js'; // Import the new project routes
 import { protect } from '../middleware/auth.js';
 import {createMessage,deleteMessage,getMessages} from './messageController.js';
+import { createApplication, updateApplicationStatus } from './applicationController.js';
 
 const router = express.Router();
 
@@ -22,7 +23,13 @@ router.use('/projects', projectRoutes); // Use the new project routes
 
 
 // Message routes
+// Message routes
 router.post('/messages', createMessage);
 router.get('/messages', getMessages);
 router.delete('/messages/:id', deleteMessage);
+
+// Application routes
+router.post('/applications', protect, createApplication); // Protected route for creating applications
+router.put('/applications/:id/status', protect, updateApplicationStatus); // Protected route for updating application status
+
 export default router;

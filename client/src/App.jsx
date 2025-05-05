@@ -62,9 +62,7 @@ function Privacy() {
 //   return <div>Creator Tasks Page</div>;
 // }
 
-function CreatorApplications() {
-  return <div>Creator Applications Page</div>;
-}
+import CreatorApplications from './components/pages/creator/CreatorApplications'; // Import the actual component
 
 function CreatorChat() {
   return <div>Creator Chat Page</div>;

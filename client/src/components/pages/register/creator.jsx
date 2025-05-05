@@ -40,7 +40,7 @@ const CreatorRegister = () => {
       }
     } catch (err) {
       console.error("Registration error:", err);
-      const errorMsg = err.response?.data?.message || err.message || "Registration failed";
+      const errorMsg = err.response && err.response.data && err.response.data.errors && err.response.data.errors[0] && err.response.data.errors[0].msg ? err.response.data.errors[0].msg : err.response && err.response.data && err.response.data.message ? err.response.data.message : err.message || "An unexpected error occurred.";
       setError(errorMsg);
     } finally {
       setLoading(false);
