@@ -55,7 +55,7 @@ function CreatorTasks() {
                 try {
                     const data = await getTasksByProject(projectId);
                     setTasks(data.tasks);
-                    setCollaborators(data.data?.collaborators || []); // Assuming the API returns collaborators
+                    setCollaborators(data.collaborators || []); // Corrected: Access collaborators directly from data
                 } catch (error) {
                     console.error('Error fetching tasks:', error);
                 }
@@ -210,9 +210,13 @@ function CreatorTasks() {
                                                 {userProfile.name} (You)
                                             </SelectItem>
                                         )}
-                                        {collaborators.map((collaborator) => (
-                                            <SelectItem key={collaborator.id} value={collaborator._id}>{collaborator.name}</SelectItem>
-                                        ))}
+                                        {collaborators
+                                            .filter(collaborator => collaborator) // Filter out null/undefined collaborators
+                                            .map((collaborator) => (
+                                                <SelectItem key={collaborator._id} value={collaborator._id}>
+                                                    {collaborator.name || collaborator._id} {/* Use 'name' or fallback to ID */}
+                                            </SelectItem>
+                                            ))}
                                     </SelectContent>
                                 </Select>
                             </div>
@@ -287,9 +291,13 @@ function CreatorTasks() {
                                                 {userProfile.name} (You)
                                             </SelectItem>
                                         )}
-                                        {collaborators.map((collaborator) => (
-                                            <SelectItem key={collaborator.id} value={collaborator._id}>{collaborator.name}</SelectItem>
-                                        ))}
+                                        {collaborators
+                                            .filter(collaborator => collaborator) // Filter out null/undefined collaborators
+                                            .map((collaborator) => (
+                                                <SelectItem key={collaborator._id} value={collaborator._id}>
+                                                    {collaborator.name || collaborator._id} {/* Use 'name' or fallback to ID */}
+                                            </SelectItem>
+                                            ))}
                                     </SelectContent>
                                 </Select>
                             </div>

@@ -37,7 +37,8 @@ export const createTask = async (req, res) => {
         });
 
         await task.save();
-        res.status(201).json({ message: 'Task created successfully', task });
+        const populatedTask = await Task.findById(task._id).populate('assignedTo', 'name'); // Populate assignedTo
+        res.status(201).json({ message: 'Task created successfully', task: populatedTask }); // Return populated task
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Failed to create task', error: error.message });
@@ -96,7 +97,8 @@ export const updateTask = async (req, res) => {
         task.dueDate = dueDate || task.dueDate;
 
         await task.save();
-        res.status(200).json({ message: 'Task updated successfully', task });
+        const populatedTask = await Task.findById(task._id).populate('assignedTo', 'name'); // Populate assignedTo
+        res.status(200).json({ message: 'Task updated successfully', task: populatedTask }); // Return populated task
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Failed to update task', error: error.message });
@@ -127,13 +129,16 @@ export const getTasksByProject = async (req, res) => {
             collaborators = [userId];
         }
 
-        const tasks = await Task.find({ project: projectId }).populate('assignedTo', 'firstName lastName');
+        console.log('Initial collaborators (IDs):', collaborators); // Log initial IDs
+
+        const tasks = await Task.find({ project: projectId }).populate('assignedTo', 'name'); // Changed to populate 'name'
         
         // Populate collaborators with user data
         const populatedCollaborators = await Promise.all(
             collaborators.map(async (collaboratorId) => {
                 try {
-                    const user = await User.findById(collaboratorId, 'firstName lastName');
+                    const user = await User.findById(collaboratorId, 'name'); // Changed to select 'name'
+                    console.log('Fetched user for collaborator ID', collaboratorId, ':', user); // Log fetched user
                     return user;
                 } catch (error) {
                     console.error('Error fetching collaborator:', error);
@@ -141,6 +146,8 @@ export const getTasksByProject = async (req, res) => {
                 }
             })
         );
+
+        console.log('Populated collaborators:', populatedCollaborators); // Log populated collaborators
 
         res.status(200).json({ tasks, collaborators: populatedCollaborators });
     } catch (error) {

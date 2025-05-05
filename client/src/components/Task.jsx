@@ -52,7 +52,7 @@ const Task = ({ tasks, onEditTask,onDeleteTask }) => {
                     <TableRow key={task._id}>
                         <TableCell className="font-medium">{task.title}</TableCell>
                         <TableCell>{task.description}</TableCell>
-                        <TableCell>{task.assignedTo ? `${task.assignedTo.firstName} ${task.assignedTo.lastName}` : 'Unassigned'}</TableCell>
+                        <TableCell>{task.assignedTo ? `${task.assignedTo.name}` : 'Unassigned'}</TableCell>
                         <TableCell>{task.status}</TableCell>
                         <TableCell>{task.priority}</TableCell>
                         <TableCell>{task.dueDate ? new Date(task.dueDate).toLocaleDateString() : 'No due date'}</TableCell>

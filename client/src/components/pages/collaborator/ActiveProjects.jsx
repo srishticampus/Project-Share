@@ -27,7 +27,7 @@ function ActiveProjects() {
       creator: 'Peter Jones',
       myTasks: [
         { _id: 'task3', title: 'Clean Dataset', status: 'Completed' },
-        { _id: 'task4', title: 'Perform Regression Analysis', status: 'Not Started' },
+        { _id: 'task4', title: 'Perform Regression Analysis', status: 'Open' },
       ],
     },
   ];
@@ -106,9 +106,10 @@ function ActiveProjects() {
                               <SelectValue placeholder="Update Status" />
                             </SelectTrigger>
                             <SelectContent>
-                              <SelectItem value="Not Started">Not Started</SelectItem>
-                              <SelectItem value="In Progress">In Progress</SelectItem>
+                              <SelectItem value="Open">Open</SelectItem>
+                              <SelectItem value="InProgress">In Progress</SelectItem>
                               <SelectItem value="Completed">Completed</SelectItem>
+                              <SelectItem value="Blocked">Blocked</SelectItem>
                             </SelectContent>
                           </Select>
                         </div>
