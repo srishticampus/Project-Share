@@ -1,6 +1,47 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import apiClient from '@/lib/apiClient'; // Import the apiClient
 
 function Analytics() {
+  const [userGrowthData, setUserGrowthData] = useState([]);
+  const [userEngagementData, setUserEngagementData] = useState([]);
+  const [projectSuccessRateData, setProjectSuccessRateData] = useState([]);
+  const [popularCategoriesData, setPopularCategoriesData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchAnalyticsData = async () => {
+      try {
+        const [userGrowthResponse, userEngagementResponse, projectSuccessRateResponse, popularCategoriesResponse] = await Promise.all([
+          apiClient.get('/admin/analytics/user-growth'),
+          apiClient.get('/admin/analytics/user-engagement'),
+          apiClient.get('/admin/analytics/project-success-rate'),
+          apiClient.get('/admin/analytics/popular-categories'),
+        ]);
+
+        setUserGrowthData(userGrowthResponse.data);
+        setUserEngagementData(userEngagementResponse.data);
+        setProjectSuccessRateData(projectSuccessRateResponse.data);
+        setPopularCategoriesData(popularCategoriesResponse.data);
+        setLoading(false);
+      } catch (err) {
+        setError(err);
+        setLoading(false);
+      }
+    };
+
+    fetchAnalyticsData();
+  }, []);
+
+  if (loading) {
+    return <main className="flex-1 px-6 pb-6"><div className="bg-white rounded-lg h-full p-6">Loading Analytics...</div></main>;
+  }
+
+  if (error) {
+    return <main className="flex-1 px-6 pb-6"><div className="bg-white rounded-lg h-full p-6 text-red-500">Error loading analytics: {error.message}</div></main>;
+  }
+
   return (
     <main className="flex-1 px-6 pb-6">
       <div className="bg-white rounded-lg h-full p-6">
@@ -8,31 +49,53 @@ function Analytics() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="border p-4 rounded-lg">
             <h2>User Engagement</h2>
-            {/* Placeholder chart */}
-            <div className="h-40 bg-gray-100 rounded-lg flex items-center justify-center">
-              Chart Placeholder
-            </div>
+            <ResponsiveContainer width="100%" height={200}>
+              <LineChart data={userEngagementData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="name" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <Line type="monotone" dataKey="Active Users" stroke="#82ca9d" activeDot={{ r: 8 }} />
+              </LineChart>
+            </ResponsiveContainer>
           </div>
           <div className="border p-4 rounded-lg">
             <h2>Project Success Rate</h2>
-            {/* Placeholder chart */}
-            <div className="h-40 bg-gray-100 rounded-lg flex items-center justify-center">
-              Chart Placeholder
-            </div>
+            <ResponsiveContainer width="100%" height={200}>
+              <BarChart data={projectSuccessRateData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="name" />
+                <YAxis />
+                <Tooltip />
+                <Bar dataKey="value" fill="#8884d8" />
+              </BarChart>
+            </ResponsiveContainer>
           </div>
           <div className="border p-4 rounded-lg">
             <h2>Popular Categories</h2>
-            {/* Placeholder chart */}
-            <div className="h-40 bg-gray-100 rounded-lg flex items-center justify-center">
-              Chart Placeholder
-            </div>
+            <ResponsiveContainer width="100%" height={200}>
+              <BarChart data={popularCategoriesData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="name" />
+                <YAxis />
+                <Tooltip />
+                <Bar dataKey="projects" fill="#ffc658" />
+              </BarChart>
+            </ResponsiveContainer>
           </div>
           <div className="border p-4 rounded-lg">
             <h2>User Growth</h2>
-            {/* Placeholder chart */}
-            <div className="h-40 bg-gray-100 rounded-lg flex items-center justify-center">
-              Chart Placeholder
-            </div>
+            <ResponsiveContainer width="100%" height={200}>
+              <LineChart data={userGrowthData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="name" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <Line type="monotone" dataKey="users" stroke="#8884d8" activeDot={{ r: 8 }} />
+              </LineChart>
+            </ResponsiveContainer>
           </div>
         </div>
       </div>

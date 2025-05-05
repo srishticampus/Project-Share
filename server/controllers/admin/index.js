@@ -4,7 +4,12 @@ import {
   updateProject,
   deleteProject,
 } from './projectController.js';
-import { getDashboardStats } from './dashboardController.js';
+import {
+  getAllProjects,
+  updateProject,
+  deleteProject,
+} from './projectController.js';
+import { getDashboardStats, getUserGrowthData, getUserEngagementData, getProjectSuccessRateData, getPopularCategoriesData } from './dashboardController.js';
 import { getUsers, createUser, getUserById, updateUser, deleteUser } from './userController.js';
 import { protect, admin } from "../../middleware/auth.js";
 
@@ -21,6 +26,18 @@ router.delete('/projects/:id', protect, admin, deleteProject);
 
 // Get dashboard statistics
 router.get('/dashboard', protect, admin, getDashboardStats);
+
+// Get user growth data for analytics
+router.get('/analytics/user-growth', protect, admin, getUserGrowthData);
+
+// Get user engagement data for analytics
+router.get('/analytics/user-engagement', protect, admin, getUserEngagementData);
+
+// Get project success rate data for analytics
+router.get('/analytics/project-success-rate', protect, admin, getProjectSuccessRateData);
+
+// Get popular categories data for analytics
+router.get('/analytics/popular-categories', protect, admin, getPopularCategoriesData);
 
 // Get all users
 router.get('/users', protect, admin, getUsers);
