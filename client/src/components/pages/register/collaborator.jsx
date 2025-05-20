@@ -34,16 +34,23 @@ const CollaboratorRegister = () => {
     // For now, sending other data
 
     try {
-      console.log("Registration attempt:", { name, email, password, contactNumber, skills, portfolioLinks, bio });
-      const response = await apiClient.post("/auth/register/collaborator", {
-        name,
-        email,
-        password,
-        contactNumber,
-        skills: skills.split(',').map(skill => skill.trim()), // Basic split for now
-        portfolioLinks: portfolioLinks.split(',').map(link => link.trim()), // Basic split for now
-        bio,
-        // photo: photoUrl, // Add photo URL/identifier here
+      console.log("Registration attempt:", { name, email, password, contactNumber, skills, portfolioLinks, bio, photo });
+      const formData = new FormData();
+      formData.append('name', name);
+      formData.append('email', email);
+      formData.append('password', password);
+      formData.append('contactNumber', contactNumber);
+      formData.append('skills', JSON.stringify(skills.split(',').map(skill => skill.trim()))); // Basic split for now
+      formData.append('portfolioLinks', JSON.stringify(portfolioLinks.split(',').map(link => link.trim()))); // Basic split for now
+      formData.append('bio', bio);
+      if (photo) {
+        formData.append('photo', photo);
+      }
+
+      const response = await apiClient.post("/auth/register/collaborator", formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
       });
 
       const data = response.data;

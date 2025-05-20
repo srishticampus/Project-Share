@@ -2,6 +2,8 @@ import express from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { body, validationResult } from 'express-validator';
+import multer from 'multer'; // Import multer
+import path from 'path';
 import User from '../../models/user.js'; // Adjust path as needed
 
 const router = express.Router();
@@ -12,20 +14,51 @@ const JWT_SECRET = 'your_jwt_secret_key_placeholder'; // Replace with a strong s
 // @route   POST api/auth/register/collaborator
 // @desc    Register collaborator user
 // @access  Public
+
+// Set up multer for file uploads
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'uploads/'); // Store uploaded files in the 'uploads' directory
+  },
+  filename: (req, file, cb) => {
+    const ext = path.extname(file.originalname);
+    cb(null, Date.now() + ext); // Rename the file to avoid conflicts
+  },
+});
+
+const upload = multer({ storage: storage });
+
+// @route   POST api/auth/register/collaborator
+// @desc    Register collaborator user
+// @access  Public
 router.post(
   '/register/collaborator',
+  upload.single('photo'), // Use multer middleware to handle file upload
   [
     body('name', 'Name is required').not().isEmpty(),
     body('email', 'Please include a valid email').isEmail(),
     body('password', 'Please enter a password with 6 or more characters').isLength({ min: 6 }),
     body('contactNumber', 'Contact number is required').not().isEmpty(),
-    body('skills', 'Skills are required').isArray().notEmpty(),
-    body('bio', 'Bio is required').not().isEmpty(),
-    body('portfolioLinks', 'Portfolio links must be an array of URLs').optional().isArray().custom(value => {
-      if (value.some(link => !/^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/.test(link))) {
-        throw new Error('Invalid portfolio link format');
+    body('skills', 'Skills are required').isString().custom(value => {
+      try {
+        const skillsArray = JSON.parse(value);
+        const filteredSkills = skillsArray.filter(skill => skill.trim() !== '');
+        return filteredSkills.length > 0;
+      } catch (error) {
+        throw new Error('Invalid skills format');
       }
-      return true;
+    }),
+    body('bio', 'Bio is required').not().isEmpty(),
+    body('portfolioLinks', 'Portfolio links must be an array of URLs').optional().isString().custom(value => {
+      try {
+        const portfolioLinksArray = JSON.parse(value);
+        if (portfolioLinksArray.some(link => !/^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/.test(link))) {
+          throw new Error('Invalid portfolio link format');
+        }
+        return true;
+      } catch (error) {
+        throw new Error('Invalid portfolio links format');
+      }
     }),
     // Photo is optional, no server-side validation needed for file upload itself
   ],
@@ -34,8 +67,8 @@ router.post(
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
     }
-
-    const { name, email, password, contactNumber, skills, portfolioLinks, bio, photo } = req.body;
+    const { name, email, password, contactNumber, skills, portfolioLinks, bio } = req.body;
+    const photo = req.file ? req.file.filename : null; // Get the filename of the uploaded photo
 
     try {
       // See if user exists
@@ -52,8 +85,8 @@ router.post(
         email,
         password,
         contactNumber,
-        skills,
-        portfolioLinks,
+        skills: skills ? JSON.parse(skills) : [],
+        portfolioLinks: portfolioLinks ? JSON.parse(portfolioLinks) : [],
         bio,
         photo, // Assuming photo is a URL or identifier after upload
         role: 'collaborator',

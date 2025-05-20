@@ -16,7 +16,7 @@ function CollaboratorProfile() {
   // Dummy data for now
   const dummyProfile = {
     name: 'Collaborator User',
-    photo: null, // Placeholder for photo URL
+    photo: 'profile.jpg', // Placeholder for photo URL
     contactNumber: '123-456-7890',
     email: 'collaborator@example.com',
     skills: ['React', 'Node.js', 'MongoDB'],
@@ -154,7 +154,7 @@ function CollaboratorProfile() {
                   />
                   {editedProfile.photo && (
                     <img
-                      src={editedProfile.photo.startsWith('blob:') ? editedProfile.photo : `http://localhost:3000/${editedProfile.photo}`}
+                      src={editedProfile.photo.startsWith('blob:') ? editedProfile.photo : `http://localhost:3000/uploads/${editedProfile.photo}`}
                       alt="Profile Preview"
                       className="mt-2 h-20 w-20 rounded-full object-cover"
                     />
@@ -219,7 +219,7 @@ function CollaboratorProfile() {
                  <div>
                   {profile?.photo && (
                     <img
-                      src={profile.photo.startsWith('blob:') ? profile.photo : `http://localhost:3000/${profile.photo}`}
+                      src={profile.photo.startsWith('blob:') ? profile.photo : `http://localhost:3000/uploads/${profile.photo}`}
                       alt="Profile"
                       className="h-20 w-20 rounded-full object-cover"
                     />

@@ -73,6 +73,12 @@ function ProjectDetails() {
         setError('User not loaded. Cannot submit application.');
         return;
       }
+
+      if (!applicationMessage.trim()) { // Check if message is empty or only whitespace
+        alert('Application message is required.');
+        return;
+      }
+
       const applicantId = currentUser._id;
 
       await apiClient.post('/applications', {
