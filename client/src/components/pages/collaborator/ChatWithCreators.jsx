@@ -6,50 +6,35 @@ import { Button } from '@/components/ui/button';
 import apiClient from '@/lib/apiClient'; // Assuming an API client
 
 function ChatWithCreators() {
-  const [creators, setCreators] = useState([]);
+  const [users, setUsers] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Dummy data for now
-  const dummyCreators = [
-    {
-      _id: 'creator1',
-      name: 'John Doe',
-      project: 'Build a Personal Website', // Assuming the project they are collaborating on or applied to
-    },
-    {
-      _id: 'creator2',
-      name: 'Jane Smith',
-      project: 'Mobile App for Task Management',
-    },
-  ];
 
   useEffect(() => {
-    const fetchCreators = async () => {
+    const fetchUsers = async () => {
       try {
-        const response = await apiClient.get('/collaborator/chat/creators', {
+        const response = await apiClient.get(`/messages/users`, {
           params: { searchTerm }
         });
-        setCreators(response.data);
+        setUsers(response.data);
         console.log('API Response Data:', response.data); // Log the response data
       } catch (error) {
-        console.error('Error fetching creators:', error);
-        setError('Failed to fetch creators.');
+        console.error('Error fetching users:', error);
+        setError('Failed to fetch users.');
       } finally {
         setLoading(false);
       }
     };
-    fetchCreators();
+    fetchUsers();
 
   }, [searchTerm]); // Depend on searchTerm
 
-  const handleChatClick = (creatorId) => {
-    // TODO: Navigate to the chat interface with this creator
-    console.log(`Initiate chat with creator ${creatorId}`);
-    // Example: navigate(`/chat/${creatorId}`);
+  const handleChatClick = (userId) => {
+    // Navigate to the chat interface with this user
+    console.log(`Initiate chat with user ${userId}`);
   };
-
   if (loading) {
     return <div>Loading creators...</div>;
   }
@@ -74,14 +59,15 @@ function ChatWithCreators() {
         </div>
 
         <div className="grid gap-4 md:grid-cols-1 lg:grid-cols-2">
-          {creators.map((creator) => (
-            <Card key={creator._id}>
+          {users.map((user) => (
+            <Card key={user._id}>
               <CardContent className="flex items-center justify-between">
                 <div>
-                  <p><strong>Name:</strong> {creator.name}</p>
-                  <p className="text-sm text-gray-500">Projects: {creator.projects.join(', ')}</p>
+                  <p><strong>Name:</strong> {user.name}</p>
                 </div>
-                <Button onClick={() => handleChatClick(creator._id)}>Chat</Button>
+                <Link to={`/chat/${user._id}`}>
+                  <Button onClick={() => handleChatClick(user._id)}>Chat</Button>
+                </Link>
               </CardContent>
             </Card>
           ))}

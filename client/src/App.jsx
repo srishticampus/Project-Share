@@ -1,5 +1,6 @@
 import React from 'react';
-import { Route, Routes } from 'react-router';
+import { Route, Routes, useParams } from 'react-router';
+import ChatInterface from './components/ChatInterface';
 import Layout from './components/pages/layout';
 import Home from './components/pages/Home';
 import About from './components/pages/About';
@@ -149,8 +150,17 @@ function App() {
       </Route>
 
 
+
+      {/* <Route path="/chat/:userId" element={<ChatInterface />} /> */}
+
+      <Route path="/chat/:userId" element={<ChatInterfaceWrapper />} />
     </Routes>
   );
+}
+
+function ChatInterfaceWrapper() {
+  const { userId } = useParams();
+  return <ChatInterface receiverId={userId} />;
 }
 
 export default App;

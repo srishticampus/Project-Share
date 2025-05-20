@@ -7,11 +7,14 @@ const NotificationSchema = new mongoose.Schema({
     required: true,
   },
   message: {
-    type: String,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Message',
     required: true,
   },
   type: {
     type: String,
+    enum: ['message'],
+    default: 'message'
   },
   date: {
     type: Date,

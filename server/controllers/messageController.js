@@ -1,41 +1,113 @@
+import express from 'express';
+import mongoose from 'mongoose';
+import { body, validationResult } from 'express-validator';
 import Message from '../models/Message.js';
-export const createMessage = async (req, res) => {
+import { protect } from '../middleware/auth.js'; //  auth middleware
+
+const router = express.Router();
+
+// @route   GET api/messages/:senderId/:receiverId
+// @desc    Get messages between two users
+// @access  Private
+router.get('/:senderId/:receiverId', protect, async (req, res) => {
   try {
-    const { name, email, subject, message } = req.body;
+    const { senderId, receiverId } = req.params;
 
-    const newMessage = new Message({
-      name,
-      email,
-      subject,
-      message
-    });
+    // Find messages where sender is senderId and receiver is receiverId OR sender is receiverId and receiver is senderId
+    const messages = await Message.find({
+      $or: [
+        { sender: senderId, receiver: receiverId },
+        { sender: receiverId, receiver: senderId }
+      ]
+    }).sort({ timestamp: 1 });
 
-    await newMessage.save();
-
-    res.status(201).json({ message: 'Message created successfully' });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Server error' });
+    res.json(messages);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server error');
   }
-};
+});
 
-export const getMessages = async (req, res) => {
+// @route   GET api/messages/users
+// @desc    Get users that the current user can chat with
+// @access  Private
+router.get('/users', protect, async (req, res) => {
   try {
-    const messages = await Message.find().sort({ createdAt: -1 });
-    res.status(200).json(messages);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Server error' });
-  }
-};
+    const userId = req.user.id; // Get the user ID from the auth middleware
 
-export const deleteMessage = async (req, res) => {
-  try {
-    const { id } = req.params;
-    await Message.findByIdAndDelete(id);
-    res.status(200).json({ message: 'Message deleted successfully' });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Server error' });
+    // Find all users except the current user
+    const users = await mongoose.model('User').find({ _id: { $ne: userId } });
+
+    res.json(users);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server error');
   }
-};
+});
+
+// @route   POST api/messages
+// @desc    Send a new message
+// @access  Private
+router.post(
+  '/',
+  [
+    protect,
+  [
+    body('sender', 'Sender is required').not().isEmpty(),
+      body('receiver', 'Receiver is required').not().isEmpty(),
+      body('content', 'Content is required').not().isEmpty()
+    ]
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    try {
+      const { sender, receiver, content } = req.body;
+
+      const newMessage = new Message({
+        sender,
+        receiver,
+        content
+      });
+
+      const message = await newMessage.save();
+
+      // Create a new notification for the receiver
+      const newNotification = new Notification({
+        user: receiver,
+        message: message._id,
+        type: 'message'
+      });
+
+      await newNotification.save();
+
+      res.json(message);
+    } catch (err) {
+      console.error(err.message);
+      res.status(500).send('Server error');
+    }
+  }
+);
+
+// @route   GET api/messages/notifications
+// @desc    Get user's notifications
+// @access  Private
+router.get('/notifications', protect, async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    const notifications = await Notification.find({ user: userId })
+      .populate('message') // Populate the message field
+      .sort({ timestamp: -1 });
+
+    res.json(notifications);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server error');
+  }
+});
+
+export default router;
