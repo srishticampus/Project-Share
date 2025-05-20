@@ -21,7 +21,9 @@ function ContactSubmissions() {
   const fetchMessages = async () => {
     try {
       const data = await apiClient.get('/messages');
-      setMessages(data);
+      console.log('API response data type:', typeof data);
+      console.log('API response data:', data);
+      setMessages(data.data);
     } catch (error) {
       console.error(error);
     }
@@ -37,7 +39,7 @@ function ContactSubmissions() {
   };
 
   return (
-    <div className="container mx-auto py-10">
+    <div className="bg-white rounded-lg p-4 m-6">
       <h1 className="text-3xl font-bold mb-5">Contact Submissions</h1>
 
       <Table>
