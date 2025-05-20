@@ -101,7 +101,7 @@ export default function Layout() {
                         localStorage.removeItem('role');
                         setIsLoggedIn(false);
                         setUserRole(null);
-                        window.location.href = '/'; // Redirect to home after logout
+                        window.location.href = '/';
                       }}
                     >
                       Logout

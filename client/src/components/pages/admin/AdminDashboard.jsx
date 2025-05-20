@@ -67,11 +67,11 @@ function AdminDashboard() {
               </ul>
             </div>
           </Card>
-          <Card>
+          {/* <Card>
             <div className="p-4">
               <Link to="/admin/profile">View Profile</Link>
             </div>
-          </Card>
+          </Card> */}
         </div>
       </div>
     </main>
