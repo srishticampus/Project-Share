@@ -1,13 +1,15 @@
 import { Link, Outlet } from "react-router";
-import { Code,  ChevronDown, Menu, User } from "lucide-react";
+import { Code,  ChevronDown, Menu, User, Bell } from "lucide-react";
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
 
+import Notifications from '../Notifications';
 export default function Layout() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userRole, setUserRole] = useState(null);
+  const [showNotifications, setShowNotifications] = useState(false);
 
   useEffect(() => {
     // Check if the token exists in local storage on component mount
@@ -75,6 +77,19 @@ export default function Layout() {
             </button>
 
             <div className="hidden md:flex items-center space-x-4">
+              {/* Notifications Dropdown */}
+              <DropdownMenu open={showNotifications} onOpenChange={setShowNotifications}>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon">
+                    <Bell className="h-6 w-6" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-80">
+                  {/* Notifications component will be rendered here */}
+                  <Notifications onNotificationClick={() => setShowNotifications(false)} />
+                </DropdownMenuContent>
+              </DropdownMenu>
+
               {isLoggedIn ? (
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
@@ -178,6 +193,20 @@ export default function Layout() {
                 <Link to="/projects" className="block transition-colors hover:text-foreground/80 text-foreground/60" prefetch="false" onClick={toggleMobileMenu}>
                   Projects
                 </Link>
+                {/* Notifications Dropdown (Mobile) */}
+                <DropdownMenu open={showNotifications} onOpenChange={setShowNotifications}>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" className="flex items-center gap-1 w-full justify-center">
+                      <Bell className="h-6 w-6" />
+                      Notifications
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-full">
+                    {/* Notifications component will be rendered here */}
+                    <Notifications onNotificationClick={() => setShowNotifications(false)} />
+                  </DropdownMenuContent>
+                </DropdownMenu>
+
                 {isLoggedIn ? (
                   <>
                     <Link to={getProfileLink(userRole)} className="block transition-colors hover:text-foreground/80 text-foreground/60" prefetch="false" onClick={toggleMobileMenu}>
@@ -243,7 +272,7 @@ export default function Layout() {
                           <Link to="/register/collaborator" prefetch="false" onClick={toggleMobileMenu}>Collaborator</Link>
                         </DropdownMenuItem>
                         <DropdownMenuItem asChild>
-                          <Link to="/register/mentor" prefetch="false" onClick={toggleMobileMenu}>Mentor/Expert</Link>
+                          <Link to="/register/mentor" prefetch="false" onClick={toggleMenu}>Mentor/Expert</Link>
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
