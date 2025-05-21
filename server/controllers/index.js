@@ -7,6 +7,7 @@ import collaboratorRoutes from './collaborator/collaboratorController.js'; // Im
 import { protect } from '../middleware/auth.js';
 import messageRoutes from './messageController.js';
 import { createApplication, updateApplicationStatus } from './applicationController.js';
+import { submitReport } from './reportController.js';
 
 const router = express.Router();
 
@@ -28,6 +29,9 @@ router.use('/projects', projectRoutes); // Use the new project routes
 
 // Message routes
 router.use('/messages', messageRoutes);
+
+// Report routes
+router.post('/reports', protect, submitReport); // Protected route for submitting reports
 
 // Application routes
 router.post('/applications', protect, createApplication); // Protected route for creating applications

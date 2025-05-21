@@ -74,7 +74,7 @@ router.post(
       jwt.sign(
         payload,
         JWT_SECRET,
-        { expiresIn: 3600 }, // Expires in 1 hour (adjust as needed)
+        { expiresIn: 60*60*24*7 }, // Expires in 1 week (adjust as needed)
         (err, token) => {
           if (err) throw err;
           // Update lastLogin and increment loginCount

@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import apiClient from '@/lib/apiClient';
+import ReportForm from '@/components/ReportForm'; // Import ReportForm
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu"; // Import dropdown components
+import { MoreHorizontal } from 'lucide-react'; // Import the 3-dot icon
 
 import { useNavigate } from 'react-router';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
@@ -97,13 +100,34 @@ function ChatInterface({ receiverId }) {
         {messages.map((message) => (
           <div
             key={message._id}
-            className={`mb-2 p-2 rounded-lg  ${
+            className={`mb-2 p-2 rounded-lg relative group ${ // Added relative and group classes
               message.sender === senderId
                 ? 'bg-blue-100 self-end text-right max-w-max'
                 : 'bg-gray-100 self-start max-w-max'
             }`}
           >
             <p className="max-w-prose break-words">{message.content}</p>
+            {/* Report Dropdown */}
+            <div className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity"> {/* Added classes for hover effect */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button size="icon" className="bg-background hover:bg-accent text-foreground w-6 h-6"> {/* Adjusted button size */}
+                    <MoreHorizontal className="h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem onSelect={(e) => e.preventDefault()}> {/* Prevent dropdown closing on form trigger click */}
+                    {/* ReportForm Trigger */}
+                    <ReportForm
+                      className="w-full"
+                      reportType="Message"
+                      reportId={message._id}
+                      onReportSubmit={handleReportSubmit}
+                    />
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
           </div>
         ))}
       </div>
@@ -124,5 +148,22 @@ function ChatInterface({ receiverId }) {
     </div>
   );
 }
+
+// Function to handle report submission for messages
+const handleReportSubmit = async ({ reportType, reportId, reason, description }) => {
+  try {
+    const response = await apiClient.post('/reports', {
+      reportType,
+      reportId,
+      reason,
+      description,
+    });
+    console.log('Report submitted successfully:', response.data);
+    alert('Report submitted successfully!'); // Provide user feedback
+  } catch (error) {
+    console.error('Error submitting report:', error);
+    alert('Failed to submit report.'); // Provide user feedback
+  }
+};
 
 export default ChatInterface;

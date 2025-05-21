@@ -27,9 +27,17 @@ const ReportSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     required: true, // Reference to the reported content (Project, Comment, or Message)
   },
+  status: { // Added status field
+    type: String,
+    enum: ["pending", "reviewed", "removed", "kept", "resolved"], // Added 'resolved' to enum
+    default: "pending",
+  },
   action: {
     type: String,
     enum: ["Remove", "Keep with notes"],
+  },
+  notes: { // Added notes field
+    type: String,
   },
 });
 

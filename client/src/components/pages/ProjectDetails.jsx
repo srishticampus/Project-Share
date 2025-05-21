@@ -4,6 +4,8 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Button } from "@/components/ui/button"
 import { getProject } from "@/lib/apiClient";
 import { ArrowLeft } from 'lucide-react';
+import ReportForm from '@/components/ReportForm'; // Import ReportForm
+import apiClient from '@/lib/apiClient'; // Import apiClient
 
 function ProjectDetails() {
   const { id } = useParams(); // Get the project ID from the URL
@@ -90,12 +92,35 @@ function ProjectDetails() {
             </div>
           )}
         </CardContent>
-        <CardFooter className="flex justify-between">
+        <CardFooter className="flex justify-between items-center"> {/* Added items-center for alignment */}
           {project.status && <span className={`text-sm p-2 ${getStatusColor(project.status)}`}>{project.status}</span>}
+          {/* Add ReportForm */}
+          <ReportForm
+            reportType="Project"
+            reportId={project._id}
+            onReportSubmit={handleReportSubmit}
+          />
         </CardFooter>
       </Card>
     </div>
   );
 }
+
+// Function to handle report submission
+const handleReportSubmit = async ({ reportType, reportId, reason, description }) => {
+  try {
+    const response = await apiClient.post('/reports', {
+      reportType,
+      reportId,
+      reason,
+      description,
+    });
+    console.log('Report submitted successfully:', response.data);
+    alert('Report submitted successfully!'); // Provide user feedback
+  } catch (error) {
+    console.error('Error submitting report:', error);
+    alert('Failed to submit report.'); // Provide user feedback
+  }
+};
 
 export default ProjectDetails;

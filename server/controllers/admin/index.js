@@ -12,6 +12,7 @@ import {
 import { getDashboardStats } from './dashboardController.js';
 import { getUserGrowth, getUserEngagement, getProjectSuccessRate, getPopularCategories } from './analyticsController.js';
 import { getUsers, createUser, getUserById, updateUser, deleteUser } from './userController.js';
+import { getReports, removeReport, keepReport, markReportAsResolved } from './reportModerationController.js'; // Import report moderation functions
 import { protect, admin } from "../../middleware/auth.js";
 
 const router = express.Router();
@@ -54,5 +55,11 @@ router.put('/users/:id', protect, admin, updateUser);
 
 // Delete a user
 router.delete('/users/:id', protect, admin, deleteUser);
+
+// Report Moderation Routes
+router.get('/reports', protect, admin, getReports); // Get all reports
+router.delete('/reports/:id', protect, admin, removeReport); // Remove a report
+router.put('/reports/:id/keep', protect, admin, keepReport); // Keep a report with notes
+router.put('/reports/:id/resolve', protect, admin, markReportAsResolved); // Mark a report as resolved
 
 export default router;
