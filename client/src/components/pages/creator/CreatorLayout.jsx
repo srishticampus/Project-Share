@@ -55,7 +55,7 @@ const menuItems = [
   },
   {
     text: "Chat",
-    path: "/creator/chat",
+    path: "/creator/chat", // This will now point to ChatWithCollaborators
     icon: MessageSquarePlus,
   },
   {
@@ -69,7 +69,7 @@ function AppSidebar() {
   const { pathname } = useLocation();
 
   return (
-    <Sidebar className="border-none" collapsible="icon" variant="floating">
+    <Sidebar className="border-none h-[84vh] overflow-y-auto" collapsible="icon" variant="floating">
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel className="p-4 flex justify-center items-center gap-2 my-4">
@@ -114,10 +114,10 @@ export default function CreatorLayout() {
 
   return (
     <SidebarProvider>
-      <div className="flex h-screen w-full bg-[#F6F7F9]">
+      <div className="flex w-full bg-[#F6F7F9]">
         <AppSidebar />
 
-        <div className="flex flex-col w-[calc(100%-var(--sidebar-width))] bg-sidebar border-sidebar-border flex flex-col rounded-lg border m-2  p-4 shadow-sm">
+        <div className="flex h-[82vh] overflow-auto flex-col w-[calc(100%-var(--sidebar-width))] bg-sidebar border-sidebar-border rounded-lg border m-2  p-4 shadow-sm">
           <Outlet />
         </div>
       </div>

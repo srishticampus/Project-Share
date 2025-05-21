@@ -5,12 +5,11 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import apiClient from '@/lib/apiClient'; // Assuming an API client
 
-function ChatWithCreators() {
+function ChatWithCollaborators() {
   const [users, setUsers] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -36,7 +35,7 @@ function ChatWithCreators() {
     console.log(`Initiate chat with user ${userId}`);
   };
   if (loading) {
-    return <div>Loading creators...</div>;
+    return <div>Loading collaborators...</div>;
   }
 
   if (error) {
@@ -44,14 +43,14 @@ function ChatWithCreators() {
   }
 
   return (
-    <main className="flex-1 px-6 pb-6">
-      <div className="bg-white rounded-lg h-full p-6">
-        <h1 className="text-2xl font-semibold mb-4">Chat with Project Creators</h1>
+    <main className="flex-1 px-6 pb-6 ">
+      <div className="bg-white rounded-lg  p-6">
+        <h1 className="text-2xl font-semibold mb-4">Chat with Project Collaborators</h1>
 
         <div className="flex space-x-4 mb-6">
           <Input
             type="text"
-            placeholder="Search creators..."
+            placeholder="Search collaborators..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="max-w-sm"
@@ -65,7 +64,7 @@ function ChatWithCreators() {
                 <div>
                   <p><strong>Name:</strong> {user.name}</p>
                 </div>
-                <Link to={`/collaborator/chat/${user._id}`}>
+                <Link to={`/creator/chat/${user._id}`}>
                   <Button onClick={() => handleChatClick(user._id)}>Chat</Button>
                 </Link>
               </CardContent>
@@ -77,4 +76,4 @@ function ChatWithCreators() {
   );
 }
 
-export default ChatWithCreators;
+export default ChatWithCollaborators;

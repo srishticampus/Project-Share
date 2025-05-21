@@ -90,7 +90,7 @@ function AppSidebar() {
   const { pathname } = useLocation();
 
   return (
-    <Sidebar className="border-none" collapsible="icon">
+    <Sidebar className="border-none h-[84vh] overflow-y-auto" collapsible="icon" variant="floating">
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel className="p-4 flex justify-center items-center gap-2 my-4">
@@ -168,11 +168,14 @@ export default function CollaboratorLayout() {
       <div className="flex w-full bg-[#F6F7F9]">
         <AppSidebar />
 
-        <div className="flex flex-col flex-1 w-[calc(100%-var(--sidebar-width))] ">
-          <header className="flex justify-between items-center p-4 m-6 bg-white rounded-lg shrink-0"> {/* Added shrink-0 */}
+
+
+
+        <div className="flex h-[82vh] overflow-auto flex-col w-[calc(100%-var(--sidebar-width))] bg-sidebar border-sidebar-border rounded-lg border m-2  py-6 shadow-sm"> {/* Added flex-1 and overflow-y-auto */}
+          {/* <header className="flex justify-between items-center p-4 m-6 bg-white rounded-lg shrink-0"> 
             <div className="flex items-center gap-4">
               <SidebarTrigger size="32" />
-              <h1 className="text-xl text-gray-900">Collaborator Dashboard</h1> {/* Update header text */}
+              <h1 className="text-xl text-gray-900">Collaborator Dashboard</h1>
             </div>
 
             <Dialog>
@@ -198,13 +201,11 @@ export default function CollaboratorLayout() {
                 </DialogFooter>
               </DialogContent>
             </Dialog>
-          </header>
-
-          <div className="flex-1 overflow-y-auto"> {/* Added flex-1 and overflow-y-auto */}
-            <Outlet />
-          </div>
+          </header> */}
+          <Outlet />
         </div>
       </div>
+
     </SidebarProvider>
   );
 }

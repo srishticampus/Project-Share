@@ -1,6 +1,7 @@
 import React from 'react';
 import { Route, Routes, useParams } from 'react-router';
 import ChatInterface from './components/ChatInterface';
+import ChatWithCollaborators from './components/pages/creator/ChatWithCollaborators';
 import Layout from './components/pages/layout';
 import Home from './components/pages/Home';
 import About from './components/pages/About';
@@ -113,9 +114,10 @@ function App() {
           <Route path="projects" element={<ProjectManagement />} />
           <Route path="tasks" element={<CreatorTasks />} />
           <Route path="applications" element={<CreatorApplications />} />
-          <Route path="chat" element={<CreatorChat />} />
+          <Route path="chat" element={<ChatWithCollaborators />} />
           <Route path="mentors" element={<CreatorMentors />} />
           <Route path="profile" element={<CreatorProfile />} />
+          <Route path="chat/:userId" element={<ChatInterfaceWrapper />} /> {/* Nested chat route */}
         </Route>
 
         <Route path="/collaborator" element={<CollaboratorLayout />}>
@@ -129,6 +131,7 @@ function App() {
           <Route path="connect-with-mentors" element={<ConnectWithMentors />} />
           <Route path="profile" element={<CollaboratorProfile />} />
           <Route path="projects/:projectId" element={<CollaboratorProjectDetails />} /> {/* Route for collaborator project details */}
+          <Route path="chat/:userId" element={<div className='border rounded-sm mx-6 shadow-sm'><ChatInterfaceWrapper /></div>} /> {/* Nested chat route */}
         </Route>
 
         <Route path="/mentor" element={<MentorLayout />}>
@@ -148,12 +151,6 @@ function App() {
         <Route path="profile" element={<AdminProfile />} />
         <Route path="contact-submissions" element={<ContactSubmissions />} />
       </Route>
-
-
-
-      {/* <Route path="/chat/:userId" element={<ChatInterface />} /> */}
-
-      <Route path="/chat/:userId" element={<ChatInterfaceWrapper />} />
     </Routes>
   );
 }

@@ -2,16 +2,19 @@ import React, { useState, useEffect } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import apiClient from '@/lib/apiClient';
-import Notifications from './Notifications';
 
+import { useNavigate } from 'react-router';
+import { ArrowLeft, ArrowRight } from 'lucide-react';
 function ChatInterface({ receiverId }) {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
   const [error, setError] = useState(null);
   const [senderId, setSenderId] = useState(null);
+  const [receiverData, setReceiverData] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchUserData = async () => {
+    const fetchSenderData = async () => {
       try {
         const response = await apiClient.get('/auth/profile');
         setSenderId(response.data._id);
@@ -21,8 +24,19 @@ function ChatInterface({ receiverId }) {
       }
     };
 
-    fetchUserData();
-  }, []);
+    const fetchReceiverData = async () => {
+      try {
+        const response = await apiClient.get(`/auth/user/${receiverId}`);
+        setReceiverData(response.data);
+      } catch (error) {
+        console.error('Error fetching receiver data:', error);
+        setError('Failed to fetch receiver data.');
+      }
+    };
+
+    fetchSenderData();
+    fetchReceiverData();
+  }, [receiverId]);
 
   useEffect(() => {
     if (!senderId) return;
@@ -68,27 +82,43 @@ function ChatInterface({ receiverId }) {
 
   return (
     <div className="flex flex-col h-full">
-      <div className="flex-1 overflow-y-auto">
+      {receiverData && (
+        <div className="bg-gray-100 p-4 border-b border-gray-200 flex items-center">
+          <Button variant="outline"  size="icon" onClick={() => navigate(-1)}>
+            <ArrowLeft/>
+          </Button>
+          <div className="ml-2">
+            <h2 className="text-lg font-semibold">{receiverData.name}</h2>
+            <p className="text-gray-500">{receiverData.role}</p>
+          </div>
+        </div>
+      )}
+      <div className="flex-1 overflow-y-auto p-4 flex flex-col">
         {messages.map((message) => (
           <div
             key={message._id}
-            className={`message ${message.sender === senderId ? 'sent' : 'received'}`}
+            className={`mb-2 p-2 rounded-lg  ${
+              message.sender === senderId
+                ? 'bg-blue-100 self-end text-right max-w-max'
+                : 'bg-gray-100 self-start max-w-max'
+            }`}
           >
-            {message.content}
+            <p className="max-w-prose break-words">{message.content}</p>
           </div>
         ))}
       </div>
-      <Notifications />
-      <div className="mt-4">
+      <div className="p-4 bg-white border-t border-gray-200">
         <div className="flex space-x-2">
           <Input
             type="text"
             placeholder="Enter message..."
             value={newMessage}
             onChange={(e) => setNewMessage(e.target.value)}
-            className="flex-1"
+            className="flex-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
           />
-          <Button onClick={handleSendMessage}>Send</Button>
+          <Button onClick={handleSendMessage} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+            Send
+          </Button>
         </div>
       </div>
     </div>

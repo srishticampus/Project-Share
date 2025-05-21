@@ -2,6 +2,7 @@ import express from 'express';
 import mongoose from 'mongoose';
 import { body, validationResult } from 'express-validator';
 import Message from '../models/Message.js';
+import Notification from '../models/Notification.js';
 import { protect } from '../middleware/auth.js'; //  auth middleware
 
 const router = express.Router();
@@ -98,15 +99,18 @@ router.post(
 router.get('/notifications', protect, async (req, res) => {
   try {
     const userId = req.user.id;
+    console.log(`Fetching notifications for user ID: ${userId}`);
 
+    console.log('Executing Notification.find() query...');
     const notifications = await Notification.find({ user: userId })
-      .populate('message') // Populate the message field
+      .populate({path:'message',populate:{path:'sender'}}) // Populate the message field
       .sort({ timestamp: -1 });
+    console.log(`Found ${notifications.length} notifications.`);
 
     res.json(notifications);
   } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server error');
+    console.error('Error fetching notifications:', err.message);
+    res.status(500).send(err.message);
   }
 });
 
