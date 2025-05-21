@@ -9,7 +9,8 @@ import {
   updateProject,
   deleteProject,
 } from './projectController.js';
-import { getDashboardStats, getUserGrowthData, getUserEngagementData, getProjectSuccessRateData, getPopularCategoriesData } from './dashboardController.js';
+import { getDashboardStats } from './dashboardController.js';
+import { getUserGrowth, getUserEngagement, getProjectSuccessRate, getPopularCategories } from './analyticsController.js';
 import { getUsers, createUser, getUserById, updateUser, deleteUser } from './userController.js';
 import { protect, admin } from "../../middleware/auth.js";
 
@@ -28,16 +29,16 @@ router.delete('/projects/:id', protect, admin, deleteProject);
 router.get('/dashboard', protect, admin, getDashboardStats);
 
 // Get user growth data for analytics
-router.get('/analytics/user-growth', protect, admin, getUserGrowthData);
+router.get('/analytics/user-growth', protect, admin, getUserGrowth);
 
 // Get user engagement data for analytics
-router.get('/analytics/user-engagement', protect, admin, getUserEngagementData);
+router.get('/analytics/user-engagement', protect, admin, getUserEngagement);
 
 // Get project success rate data for analytics
-router.get('/analytics/project-success-rate', protect, admin, getProjectSuccessRateData);
+router.get('/analytics/project-success-rate', protect, admin, getProjectSuccessRate);
 
 // Get popular categories data for analytics
-router.get('/analytics/popular-categories', protect, admin, getPopularCategoriesData);
+router.get('/analytics/popular-categories', protect, admin, getPopularCategories);
 
 // Get all users
 router.get('/users', protect, admin, getUsers);

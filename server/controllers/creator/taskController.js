@@ -37,6 +37,10 @@ export const createTask = async (req, res) => {
         });
 
         await task.save();
+
+        // Increment taskInteractionCount for the creator
+        await User.findByIdAndUpdate(userId, { $inc: { taskInteractionCount: 1 } });
+
         const populatedTask = await Task.findById(task._id).populate('assignedTo', 'name'); // Populate assignedTo
         res.status(201).json({ message: 'Task created successfully', task: populatedTask }); // Return populated task
     } catch (error) {
@@ -97,6 +101,10 @@ export const updateTask = async (req, res) => {
         task.dueDate = dueDate || task.dueDate;
 
         await task.save();
+
+        // Increment taskInteractionCount for the user who updated the task (creator or assignedTo)
+        await User.findByIdAndUpdate(userId, { $inc: { taskInteractionCount: 1 } });
+
         const populatedTask = await Task.findById(task._id).populate('assignedTo', 'name'); // Populate assignedTo
         res.status(200).json({ message: 'Task updated successfully', task: populatedTask }); // Return populated task
     } catch (error) {

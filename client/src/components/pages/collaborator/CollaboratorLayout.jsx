@@ -171,7 +171,7 @@ export default function CollaboratorLayout() {
 
 
 
-        <div className="flex h-[82vh] overflow-auto flex-col w-[calc(100%-var(--sidebar-width))] bg-sidebar border-sidebar-border rounded-lg border m-2  py-6 shadow-sm"> {/* Added flex-1 and overflow-y-auto */}
+        <div className="flex h-[82vh] overflow-y-auto flex-col w-[calc(100%-var(--sidebar-width))] bg-sidebar border-sidebar-border rounded-lg border m-2  py-6 shadow-sm"> {/* Added flex-1 and overflow-y-auto */}
           {/* <header className="flex justify-between items-center p-4 m-6 bg-white rounded-lg shrink-0"> 
             <div className="flex items-center gap-4">
               <SidebarTrigger size="32" />

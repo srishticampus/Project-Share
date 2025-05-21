@@ -54,7 +54,23 @@ const UserSchema = new mongoose.Schema({
   lastLogin: {
     type: Date,
   },
-});
+  loginCount: {
+    type: Number,
+    default: 0,
+  },
+  projectInteractionCount: {
+    type: Number,
+    default: 0,
+  },
+  taskInteractionCount: {
+    type: Number,
+    default: 0,
+  },
+  chatActivityCount: {
+    type: Number,
+    default: 0,
+  },
+}, { timestamps: true });
 
 UserSchema.set("toJSON", {
   transform: function (doc, ret, options) {

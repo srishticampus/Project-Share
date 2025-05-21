@@ -76,6 +76,10 @@ router.post(
 
       const message = await newMessage.save();
 
+      // Increment chatActivityCount for sender and receiver
+      await User.findByIdAndUpdate(sender, { $inc: { chatActivityCount: 1 } });
+      await User.findByIdAndUpdate(receiver, { $inc: { chatActivityCount: 1 } });
+
       // Create a new notification for the receiver
       const newNotification = new Notification({
         user: receiver,

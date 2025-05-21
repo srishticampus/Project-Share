@@ -94,6 +94,9 @@ router.get('/projects/:projectId', async (req, res) => {
       return res.status(404).json({ msg: 'Project not found' });
     }
 
+    // Increment projectInteractionCount for the collaborator
+    await User.findByIdAndUpdate(req.user.id, { $inc: { projectInteractionCount: 1 } });
+
     res.json(project);
   } catch (err) {
     console.error(err.message);
@@ -133,6 +136,9 @@ router.post('/projects/:projectId/apply', async (req, res) => {
     });
 
     await application.save();
+
+    // Increment projectInteractionCount for the collaborator
+    await User.findByIdAndUpdate(userId, { $inc: { projectInteractionCount: 1 } });
 
     res.status(201).json({ msg: 'Application submitted successfully', application });
   } catch (err) {

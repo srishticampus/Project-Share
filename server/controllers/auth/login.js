@@ -77,8 +77,9 @@ router.post(
         { expiresIn: 3600 }, // Expires in 1 hour (adjust as needed)
         (err, token) => {
           if (err) throw err;
-          // Update lastLogin
+          // Update lastLogin and increment loginCount
           user.lastLogin = Date.now();
+          user.loginCount = (user.loginCount || 0) + 1; // Increment login count
           user.save(); // Don't await this, let it run in background
           res.json({ token, isAdmin: isAdmin });
         }

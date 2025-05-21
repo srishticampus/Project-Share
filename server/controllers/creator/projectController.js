@@ -24,6 +24,10 @@ export const createProject = async (req, res) => {
     });
 
     await project.save();
+
+    // Increment projectInteractionCount for the creator
+    await User.findByIdAndUpdate(req.user._id, { $inc: { projectInteractionCount: 1 } });
+
     res.status(201).json({
       success: true,
       data: await project.populate('creator', 'name email')
