@@ -35,7 +35,22 @@ const ProjectSchema = new mongoose.Schema({
     start: Date,
     end: Date
   },
-  attachments: [String]
+  attachments: [String],
+  feedback: [{
+    mentor: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: true,
+    },
+    message: {
+      type: String,
+      required: true,
+    },
+    date: {
+      type: Date,
+      default: Date.now,
+    },
+  }],
 }, {
   timestamps: true,
   toJSON: { virtuals: true }

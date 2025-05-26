@@ -53,8 +53,9 @@ function CollaboratorDashboardPage() {
         {/* Add more cards or components for other collaborator dashboard features here */}
 
         <Card>
-            <div className="p-4">
-              <Link to="/collaborator/profile">View Profile</Link>
+            <div className="p-4 flex flex-col space-y-2">
+              <Link to="/collaborator/profile" className="text-blue-500 hover:underline">View Profile</Link>
+              <Link to="/collaborator/connect-with-mentors" className="text-blue-500 hover:underline">Connect with Mentors</Link>
             </div>
           </Card>
         </div>

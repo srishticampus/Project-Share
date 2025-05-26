@@ -73,8 +73,9 @@ const CreatorDashboardPage = () => {
           </CardContent>
         </Card>
         <Card>
-            <div className="p-4">
-              <Link to="/creator/profile">View Profile</Link>
+            <div className="p-4 flex flex-col space-y-2">
+              <Link to="/creator/profile" className="text-blue-500 hover:underline">View Profile</Link>
+              <Link to="/creator/mentors" className="text-blue-500 hover:underline">Connect with Mentors</Link>
             </div>
           </Card>
       </div>

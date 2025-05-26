@@ -19,7 +19,8 @@ function ConnectWithMentors() {
   useEffect(() => {
     const fetchMentors = async () => {
       try {
-        const response = await apiClient.get('/users/mentors'); // Reusing the generic endpoint for listing mentors
+        // This API endpoint will need to be created on the server to list all mentors
+        const response = await apiClient.get('/users/mentors'); // Assuming a generic endpoint for listing mentors
         setMentors(response.data);
       } catch (err) {
         console.error("Error fetching mentors:", err);

@@ -70,6 +70,10 @@ const UserSchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
+  followedProjects: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Project',
+  }],
 }, { timestamps: true });
 
 UserSchema.set("toJSON", {

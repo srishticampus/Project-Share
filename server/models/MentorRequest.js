@@ -1,36 +1,34 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
 const MentorRequestSchema = new mongoose.Schema({
   requester: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
+    ref: 'User',
     required: true,
-  },
-  type: {
-    type: String,
-    enum: ["Project Creator", "Collaborator"],
-  },
-  message: {
-    type: String,
-  },
-  project: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Project",
   },
   mentor: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
+    ref: 'User',
+    required: true,
+  },
+  project: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Project',
+    required: false, // Project is optional for mentorship requests
+  },
+  message: {
+    type: String,
     required: true,
   },
   status: {
     type: String,
-    enum: ["Pending", "Accepted", "Rejected"],
-    default: "Pending",
+    enum: ['pending', 'accepted', 'rejected'],
+    default: 'pending',
   },
-  createdAt: {
+  requestDate: {
     type: Date,
     default: Date.now,
   },
 });
 
-export default mongoose.model("MentorRequest", MentorRequestSchema);
+export default mongoose.model('MentorRequest', MentorRequestSchema);

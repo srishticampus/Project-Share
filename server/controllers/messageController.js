@@ -83,8 +83,10 @@ router.post(
       // Create a new notification for the receiver
       const newNotification = new Notification({
         user: receiver,
-        message: message._id,
-        type: 'message'
+        message: `New message from ${req.user.name}: "${content.substring(0, 50)}..."`, // Use content string
+        type: 'message',
+        relatedEntity: message._id, // Link to the actual message document
+        relatedEntityType: 'Message',
       });
 
       await newNotification.save();
@@ -107,11 +109,27 @@ router.get('/notifications', protect, async (req, res) => {
 
     console.log('Executing Notification.find() query...');
     const notifications = await Notification.find({ user: userId })
-      .populate({path:'message',populate:{path:'sender'}}) // Populate the message field
-      .sort({ timestamp: -1 });
-    console.log(`Found ${notifications.length} notifications.`);
+      .populate('relatedEntity') // Populate the related entity based on its type
+      .sort({ date: -1 }); // Sort by date, not timestamp
 
-    res.json(notifications);
+    // Manually populate sender for message notifications if needed, or adjust client to handle relatedEntity
+    const populatedNotifications = await Promise.all(notifications.map(async (notif) => {
+      if (notif.type === 'message' && notif.relatedEntity && notif.relatedEntityType === 'Message') {
+        const messageDoc = await mongoose.model('Message').findById(notif.relatedEntity).populate('sender', 'name');
+        if (messageDoc) {
+          return {
+            ...notif.toObject(),
+            message: `New message from ${messageDoc.sender.name}: "${messageDoc.content.substring(0, 50)}..."`,
+            senderName: messageDoc.sender.name, // Add sender name for display
+          };
+        }
+      }
+      return notif.toObject();
+    }));
+
+    console.log(`Found ${populatedNotifications.length} notifications.`);
+
+    res.json(populatedNotifications);
   } catch (err) {
     console.error('Error fetching notifications:', err.message);
     res.status(500).send(err.message);

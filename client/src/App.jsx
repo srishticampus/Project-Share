@@ -50,6 +50,15 @@ import ChatWithCreators from './components/pages/collaborator/ChatWithCreators';
 import ConnectWithMentors from './components/pages/collaborator/ConnectWithMentors';
 import CollaboratorProjectDetails from './components/pages/collaborator/ProjectDetails'; // Rename to avoid conflict
 
+// New Mentor Page Imports
+import MentorshipRequests from './components/pages/mentor/MentorshipRequests';
+import ActiveMentorships from './components/pages/mentor/ActiveMentorships';
+import MentorBrowseProjects from './components/pages/mentor/BrowseProjects'; // Renamed to avoid conflict with collaborator's BrowseProjects
+import CreateArticle from './components/pages/mentor/CreateArticle';
+import ViewArticles from './components/pages/mentor/ViewArticles';
+import ChatWithMentees from './components/pages/mentor/ChatWithMentees';
+import CreatorConnectWithMentors from './components/pages/creator/ConnectWithMentors'; // Renamed to avoid conflict
+
 function Collaborators() {
   return <div>Collaborators Page</div>;
 }
@@ -115,7 +124,7 @@ function App() {
           <Route path="tasks" element={<CreatorTasks />} />
           <Route path="applications" element={<CreatorApplications />} />
           <Route path="chat" element={<ChatWithCollaborators />} />
-          <Route path="mentors" element={<CreatorMentors />} />
+          <Route path="mentors" element={<CreatorConnectWithMentors />} /> {/* Updated to new component */}
           <Route path="profile" element={<CreatorProfile />} />
           <Route path="chat/:userId" element={<ChatInterfaceWrapper />} /> {/* Nested chat route */}
         </Route>
@@ -137,6 +146,13 @@ function App() {
         <Route path="/mentor" element={<MentorLayout />}>
           <Route path="dashboard" element={<MentorDashboardPage />} />
           <Route path="profile" element={<MentorProfile />} />
+          <Route path="mentorship-requests" element={<MentorshipRequests />} /> {/* New mentor route */}
+          <Route path="active-mentorships" element={<ActiveMentorships />} /> {/* New mentor route */}
+          <Route path="browse-projects" element={<MentorBrowseProjects />} /> {/* New mentor route */}
+          <Route path="create-article" element={<CreateArticle />} /> {/* New mentor route */}
+          <Route path="articles" element={<ViewArticles />} /> {/* New mentor route */}
+          <Route path="chat-with-mentees" element={<ChatWithMentees />} /> {/* New mentor route */}
+          {/* Add routes for viewing/editing specific articles if needed, e.g., /mentor/articles/:id and /mentor/articles/:id/edit */}
         </Route>
         <Route path="*" element={<NotFound />} />
       </Route>

@@ -4,6 +4,8 @@ import creatorRoutes from './creator/index.js';
 import adminRoutes from './admin/index.js';
 import projectRoutes from './projectController.js'; // Import the new project routes
 import collaboratorRoutes from './collaborator/collaboratorController.js'; // Import collaborator routes
+import mentorRoutes from './mentor/index.js'; // Import mentor routes
+import userController from './userController.js'; // Import user controller
 import { protect } from '../middleware/auth.js';
 import messageRoutes from './messageController.js';
 import { createApplication, updateApplicationStatus } from './applicationController.js';
@@ -22,6 +24,12 @@ router.use('/admin', protect, adminRoutes);
 
 // Collaborator routes with authentication
 router.use('/collaborator', protect, collaboratorRoutes);
+
+// Mentor routes with authentication
+router.use('/mentor', protect, mentorRoutes); // Use mentor routes
+
+// User routes (e.g., for fetching lists of users by role)
+router.use('/users', protect, userController); // Add user controller routes
 
 // Project routes
 router.use('/projects', projectRoutes); // Use the new project routes
