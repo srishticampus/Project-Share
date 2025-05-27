@@ -4,14 +4,9 @@ import {
   updateProject,
   deleteProject,
 } from './projectController.js';
-import {
-  getAllProjects,
-  updateProject,
-  deleteProject,
-} from './projectController.js';
 import { getDashboardStats } from './dashboardController.js';
 import { getUserGrowth, getUserEngagement, getProjectSuccessRate, getPopularCategories } from './analyticsController.js';
-import { getUsers, createUser, getUserById, updateUser, deleteUser } from './userController.js';
+import { getUsers, createUser, getUserById, updateUser, deleteUser, updateUserApprovalStatus } from './userController.js';
 import { getReports, removeReport, keepReport, markReportAsResolved } from './reportModerationController.js'; // Import report moderation functions
 import mentorRequestRoutes from './mentorRequestController.js'; // Import mentor request routes
 import { protect, admin } from "../../middleware/auth.js";
@@ -56,6 +51,9 @@ router.put('/users/:id', protect, admin, updateUser);
 
 // Delete a user
 router.delete('/users/:id', protect, admin, deleteUser);
+
+// Update user approval status
+router.put('/users/:id/approve', protect, admin, updateUserApprovalStatus);
 
 // Report Moderation Routes
 router.get('/reports', protect, admin, getReports); // Get all reports

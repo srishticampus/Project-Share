@@ -9,9 +9,18 @@ import {
   TableCaption,
 } from "@/components/ui/table"
 import { Button } from '@/components/ui/button';
-import { Avatar } from "@/components/ui/avatar"
+import { Avatar,AvatarImage,AvatarFallback } from "@/components/ui/avatar"
 import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog"
-import  apiClient from '@/lib/apiClient';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { MoreHorizontal } from "lucide-react" // Import the ellipsis icon
+import apiClient from '@/lib/apiClient';
 
 function Users() {
   const [users, setUsers] = useState([]);
@@ -49,12 +58,21 @@ function Users() {
     }
   };
 
-  const handleToggleActive = async (id, active) => {
+  const handleToggleVerified = async (id, isVerified) => {
     try {
-      await apiClient.put(`/admin/users/${id}`, { isVerified: !active });
+      await apiClient.put(`/admin/users/${id}`, { isVerified: !isVerified });
       fetchUsers(); // Refresh user list after toggle
     } catch (error) {
-      console.error('Failed to toggle active:', error);
+      console.error('Failed to toggle verification status:', error);
+    }
+  };
+
+  const handleToggleApproved = async (id, isApproved) => {
+    try {
+      await apiClient.put(`/admin/users/${id}/approve`, { isApproved: !isApproved });
+      fetchUsers(); // Refresh user list after toggle
+    } catch (error) {
+      console.error('Failed to toggle approval status:', error);
     }
   };
 
@@ -89,6 +107,7 @@ function Users() {
               <TableHead>Date of Birth</TableHead>
               <TableHead>Gender</TableHead>
               <TableHead>Verified</TableHead>
+              <TableHead>Approved</TableHead> {/* New TableHead for Approved */}
               <TableHead>Last Login</TableHead>
               <TableHead>Actions</TableHead>
             </TableRow>
@@ -97,7 +116,10 @@ function Users() {
             {users && users?.map((user) => (
               <TableRow key={user.email}>
                 <TableCell>
-                  <Avatar src={user.photo || "https://github.com/shadcn.png"} alt={user.name} />
+                  <Avatar >
+                    <AvatarImage src={user.photo && `${import.meta.env.VITE_API_URL}/${user.photo}` }  />
+                    <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+                  </Avatar>
                 </TableCell>
                 <TableCell>{user.name}</TableCell>
                 <TableCell>{user.email}</TableCell>
@@ -108,12 +130,31 @@ function Users() {
                 <TableCell>{user.dateOfBirth ? new Date(user.dateOfBirth).toLocaleDateString() : 'N/A'}</TableCell>
                 <TableCell>{user.gender || 'N/A'}</TableCell>
                 <TableCell>{user.isVerified ? 'Yes' : 'No'}</TableCell>
+                <TableCell>
+                  {user.role === 'creator' ? (user.isApproved ? 'Yes' : 'No') : 'N/A'}
+                </TableCell> {/* Display N/A if not a creator */}
                 <TableCell>{user.lastLogin ? new Date(user.lastLogin).toLocaleString() : 'N/A'}</TableCell>
                 <TableCell>
-                  <Button onClick={() => handleDeleteUser(user._id)}>Delete</Button>
-                  <Button onClick={() => handleToggleActive(user._id, user.isVerified)}>
-                    {user.isVerified ? 'Deactivate' : 'Activate'}
-                  </Button>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" className="h-8 w-8 p-0">
+                        <span className="sr-only">Open menu</span>
+                        <MoreHorizontal className="h-4 w-4" /> {/* Replaced "Actions" text with icon */}
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                      <DropdownMenuItem onClick={() => handleDeleteUser(user._id)}>Delete</DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => handleToggleVerified(user._id, user.isVerified)}>
+                        {user.isVerified ? 'Unverify' : 'Verify'}
+                      </DropdownMenuItem>
+                      {user.role === 'creator' && (
+                        <DropdownMenuItem onClick={() => handleToggleApproved(user._id, user.isApproved)}>
+                          {user.isApproved ? 'Disapprove' : 'Approve'}
+                        </DropdownMenuItem>
+                      )}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </TableCell>
               </TableRow>
             ))}

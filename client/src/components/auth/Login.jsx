@@ -55,7 +55,13 @@ function Login() {
       const errorMsg = err.response?.data?.errors
         ? err.response.data.errors.map(e => e.msg).join(', ')
         : err.response?.data?.message || err.message || 'An error occurred during login.';
-      setError(errorMsg);
+      
+      // Check for the specific approval pending message
+      if (err.response?.status === 403 && errorMsg.includes('Your account is pending admin approval.')) {
+        setError('Login failed: Your account is pending admin approval. Please wait for an administrator to approve your account.');
+      } else {
+        setError(errorMsg);
+      }
     } finally {
       setLoading(false);
     }

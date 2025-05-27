@@ -10,13 +10,16 @@ const CreatorRegister = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [photo, setPhoto] = useState(null); // New state for photo file
   const [error, setError] = useState("");
+  const [successMessage, setSuccessMessage] = useState(""); // New state for success message
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+    setSuccessMessage(""); // Clear previous success messages
 
     if (password !== confirmPassword) {
       setError("Passwords do not match");
@@ -24,18 +27,34 @@ const CreatorRegister = () => {
     }
     setLoading(true);
 
+    const formData = new FormData();
+    formData.append("name", name);
+    formData.append("email", email);
+    formData.append("password", password);
+    if (photo) {
+      formData.append("photo", photo);
+    }
+
     try {
-      console.log("Registration attempt:", { name, email, password });
-      const response = await apiClient.post("/auth/register/creator", { name, email, password });
+      console.log("Registration attempt:", { name, email, password, photo: photo ? photo.name : "no photo" });
+      const response = await apiClient.post("/auth/register/creator", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
 
       const data = response.data;
       console.log("Registration successful:", data);
 
-      if (data.token) {
+      if (data.msg) { // Check for the custom message from the server
+        setSuccessMessage(data.msg);
+        // Optionally, you might want to redirect to a login page or a "pending approval" page
+        // navigate("/login/creator"); // Example: redirect to login
+      } else if (data.token) {
         localStorage.setItem("token", data.token);
         navigate("/creator/dashboard");
       } else {
-        console.warn("Registration successful, but no token received.");
+        console.warn("Registration successful, but no token or message received.");
         setError("Registration complete, but login might be required.");
       }
     } catch (err) {
@@ -53,6 +72,7 @@ const CreatorRegister = () => {
         <h2 className="text-2xl font-semibold text-center mb-4">Project Creator Registration</h2>
         <form className="space-y-6" onSubmit={handleSubmit}>
           {error && <p className="text-red-500 text-center mb-4">{error}</p>}
+          {successMessage && <p className="text-green-500 text-center mb-4">{successMessage}</p>} {/* Display success message */}
           <div>
             <Label htmlFor="name" className="block text-sm font-medium text-gray-700">
               Full Name
@@ -103,6 +123,17 @@ const CreatorRegister = () => {
               placeholder="Confirm your password"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
+            />
+          </div>
+          <div>
+            <Label htmlFor="photo" className="block text-sm font-medium text-gray-700">
+              Profile Picture
+            </Label>
+            <Input
+              type="file"
+              id="photo"
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+              onChange={(e) => setPhoto(e.target.files[0])}
             />
           </div>
           <Button type="submit" className="w-full" disabled={loading}>

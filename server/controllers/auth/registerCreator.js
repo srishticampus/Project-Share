@@ -1,19 +1,33 @@
 import express from 'express';
 import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
 import { body, validationResult } from 'express-validator';
 import User from '../../models/user.js'; // Adjust path as needed
+import multer from 'multer'; // Import multer
+import path from 'path'; // Import path for file paths
+import fs from 'fs'; // Import fs for file system operations
 
 const router = express.Router();
 
-// @TODO: Move JWT_SECRET to environment variables
-const JWT_SECRET = 'your_jwt_secret_key_placeholder'; // Replace with a strong secret
+// Configure multer for file uploads
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    const uploadPath = 'uploads/photos'; // Directory to save photos
+    fs.mkdirSync(uploadPath, { recursive: true }); // Create directory if it doesn't exist
+    cb(null, uploadPath);
+  },
+  filename: (req, file, cb) => {
+    cb(null, `${file.fieldname}-${Date.now()}${path.extname(file.originalname)}`);
+  },
+});
+
+const upload = multer({ storage });
 
 // @route   POST api/auth/register/creator
 // @desc    Register creator user
 // @access  Public
 router.post(
   '/register/creator',
+  upload.single('photo'), // Use multer middleware for single photo upload
   [
     body('name', 'Name is required').not().isEmpty(),
     body('email', 'Please include a valid email').isEmail(),
@@ -26,7 +40,8 @@ router.post(
       return res.status(400).json({ errors: errors.array() });
     }
 
-    const { name, email, password } = req.body; // Removed username
+    const { name, email, password } = req.body;
+    const photoPath = req.file ? req.file.path : ''; // Get photo path if uploaded, default to empty string
 
     try {
       // See if user exists
@@ -41,9 +56,10 @@ router.post(
       user = new User({
         name,
         email,
-        // Removed username
         password,
         role: 'creator',
+        photo: photoPath, // Save photo path
+        isApproved: false, // Set isApproved to false for new creators
       });
 
       // Hash password
@@ -52,23 +68,8 @@ router.post(
 
       await user.save();
 
-      // Return jsonwebtoken
-      const payload = {
-        user: {
-          id: user.id,
-          role: user.role,
-        },
-      };
-
-      jwt.sign(
-        payload,
-        JWT_SECRET,
-        { expiresIn: 3600 },
-        (err, token) => {
-          if (err) throw err;
-          res.json({ token });
-        }
-      );
+      // Inform the user that their account is pending approval
+      res.status(200).json({ msg: 'Registration successful. Your account is pending admin approval.' });
     } catch (err) {
       console.error(err.message);
       res.status(500).send('Server error');

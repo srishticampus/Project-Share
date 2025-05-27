@@ -4,6 +4,7 @@ import jwt from 'jsonwebtoken';
 import { body, validationResult } from 'express-validator';
 import multer from 'multer'; // Import multer
 import path from 'path';
+import fs from 'fs'; // Import fs for file system operations
 import User from '../../models/user.js'; // Adjust path as needed
 
 const router = express.Router();
@@ -11,18 +12,16 @@ const router = express.Router();
 // @TODO: Move JWT_SECRET to environment variables
 const JWT_SECRET = 'your_jwt_secret_key_placeholder'; // Replace with a strong secret
 
-// @route   POST api/auth/register/collaborator
-// @desc    Register collaborator user
-// @access  Public
-
 // Set up multer for file uploads
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, 'uploads/'); // Store uploaded files in the 'uploads' directory
+    const uploadPath = 'uploads/photos'; // Store uploaded files in the 'uploads/photos' directory
+    fs.mkdirSync(uploadPath, { recursive: true }); // Create directory if it doesn't exist
+    cb(null, uploadPath);
   },
   filename: (req, file, cb) => {
     const ext = path.extname(file.originalname);
-    cb(null, Date.now() + ext); // Rename the file to avoid conflicts
+    cb(null, `${file.fieldname}-${Date.now()}${ext}`); // Rename the file to avoid conflicts
   },
 });
 
@@ -68,7 +67,7 @@ router.post(
       return res.status(400).json({ errors: errors.array() });
     }
     const { name, email, password, contactNumber, skills, portfolioLinks, bio } = req.body;
-    const photo = req.file ? req.file.filename : null; // Get the filename of the uploaded photo
+    const photoPath = req.file ? req.file.path : ''; // Get the path of the uploaded photo, default to empty string
 
     try {
       // See if user exists
@@ -88,7 +87,7 @@ router.post(
         skills: skills ? JSON.parse(skills) : [],
         portfolioLinks: portfolioLinks ? JSON.parse(portfolioLinks) : [],
         bio,
-        photo, // Assuming photo is a URL or identifier after upload
+        photo: photoPath, // Save photo path
         role: 'collaborator',
       });
 

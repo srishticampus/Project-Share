@@ -21,6 +21,7 @@ const UserSchema = new mongoose.Schema({
   },
   photo: {
     type: String, // URL to the profile picture
+    default: '', // Default empty string
   },
   contactNumber: {
     type: String,
@@ -47,7 +48,15 @@ const UserSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
-  date: {
+  isApproved: {
+    type: Boolean,
+    default: false,
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
+  updatedAt: {
     type: Date,
     default: Date.now,
   },
@@ -74,7 +83,7 @@ const UserSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Project',
   }],
-}, { timestamps: true });
+});
 
 UserSchema.set("toJSON", {
   transform: function (doc, ret, options) {
