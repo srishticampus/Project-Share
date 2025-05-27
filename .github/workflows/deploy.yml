@@ -57,12 +57,12 @@ jobs:
 
           # Create server directory and copy files
           mkdir -p deploy/server
-          cp -r server/* deploy/server/
-          rm -rf deploy/server/node_modules
+          cp -r server/* deploy/backend/
+          rm -rf deploy/backend/node_modules
 
           # Move environment files to correct locations
           mv client/.env.production deploy/
-          mv server/.env.production deploy/server/
+          mv server/.env.production deploy/backend/
 
       # Compress for transfer
       - name: Compress deployment package
