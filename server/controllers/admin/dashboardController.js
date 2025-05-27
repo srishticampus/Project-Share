@@ -82,18 +82,35 @@ export const getUserGrowthData = async (req, res) => {
 // Function to get user engagement data (placeholder)
 export const getUserEngagementData = async (req, res) => {
   try {
-    // TODO: Implement actual logic to fetch user engagement data (e.g., logins over time, active users)
-    const dummyEngagementData = [
-      { name: 'Jan', 'Active Users': 50 },
-      { name: 'Feb', 'Active Users': 60 },
-      { name: 'Mar', 'Active Users': 75 },
-      { name: 'Apr', 'Active Users': 90 },
-      { name: 'May', 'Active Users': 100 },
-      { name: 'Jun', 'Active Users': 110 },
-      { name: 'Jul', 'Active Users': 120 },
-    ];
+    const userEngagement = await User.aggregate([
+      {
+        $match: {
+          lastLogin: { $ne: null } // Only consider users with a lastLogin date
+        }
+      },
+      {
+        $group: {
+          _id: {
+            year: { $year: "$lastLogin" },
+            month: { $month: "$lastLogin" }
+          },
+          count: { $sum: 1 }
+        }
+      },
+      {
+        $sort: { "_id.year": 1, "_id.month": 1 }
+      }
+    ]);
 
-    res.status(200).json(dummyEngagementData);
+    // Format the data for the frontend (e.g., [{ name: 'Jan 2023', 'Active Users': 10 }])
+    const formattedEngagementData = userEngagement.map(item => {
+      const { year, month } = item._id;
+      const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+      const name = `${monthNames[month - 1]} ${year}`;
+      return { name, 'Active Users': item.count };
+    });
+
+    res.status(200).json(formattedEngagementData);
   } catch (error) {
     console.error('Error fetching user engagement data:', error);
     res.status(500).json({ message: 'Error fetching user engagement data' });

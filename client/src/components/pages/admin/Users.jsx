@@ -79,9 +79,15 @@ function Users() {
           <TableCaption>A list of users.</TableCaption>
           <TableHeader>
             <TableRow>
+              <TableHead>Photo</TableHead>
               <TableHead>Name</TableHead>
               <TableHead>Email</TableHead>
               <TableHead>Role</TableHead>
+              <TableHead>Contact Number</TableHead>
+              <TableHead>Country</TableHead>
+              <TableHead>City</TableHead>
+              <TableHead>Date of Birth</TableHead>
+              <TableHead>Gender</TableHead>
               <TableHead>Verified</TableHead>
               <TableHead>Last Login</TableHead>
               <TableHead>Actions</TableHead>
@@ -90,13 +96,24 @@ function Users() {
           <TableBody>
             {users && users?.map((user) => (
               <TableRow key={user.email}>
+                <TableCell>
+                  <Avatar src={user.photo || "https://github.com/shadcn.png"} alt={user.name} />
+                </TableCell>
                 <TableCell>{user.name}</TableCell>
                 <TableCell>{user.email}</TableCell>
                 <TableCell>{user.role}</TableCell>
+                <TableCell>{user.contactNumber || 'N/A'}</TableCell>
+                <TableCell>{user.country || 'N/A'}</TableCell>
+                <TableCell>{user.city || 'N/A'}</TableCell>
+                <TableCell>{user.dateOfBirth ? new Date(user.dateOfBirth).toLocaleDateString() : 'N/A'}</TableCell>
+                <TableCell>{user.gender || 'N/A'}</TableCell>
                 <TableCell>{user.isVerified ? 'Yes' : 'No'}</TableCell>
-                <TableCell>{user.lastLogin}</TableCell>
+                <TableCell>{user.lastLogin ? new Date(user.lastLogin).toLocaleString() : 'N/A'}</TableCell>
                 <TableCell>
                   <Button onClick={() => handleDeleteUser(user._id)}>Delete</Button>
+                  <Button onClick={() => handleToggleActive(user._id, user.isVerified)}>
+                    {user.isVerified ? 'Deactivate' : 'Activate'}
+                  </Button>
                 </TableCell>
               </TableRow>
             ))}
