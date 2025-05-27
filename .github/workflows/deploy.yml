@@ -56,7 +56,7 @@ jobs:
           cp -r dist/* deploy/
 
           # Create server directory and copy files
-          mkdir -p deploy/server
+          mkdir -p deploy/backend
           cp -r server/* deploy/backend/
           rm -rf deploy/backend/node_modules
 
