@@ -1,5 +1,5 @@
 import express from 'express';
-import auth from '../../middleware/auth.js';
+import { protect } from '../../middleware/auth.js';
 import MentorRequest from '../../models/MentorRequest.js';
 import User from '../../models/user.js'; // To populate user details
 
@@ -8,7 +8,7 @@ const router = express.Router();
 // @route   GET api/admin/mentor-requests
 // @desc    Get all pending mentor requests for admin review
 // @access  Private (Admin only)
-router.get('/mentor-requests', auth, async (req, res) => {
+router.get('/mentor-requests', protect, async (req, res) => {
   try {
     // Ensure only admin can access this route
     if (req.user.role !== 'admin') {
@@ -28,7 +28,7 @@ router.get('/mentor-requests', auth, async (req, res) => {
 // @route   PUT api/admin/mentor-requests/:id/status
 // @desc    Update status of a mentor request (approve/reject) and update user role if approved
 // @access  Private (Admin only)
-router.put('/mentor-requests/:id/status', auth, async (req, res) => {
+router.put('/mentor-requests/:id/status', protect, async (req, res) => {
   try {
     // Ensure only admin can access this route
     if (req.user.role !== 'admin') {

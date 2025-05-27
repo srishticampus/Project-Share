@@ -1,5 +1,5 @@
 import express from 'express';
-import auth from '../../middleware/auth.js';
+import { protect } from '../../middleware/auth.js';
 import Project from '../../models/Project.js';
 import User from '../../models/user.js';
 import Notification from '../../models/Notification.js'; // Import Notification model
@@ -9,7 +9,7 @@ const router = express.Router();
 // @route   GET api/mentor/browse-projects
 // @desc    Get all projects with search and filter for mentors
 // @access  Private (Mentor only)
-router.get('/browse-projects', auth, async (req, res) => {
+router.get('/browse-projects', protect, async (req, res) => {
   try {
     const { search, category, skill } = req.query;
     let query = {};
@@ -41,7 +41,7 @@ router.get('/browse-projects', auth, async (req, res) => {
 // @route   POST api/mentor/projects/:id/follow
 // @desc    Allow a mentor to follow a project
 // @access  Private (Mentor only)
-router.post('/projects/:id/follow', auth, async (req, res) => {
+router.post('/projects/:id/follow', protect, async (req, res) => {
   try {
     const projectId = req.params.id;
     const mentorId = req.user.id;
@@ -69,7 +69,7 @@ router.post('/projects/:id/follow', auth, async (req, res) => {
 // @route   POST api/mentor/projects/:id/feedback
 // @desc    Allow a mentor to provide feedback on a followed project
 // @access  Private (Mentor only)
-router.post('/projects/:id/feedback', auth, async (req, res) => {
+router.post('/projects/:id/feedback', protect, async (req, res) => {
   try {
     const projectId = req.params.id;
     const mentorId = req.user.id;

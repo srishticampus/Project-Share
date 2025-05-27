@@ -1,5 +1,5 @@
 import express from 'express';
-import auth from '../../middleware/auth.js';
+import { protect } from '../../middleware/auth.js';
 import MentorRequest from '../../models/MentorRequest.js'; // MentorRequest model is used for active mentorships
 
 const router = express.Router();
@@ -7,7 +7,7 @@ const router = express.Router();
 // @route   GET api/mentor/active-mentorships
 // @desc    Get all accepted mentorships for the logged-in mentor
 // @access  Private (Mentor only)
-router.get('/active-mentorships', auth, async (req, res) => {
+router.get('/active-mentorships', protect, async (req, res) => {
   try {
     const mentorId = req.user.id;
     const activeMentorships = await MentorRequest.find({ mentor: mentorId, status: 'accepted' })

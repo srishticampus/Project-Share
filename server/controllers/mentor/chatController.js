@@ -1,5 +1,5 @@
 import express from 'express';
-import auth from '../../middleware/auth.js';
+import { protect } from '../../middleware/auth.js';
 import MentorRequest from '../../models/MentorRequest.js';
 import User from '../../models/user.js'; // To populate mentee details
 import Project from '../../models/Project.js'; // To populate project details if applicable
@@ -9,7 +9,7 @@ const router = express.Router();
 // @route   GET api/mentor/mentees
 // @desc    Get a list of active mentees for the logged-in mentor
 // @access  Private (Mentor only)
-router.get('/mentees', auth, async (req, res) => {
+router.get('/mentees', protect, async (req, res) => {
   try {
     const mentorId = req.user.id;
 

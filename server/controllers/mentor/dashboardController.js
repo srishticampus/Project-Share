@@ -1,5 +1,5 @@
 import express from 'express';
-import auth from '../../middleware/auth.js'; // Assuming auth middleware exists
+import { protect } from '../../middleware/auth.js'; // Assuming auth middleware exists
 import MentorRequest from '../../models/MentorRequest.js'; // Will create this model
 import Project from '../../models/Project.js'; // Assuming Project model exists
 import User from '../../models/user.js'; // Assuming User model exists
@@ -9,7 +9,7 @@ const router = express.Router();
 // @route   GET api/mentor/dashboard
 // @desc    Get mentor dashboard data (counts)
 // @access  Private (Mentor only)
-router.get('/dashboard', auth, async (req, res) => {
+router.get('/dashboard', protect, async (req, res) => {
   try {
     const mentorId = req.user.id;
 

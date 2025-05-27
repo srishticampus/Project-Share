@@ -1,5 +1,5 @@
 import express from 'express';
-import auth from '../../middleware/auth.js';
+import { protect } from '../../middleware/auth.js';
 import MentorRequest from '../../models/MentorRequest.js';
 import User from '../../models/user.js';
 import Project from '../../models/Project.js'; // Assuming Project model exists
@@ -13,7 +13,7 @@ const router = express.Router();
 // @access  Private (Project Creator/Collaborator)
 router.post(
   '/mentorship-requests',
-  auth,
+  protect,
   [
     body('mentor', 'Mentor ID is required').not().isEmpty(),
     body('message', 'Message is required').not().isEmpty(),
@@ -74,7 +74,7 @@ router.post(
 // @route   GET api/mentor/mentorship-requests
 // @desc    Get all pending mentorship requests for the logged-in mentor
 // @access  Private (Mentor only)
-router.get('/mentorship-requests', auth, async (req, res) => {
+router.get('/mentorship-requests', protect, async (req, res) => {
   try {
     const mentorId = req.user.id;
     const requests = await MentorRequest.find({ mentor: mentorId, status: 'pending' })
@@ -91,7 +91,7 @@ router.get('/mentorship-requests', auth, async (req, res) => {
 // @route   PUT api/mentor/mentorship-requests/:id/status
 // @desc    Update status of a mentorship request (accept/reject)
 // @access  Private (Mentor only)
-router.put('/mentorship-requests/:id/status', auth, async (req, res) => {
+router.put('/mentorship-requests/:id/status', protect, async (req, res) => {
   try {
     const requestId = req.params.id;
     const { status } = req.body; // 'accepted' or 'rejected'

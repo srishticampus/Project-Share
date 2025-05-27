@@ -1,5 +1,5 @@
 import express from 'express';
-import auth from '../../middleware/auth.js';
+import { protect } from '../../middleware/auth.js';
 import Article from '../../models/Article.js';
 import { body, validationResult } from 'express-validator';
 
@@ -10,7 +10,7 @@ const router = express.Router();
 // @access  Private (Mentor only)
 router.post(
   '/articles',
-  auth,
+  protect,
   [
     body('title', 'Title is required').not().isEmpty(),
     body('content', 'Content is required').not().isEmpty(),
@@ -45,7 +45,7 @@ router.post(
 // @route   GET api/mentor/articles
 // @desc    Get all articles by the logged-in mentor
 // @access  Private (Mentor only)
-router.get('/articles', auth, async (req, res) => {
+router.get('/articles', protect, async (req, res) => {
   try {
     const articles = await Article.find({ author: req.user.id }).sort({ publicationDate: -1 });
     res.json(articles);
@@ -59,7 +59,7 @@ router.get('/articles', auth, async (req, res) => {
 // @desc    Get a single article by ID
 // @access  Private (Mentor only, or public if articles are generally viewable)
 // For now, assuming private for mentor's own articles
-router.get('/articles/:id', auth, async (req, res) => {
+router.get('/articles/:id', protect, async (req, res) => {
   try {
     const article = await Article.findById(req.params.id);
 
@@ -87,7 +87,7 @@ router.get('/articles/:id', auth, async (req, res) => {
 // @access  Private (Mentor only)
 router.put(
   '/articles/:id',
-  auth,
+  protect,
   [
     body('title', 'Title is required').not().isEmpty(),
     body('content', 'Content is required').not().isEmpty(),
@@ -133,7 +133,7 @@ router.put(
 // @route   DELETE api/mentor/articles/:id
 // @desc    Delete an article
 // @access  Private (Mentor only)
-router.delete('/articles/:id', auth, async (req, res) => {
+router.delete('/articles/:id', protect, async (req, res) => {
   try {
     const article = await Article.findById(req.params.id);
 
