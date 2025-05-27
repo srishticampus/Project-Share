@@ -1,7 +1,7 @@
 import express from 'express';
-import { createProject, getProjects, getProject, updateProject, deleteProject } from './projectController';
+import { createProject, getProjects, getProject, updateProject, deleteProject, getProjectDashboardStats } from './projectController';
 import { createTask, assignTask, updateTask, getTasksByProject, deleteTask, editTask } from './taskController';
-import { getApplicationsForCreatorProjects } from '../applicationController.js';
+import { getApplicationsForCreatorProjects, getApplicationDashboardStats } from '../applicationController.js';
 
 const router = express.Router();
 
@@ -21,5 +21,9 @@ router.put('/tasks/:taskId/edit', editTask);
 
 // Application routes for creator
 router.get('/applications', getApplicationsForCreatorProjects);
+
+// Dashboard stats routes for creator
+router.get('/dashboard/project-stats', getProjectDashboardStats);
+router.get('/dashboard/application-stats', getApplicationDashboardStats);
 
 export default router;

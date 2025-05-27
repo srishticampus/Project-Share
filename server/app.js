@@ -53,7 +53,7 @@ app.use((err, req, res, next) => {
 
 // Server Start (Consider using Vite's dev server in development)
 if (import.meta.env.PROD) {
-    const PORT = process.env.PORT || 3000;
+    const PORT = import.meta.env.VITE_PORT || 3000;
     app.listen(PORT, () => console.log(`Server running in production on port ${PORT}`));
 }
 

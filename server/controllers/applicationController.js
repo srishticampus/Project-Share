@@ -126,3 +126,36 @@ export const updateApplicationStatus = async (req, res) => {
     });
   }
 };
+
+export const getApplicationDashboardStats = async (req, res) => {
+  try {
+    const creatorId = req.user._id;
+
+    // Find all projects created by the user
+    const creatorProjects = await Project.find({ creator: creatorId }).select('_id');
+    const projectIds = creatorProjects.map(project => project._id);
+
+    const totalApplications = await Application.countDocuments({ projectId: { $in: projectIds } });
+    const newApplications = await Application.countDocuments({ projectId: { $in: projectIds }, status: 'Pending' });
+    const reviewedApplications = await Application.countDocuments({ projectId: { $in: projectIds }, status: { $in: ['Accepted', 'Rejected'] } });
+    const acceptedApplications = await Application.countDocuments({ projectId: { $in: projectIds }, status: 'Accepted' });
+    const rejectedApplications = await Application.countDocuments({ projectId: { $in: projectIds }, status: 'Rejected' });
+
+    res.status(200).json({
+      success: true,
+      data: {
+        totalApplications,
+        newApplications,
+        reviewedApplications,
+        acceptedApplications,
+        rejectedApplications,
+      }
+    });
+  } catch (error) {
+    console.error('Error fetching application dashboard stats:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Server Error',
+    });
+  }
+};

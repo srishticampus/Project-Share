@@ -139,3 +139,27 @@ export const deleteProject = async (req, res) => {
     });
   }
 };
+
+export const getProjectDashboardStats = async (req, res) => {
+  try {
+    const creatorId = req.user._id;
+
+    const totalProjects = await Project.countDocuments({ creator: creatorId });
+    const activeProjects = await Project.countDocuments({ creator: creatorId, status: 'Active' });
+    const completedProjects = await Project.countDocuments({ creator: creatorId, status: 'Completed' });
+
+    res.status(200).json({
+      success: true,
+      data: {
+        totalProjects,
+        activeProjects,
+        completedProjects,
+      }
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: 'Server Error'
+    });
+  }
+};
