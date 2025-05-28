@@ -25,8 +25,8 @@ function BrowseProjects() {
         const response = await apiClient.get('/mentor/browse-projects', {
           params: {
             search: searchTerm,
-            category: filterCategory,
-            skill: filterSkill,
+            category: filterCategory === 'all' ? '' : filterCategory,
+            skill: filterSkill === 'all' ? '' : filterSkill,
           },
         });
         setProjects(response.data);
@@ -77,7 +77,7 @@ function BrowseProjects() {
             <SelectValue placeholder="Filter by Category" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">All Categories</SelectItem>
+            <SelectItem value="all">All Categories</SelectItem>
             {categories.map((category) => (
               <SelectItem key={category} value={category}>{category}</SelectItem>
             ))}
@@ -88,7 +88,7 @@ function BrowseProjects() {
             <SelectValue placeholder="Filter by Skill" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">All Skills</SelectItem>
+            <SelectItem value="all">All Skills</SelectItem>
             {skills.map((skill) => (
               <SelectItem key={skill} value={skill}>{skill}</SelectItem>
             ))}
@@ -99,22 +99,22 @@ function BrowseProjects() {
       {projects.length === 0 ? (
         <p className="text-center text-gray-500">No projects found matching your criteria.</p>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
           {projects.map((project) => (
             <Card key={project._id}>
               <CardHeader>
                 <CardTitle>{project.title}</CardTitle>
-                <p className="text-sm text-gray-600">Creator: {project.creator.name}</p>
+                <p className="text-sm text-gray-600">Creator: {project.creator ? project.creator.name : 'Unknown'}</p>
               </CardHeader>
               <CardContent>
                 <p className="text-gray-700 mb-2 line-clamp-3">{project.description}</p>
                 <p className="text-sm text-gray-500">Category: {project.category}</p>
-                <p className="text-sm text-gray-500">Skills: {project.requiredSkills.join(', ')}</p>
+                <p className="text-sm text-gray-500">Tech Stack: {project.techStack && Array.isArray(project.techStack) ? project.techStack.join(', ') : 'None'}</p>
                 <div className="mt-4 flex justify-between items-center">
-                  <Link to={`/project/${project._id}`}>
+                  <Link to={`/mentor/projects/${project._id}`}>
                     <Button variant="outline">View Details</Button>
                   </Link>
-                  <Button onClick={() => handleFollowProject(project._id)} className="bg-purple-500 hover:bg-purple-600 text-white">
+                  <Button onClick={() => handleFollowProject(project._id)} variant="default">
                     Follow Project
                   </Button>
                 </div>

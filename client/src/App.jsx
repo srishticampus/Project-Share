@@ -57,6 +57,7 @@ import MentorBrowseProjects from './components/pages/mentor/BrowseProjects'; // 
 import CreateArticle from './components/pages/mentor/CreateArticle';
 import ViewArticles from './components/pages/mentor/ViewArticles';
 import ChatWithMentees from './components/pages/mentor/ChatWithMentees';
+import MentorProjectDetails from './components/pages/mentor/MentorProjectDetails'; // New mentor project details component
 import CreatorConnectWithMentors from './components/pages/creator/ConnectWithMentors'; // Renamed to avoid conflict
 
 function Collaborators() {
@@ -145,7 +146,7 @@ function App() {
         </Route>
 
         <Route path="/mentor" element={<MentorLayout />}>
-          <Route path="dashboard" element={<MentorDashboardPage />} />
+          <Route index element={<MentorDashboardPage />} />
           <Route path="profile" element={<MentorProfile />} />
           <Route path="mentorship-requests" element={<MentorshipRequests />} /> {/* New mentor route */}
           <Route path="active-mentorships" element={<ActiveMentorships />} /> {/* New mentor route */}
@@ -153,6 +154,8 @@ function App() {
           <Route path="create-article" element={<CreateArticle />} /> {/* New mentor route */}
           <Route path="articles" element={<ViewArticles />} /> {/* New mentor route */}
           <Route path="chat-with-mentees" element={<ChatWithMentees />} /> {/* New mentor route */}
+          <Route path="chat/:userId" element={<div className='border rounded-sm mx-6 shadow-sm'><ChatInterfaceWrapper /></div>} /> {/* Nested chat route */}
+          <Route path="projects/:projectId" element={<MentorProjectDetails />} /> {/* New mentor project details route */}
           {/* Add routes for viewing/editing specific articles if needed, e.g., /mentor/articles/:id and /mentor/articles/:id/edit */}
         </Route>
         <Route path="*" element={<NotFound />} />

@@ -27,7 +27,8 @@ router.get('/:id', async (req, res) => {
 
     // Fetch tasks associated with the project
     const tasks = await Task.find({ project: req.params.id })
-      .populate('createdBy', 'username email'); // Populate creator of each task
+      .populate('createdBy', 'name email') // Populate creator of each task
+      .populate('assignedTo', 'name email'); // Populate assignedTo user
 
     res.status(200).json({ project, tasks });
   } catch (error) {

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Link } from 'react-router'; 
+import apiClient from '@/lib/apiClient';
 
 function ActiveMentorships() {
   const [activeMentorships, setActiveMentorships] = useState([]);
@@ -15,7 +16,7 @@ function ActiveMentorships() {
         const response = await apiClient.get('/mentor/active-mentorships');
         setActiveMentorships(response.data);
       } catch (err) {
-        console.error("Error fetching active mentorships:", err);
+        console.error("Error fetching active mentorships:", err.response || err.message || err);
         setError("Failed to load active mentorships.");
       } finally {
         setLoading(false);
