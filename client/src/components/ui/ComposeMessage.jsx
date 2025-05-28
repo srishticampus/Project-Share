@@ -16,7 +16,7 @@ function ComposeMessage() {
     try {
       // Replace 'senderId' with the actual user ID (e.g., from local storage or context)
       const senderId = 'someSenderId'; // Replace with actual user ID
-      const response = await apiClient.post('/api/messages/send', {
+      const response = await apiClient.post('/messages/send', {
         senderId,
         receiverId,
         subject,
