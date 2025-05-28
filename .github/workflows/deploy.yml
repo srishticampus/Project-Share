@@ -86,8 +86,8 @@ jobs:
           mkdir -p ${{ env.DEPLOY_DIR }}
 
           # Clear existing files (preserve uploads if they exist)
-          if [ -d "${{ env.DEPLOY_DIR }}/server/uploads" ]; then
-            mv ${{ env.DEPLOY_DIR }}/server/uploads /tmp/project_share_uploads
+          if [ -d "${{ env.DEPLOY_DIR }}/backend/uploads" ]; then
+            mv ${{ env.DEPLOY_DIR }}/backend/uploads /tmp/project_share_uploads
           fi
           rm -rf ${{ env.DEPLOY_DIR }}/*
 
@@ -96,18 +96,18 @@ jobs:
 
           # Restore uploads if they existed
           if [ -d "/tmp/project_share_uploads" ]; then
-            mkdir -p ${{ env.DEPLOY_DIR }}/server/uploads
-            mv /tmp/project_share_uploads/* ${{ env.DEPLOY_DIR }}/server/uploads/
+            mkdir -p ${{ env.DEPLOY_DIR }}/backend/uploads
+            mv /tmp/project_share_uploads/* ${{ env.DEPLOY_DIR }}/backend/uploads/
             rm -rf /tmp/project_share_uploads
           else
-            mkdir -p ${{ env.DEPLOY_DIR }}/server/uploads
+            mkdir -p ${{ env.DEPLOY_DIR }}/backend/uploads
           fi
 
           # Set proper permissions
-          chmod -R 755 ${{ env.DEPLOY_DIR }}/server/uploads
+          chmod -R 755 ${{ env.DEPLOY_DIR }}/backend/uploads
 
           # Install backend dependencies
-          cd ${{ env.DEPLOY_DIR }}/server
+          cd ${{ env.DEPLOY_DIR }}/backend
           npm install --omit=dev
 
           # Build server
@@ -122,5 +122,5 @@ jobs:
           echo "Deployment structure:"
           ls -la ${{ env.DEPLOY_DIR }}
           echo "Server directory:"
-          ls -la ${{ env.DEPLOY_DIR }}/server
+          ls -la ${{ env.DEPLOY_DIR }}/backend
           EOF
