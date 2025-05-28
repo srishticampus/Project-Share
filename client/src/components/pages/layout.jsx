@@ -272,7 +272,7 @@ export default function Layout() {
                           <Link to="/register/collaborator" prefetch="false" onClick={toggleMobileMenu}>Collaborator</Link>
                         </DropdownMenuItem>
                         <DropdownMenuItem asChild>
-                          <Link to="/register/mentor" prefetch="false" onClick={toggleMenu}>Mentor/Expert</Link>
+                          <Link to="/register/mentor" prefetch="false" onClick={toggleMobileMenu}>Mentor/Expert</Link>
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
