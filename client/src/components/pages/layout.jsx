@@ -78,18 +78,19 @@ export default function Layout() {
             </button>
 
             <div className="hidden md:flex items-center space-x-4">
-              {/* Notifications Dropdown */}
-              <DropdownMenu open={showNotifications} onOpenChange={setShowNotifications}>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon">
-                    <Bell className="h-6 w-6" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-80">
-                  {/* Notifications component will be rendered here */}
-                  <Notifications onNotificationClick={() => setShowNotifications(false)} />
-                </DropdownMenuContent>
-              </DropdownMenu>
+              {isLoggedIn && (
+                <DropdownMenu open={showNotifications} onOpenChange={setShowNotifications}>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="icon">
+                      <Bell className="h-6 w-6" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-80">
+                    {/* Notifications component will be rendered here */}
+                    <Notifications onNotificationClick={() => setShowNotifications(false)} />
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              )}
 
               {isLoggedIn ? (
                 <DropdownMenu>
@@ -195,18 +196,20 @@ export default function Layout() {
                   Projects
                 </Link>
                 {/* Notifications Dropdown (Mobile) */}
-                <DropdownMenu open={showNotifications} onOpenChange={setShowNotifications}>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className="flex items-center gap-1 w-full justify-center">
-                      <Bell className="h-6 w-6" />
-                      Notifications
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-full">
-                    {/* Notifications component will be rendered here */}
-                    <Notifications onNotificationClick={() => setShowNotifications(false)} />
-                  </DropdownMenuContent>
-                </DropdownMenu>
+                {isLoggedIn && (
+                  <DropdownMenu open={showNotifications} onOpenChange={setShowNotifications}>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" className="flex items-center gap-1 w-full justify-center">
+                        <Bell className="h-6 w-6" />
+                        Notifications
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="w-full">
+                      {/* Notifications component will be rendered here */}
+                      <Notifications onNotificationClick={() => setShowNotifications(false)} />
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                )}
 
                 {isLoggedIn ? (
                   <>

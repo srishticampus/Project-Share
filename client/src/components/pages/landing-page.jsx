@@ -1,9 +1,12 @@
 import { Link } from "react-router";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Code, Users, Briefcase, GraduationCap, ChevronDown, Star, CheckCircle, MessageSquare, Search } from "lucide-react";
 import { useState, useEffect } from 'react';
+import apiClient from '@/lib/apiClient';
 
 // Placeholder for a simple slideshow effect
 const ImageSlideshow = ({ images, altPrefix }) => {
@@ -33,6 +36,37 @@ export default function LandingPage() {
   const heroImages = ["https://picsum.photos/1200/600", "https://picsum.photos/1200/600", "https://picsum.photos/1200/600"];
   const aboutImages = ["https://picsum.photos/600/400", "https://picsum.photos/600/400", "https://picsum.photos/600/400"];
 
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [subject, setSubject] = useState("");
+  const [message, setMessage] = useState("");
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      const response = await apiClient.post("/messages", {
+        name,
+        email,
+        subject,
+        message,
+      });
+
+      if (response.status === 201) {
+        alert("Message sent successfully!");
+        setName("");
+        setEmail("");
+        setSubject("");
+        setMessage("");
+      } else {
+        alert("Failed to send message.");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      alert("An error occurred while sending the message.");
+    }
+  };
+
   return (
     <main className="flex-1">
         {/* Home Section (Hero) */}
@@ -57,10 +91,10 @@ export default function LandingPage() {
                  </ul>
                 <div className="flex flex-col gap-2 min-[400px]:flex-row pt-4">
                   <Button size="lg" asChild>
-                    <Link to="/projects" prefetch="false">Find Projects</Link>
+                    <Link to="/register/collaborator" prefetch="false">Find Projects</Link>
                   </Button>
                   <Button size="lg" variant="secondary" asChild>
-                     <Link to="/collaborators" prefetch="false">Find Collaborators</Link>
+                     <Link to="/register/creator" prefetch="false">Find Collaborators</Link>
                   </Button>
                 </div>
               </div>
@@ -207,10 +241,52 @@ export default function LandingPage() {
                 (Contact form or details will be added here).
               </p>
             </div>
-             {/* Placeholder for contact form or details */}
-             <div className="mt-4 text-muted-foreground">
-                Email: info@projectshare.example.com
-             </div>
+             {/* Contact Form */}
+            <form className="max-w-md mx-auto" onSubmit={handleSubmit}>
+              <div className="grid gap-4">
+                <div className="flex flex-col space-y-2">
+                  <Label htmlFor="name">Name</Label>
+                  <Input
+                    id="name"
+                    placeholder="Your name"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                  />
+                </div>
+                <div className="flex flex-col space-y-2">
+                  <Label htmlFor="email">Email</Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="Your email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                  />
+                </div>
+                <div className="flex flex-col space-y-2">
+                  <Label htmlFor="subject">Subject</Label>
+                  <Input
+                    id="subject"
+                    placeholder="Subject"
+                    value={subject}
+                    onChange={(e) => setSubject(e.target.value)}
+                  />
+                </div>
+                <div className="flex flex-col space-y-2">
+                  <Label htmlFor="message">Message</Label>
+                  <textarea
+                    id="message"
+                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                    placeholder="Enter your message"
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
+                  />
+                </div>
+              </div>
+              <section className="text-center mt-8">
+                <Button type="submit">Submit</Button>
+              </section>
+            </form>
           </div>
         </section>
     </main>
