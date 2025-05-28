@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router"; 
+import { Link, useNavigate } from "react-router"; 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -10,6 +10,7 @@ const CreatorLogin = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false); // Added loading state
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -39,7 +40,7 @@ const CreatorLogin = () => {
 
         // Redirect to the creator dashboard
         // Consider using useNavigate from react-router for SPA navigation
-        window.location.href = "/creator/dashboard";
+        navigate('/creator/dashboard');
       } else {
         // This case might not be necessary if the server always returns a token on success
         // or throws an error handled by the catch block.

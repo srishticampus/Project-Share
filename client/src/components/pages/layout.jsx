@@ -1,4 +1,4 @@
-import { Link, Outlet } from "react-router";
+import { Link, Outlet, useNavigate } from "react-router";
 import { Code,  ChevronDown, Menu, User, Bell } from "lucide-react";
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
@@ -10,6 +10,7 @@ export default function Layout() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userRole, setUserRole] = useState(null);
   const [showNotifications, setShowNotifications] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     // Check if the token exists in local storage on component mount
@@ -116,7 +117,7 @@ export default function Layout() {
                         localStorage.removeItem('role');
                         setIsLoggedIn(false);
                         setUserRole(null);
-                        window.location.href = '/';
+                        navigate('/');
                       }}
                     >
                       Logout
@@ -223,7 +224,7 @@ export default function Layout() {
                         localStorage.removeItem('role');
                         setIsLoggedIn(false);
                         setUserRole(null);
-                        window.location.href = '/'; // Redirect to home after logout
+                        navigate('/'); // Redirect to home after logout
                         toggleMobileMenu();
                       }}
                     >

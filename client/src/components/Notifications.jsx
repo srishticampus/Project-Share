@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import apiClient from '@/lib/apiClient';
-import { useNavigate } from 'react-router';
+import { useNavigate,useLocation } from 'react-router';
 
 function Notifications({ onNotificationClick }) {
   const [notifications, setNotifications] = useState([]);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
-  const currentRole = window.location.pathname.split('/')[1];
+  const location = useLocation();
+  const currentRole = location.pathname.split('/')[1];
 
   useEffect(() => {
     const fetchNotifications = async () => {

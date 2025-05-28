@@ -1,4 +1,4 @@
-import { Link, Outlet, useLocation } from "react-router";
+import { Link, Outlet, useLocation, useNavigate } from "react-router";
 import {
   LayoutDashboard,
   Search,
@@ -157,10 +157,11 @@ function AppSidebar() {
 }
 
 export default function CollaboratorLayout() {
+  const navigate = useNavigate();
   const handleLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('role');
-    window.location.href = '/'; // Redirect to home after logout
+    navigate('/');
   };
 
   return (

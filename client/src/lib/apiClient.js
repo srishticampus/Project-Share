@@ -35,7 +35,7 @@ apiClient.interceptors.response.use(
       console.error('Unauthorized access - redirecting to login');
       // Potentially clear local storage and redirect
       localStorage.removeItem('token');
-      window.location.href = '/login';
+      window.location.href = import.meta.env.VITE_BASE_URL + 'login';
     }
     return Promise.reject(error);
   }

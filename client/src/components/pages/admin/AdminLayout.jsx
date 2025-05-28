@@ -1,4 +1,4 @@
-import { Link, Outlet, useLocation } from "react-router";
+import { Link, Outlet, useLocation, useNavigate } from "react-router";
 import {
   LayoutDashboard,
   User,
@@ -114,13 +114,14 @@ function AppSidebar() {
 export default function AdminLayout() {
   const [isLoggedIn, setIsLoggedIn] = useState(true);
   const [userRole, setUserRole] = useState('admin');
+  const navigate = useNavigate();
 
   const handleLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('role');
     setIsLoggedIn(false);
     setUserRole(null);
-    window.location.href = '/'; // Redirect to home after logout
+    navigate('/');
   };
 
   return (
