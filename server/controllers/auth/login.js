@@ -86,7 +86,7 @@ router.post(
           user.lastLogin = Date.now();
           user.loginCount = (user.loginCount || 0) + 1; // Increment login count
           user.save(); // Don't await this, let it run in background
-          res.json({ token, isAdmin: isAdmin });
+          res.json({ token, isAdmin: isAdmin, role: user.role });
         }
       );
     } catch (err) {

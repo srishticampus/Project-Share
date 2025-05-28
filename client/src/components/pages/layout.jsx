@@ -35,7 +35,7 @@ export default function Layout() {
       case 'collaborator':
         return '/collaborator/profile';
       case 'mentor':
-        return '/mentor/profile';
+        return '/mentor';
       default:
         return '/profile'; // Default profile page
     }
@@ -105,11 +105,6 @@ export default function Layout() {
                     <DropdownMenuItem asChild>
                       <Link to={getProfileLink()} prefetch="false">
                         My Profile
-                      </Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem asChild>
-                      <Link to="/settings" prefetch="false">
-                        Settings
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem
@@ -213,11 +208,8 @@ export default function Layout() {
 
                 {isLoggedIn ? (
                   <>
-                    <Link to={getProfileLink(userRole)} className="block transition-colors hover:text-foreground/80 text-foreground/60" prefetch="false" onClick={toggleMobileMenu}>
+                    <Link to={getProfileLink()} className="block transition-colors hover:text-foreground/80 text-foreground/60" prefetch="false" onClick={toggleMobileMenu}>
                       My Profile
-                    </Link>
-                    <Link to="/settings" className="block transition-colors hover:text-foreground/80 text-foreground/60" prefetch="false" onClick={toggleMobileMenu}>
-                      Settings
                     </Link>
                     <Button
                       variant="outline"

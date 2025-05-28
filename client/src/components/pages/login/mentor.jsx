@@ -40,7 +40,7 @@ const MentorLogin = () => {
 
         // Redirect to the mentor dashboard
         // Consider using useNavigate from react-router for SPA navigation
-        navigate('/mentor/dashboard');
+        navigate('/mentor');
       } else {
         // This case might not be necessary if the server always returns a token on success
         // or throws an error handled by the catch block.

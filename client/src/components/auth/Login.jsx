@@ -34,14 +34,21 @@ function Login() {
 
       // Login successful
       console.log('Login successful:', data);
-      // Store the token (e.g., in localStorage)
-      localStorage.setItem('token', data.token); // Assuming the token is in data.token
+      // Store the token and role in localStorage
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('role', data.role); // Store the user's role
 
       // Redirect user to dashboard or appropriate page
-      if (data.isAdmin) {
+      if (data.role === 'admin') {
         navigate('/admin');
+      } else if (data.role === 'creator') {
+        navigate('/creator/dashboard'); // Assuming creator dashboard is /creator/dashboard
+      } else if (data.role === 'collaborator') {
+        navigate('/collaborator/dashboard'); // Assuming collaborator dashboard is /collaborator/dashboard
+      } else if (data.role === 'mentor') {
+        navigate('/mentor');
       } else {
-        navigate('/home');
+        navigate('/home'); // Default redirect
       }
 
       // For now, just log success and clear form
