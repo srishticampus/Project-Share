@@ -1,4 +1,4 @@
-import Report from '../../models/Report'; // Import the Report model
+import Report from '../../models/Report.js'; // Import the Report model
 
 // Get all reports (or pending reports for moderation)
 const getReports = async (req, res) => {

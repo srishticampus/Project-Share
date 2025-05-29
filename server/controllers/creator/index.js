@@ -1,6 +1,6 @@
 import express from 'express';
-import { createProject, getProjects, getProject, updateProject, deleteProject, getProjectDashboardStats } from './projectController';
-import { createTask, assignTask, updateTask, getTasksByProject, deleteTask, editTask } from './taskController';
+import { createProject, getProjects, getProject, updateProject, deleteProject, getProjectDashboardStats } from './projectController.js';
+import { createTask, assignTask, updateTask, getTasksByProject, deleteTask, editTask } from './taskController.js';
 import { getApplicationsForCreatorProjects, getApplicationDashboardStats } from '../applicationController.js';
 
 const router = express.Router();

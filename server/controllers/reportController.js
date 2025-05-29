@@ -1,4 +1,4 @@
-import Report from '../models/Report'; // Assuming the Report model exists
+import Report from '../models/Report.js'; // Assuming the Report model exists
 
 const submitReport = async (req, res) => {
   try {

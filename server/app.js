@@ -51,10 +51,14 @@ app.use((err, req, res, next) => {
 });
 
 
-// Server Start (Consider using Vite's dev server in development)
-if (import.meta.env.PROD) {
-    const PORT = import.meta.env.VITE_PORT || 3000;
+// Replace the Vite-specific check with standard Node.js environment detection
+const PORT = process.env.PORT || 4061;
+const isProduction = process.env.NODE_ENV === 'production';
+
+if (isProduction) {
     app.listen(PORT, () => console.log(`Server running in production on port ${PORT}`));
+} else {
+    app.listen(PORT, () => console.log(`Server running in development on port ${PORT}`));
 }
 
 // Note: For development, you might run this via Vite or nodemon.
