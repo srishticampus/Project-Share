@@ -13,6 +13,10 @@ import { submitReport } from './reportController.js';
 
 const router = express.Router();
 
+//Test route
+router.get('/',(req,res)=>{
+    res.send("Api is working fine")
+})
 // Auth routes
 router.use('/auth', authRoutes);
 
