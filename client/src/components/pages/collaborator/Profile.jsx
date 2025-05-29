@@ -5,6 +5,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import apiClient from '@/lib/apiClient'; // Assuming an API client
+import { API_URL } from '@/lib/constant';
 
 function CollaboratorProfile() {
   const [profile, setProfile] = useState(null);
@@ -219,7 +220,7 @@ function CollaboratorProfile() {
                  <div>
                   {profile?.photo && (
                     <img
-                      src={profile.photo.startsWith('blob:') ? profile.photo : `${import.meta.env.VITE_API_URL}/uploads/${profile.photo}`}
+                      src={profile.photo.startsWith('blob:') ? profile.photo : `${API_URL}/uploads/${profile.photo}`}
                       alt="Profile"
                       className="h-20 w-20 rounded-full object-cover"
                     />

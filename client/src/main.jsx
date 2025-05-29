@@ -6,7 +6,7 @@ import { BrowserRouter } from 'react-router'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <BrowserRouter basename={import.meta.env.VITE_BASE_URL}>
+    <BrowserRouter basename={import.meta.env.VITE_BASE_URL || '/project_share/'}>
       <App />
     </BrowserRouter>
   </React.StrictMode>,

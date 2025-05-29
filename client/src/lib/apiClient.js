@@ -1,9 +1,10 @@
 import axios from 'axios';
+import { API_URL } from './constant';
 
 // Assume the API is running on localhost:5000 and prefixed with /api
 // Adjust this baseURL if your API endpoint is different
 const apiClient = axios.create({
-  baseURL: `${import.meta.env.VITE_API_URL}` || 'https://hybrid.srishticampus.in/project_share_api', // Replace with your actual API base URL
+  baseURL: `${API_URL}/api`, // Replace with your actual API base URL
 });
 
 // Request interceptor to add the auth token header to requests
@@ -35,7 +36,7 @@ apiClient.interceptors.response.use(
       console.error('Unauthorized access - redirecting to login');
       // Potentially clear local storage and redirect
       localStorage.removeItem('token');
-      window.location.href = import.meta.env.VITE_BASE_URL + 'login';
+      window.location.href = (import.meta.env.VITE_BASE_URL || '/project_share/') + 'login';
     }
     return Promise.reject(error);
   }
