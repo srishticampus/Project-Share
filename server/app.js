@@ -13,7 +13,7 @@ app.use(cors()); // Enable CORS for all origins (adjust in production)
 
 // Logging
 app.use(morgan("dev")); // Dev logging to console
-app.use(logger({ transport: { target: "pino-pretty" } })); // Pino logging
+app.use(logger({transport:{target:"pino-pretty"}})); // Pino logging
 
 // create a rotating write stream for file logging
 const accessLogStream = createStream("access.log", {
@@ -26,18 +26,18 @@ app.use(morgan("combined", { stream: accessLogStream }));
 // Body Parser Middleware
 app.use(express.json()); // To parse JSON request bodies
 
-import fs from "fs";
-import path from "path";
+import fs from 'fs';
+import path from 'path';
 
 // Check if uploads directory exists, create if not
-const uploadsDir = path.join(process.cwd(), "uploads");
+const uploadsDir = path.join(process.cwd(), 'uploads');
 if (!fs.existsSync(uploadsDir)) {
   fs.mkdirSync(uploadsDir);
 }
 
 // Mount API Routes
-app.use("/uploads", express.static("uploads")); // Serve the uploads directory as static
-app.use("project_share_api/api", apiRouter);
+app.use('/uploads', express.static('uploads')); // Serve the uploads directory as static
+app.use("/api", apiRouter);
 
 // Basic 404 Handler
 app.use((req, res, next) => {
@@ -50,12 +50,11 @@ app.use((err, req, res, next) => {
   res.status(500).json({ message: "Server Error", error: err.message }); // Avoid sending stack trace in production
 });
 
+
 // Server Start (Consider using Vite's dev server in development)
 if (import.meta.env.PROD) {
-  const PORT = import.meta.env.VITE_PORT || 3000;
-  app.listen(PORT, () =>
-    console.log(`Server running in production on port ${PORT}`)
-  );
+    const PORT = import.meta.env.VITE_PORT || 3000;
+    app.listen(PORT, () => console.log(`Server running in production on port ${PORT}`));
 }
 
 // Note: For development, you might run this via Vite or nodemon.
