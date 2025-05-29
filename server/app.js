@@ -37,7 +37,7 @@ if (!fs.existsSync(uploadsDir)) {
 
 // Mount API Routes
 app.use('/uploads', express.static('uploads')); // Serve the uploads directory as static
-app.use("/api", apiRouter);
+app.use("/project_share_api", apiRouter);
 
 // Basic 404 Handler
 app.use((req, res, next) => {
