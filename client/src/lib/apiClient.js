@@ -3,7 +3,7 @@ import axios from 'axios';
 // Assume the API is running on localhost:5000 and prefixed with /api
 // Adjust this baseURL if your API endpoint is different
 const apiClient = axios.create({
-  baseURL: `${import.meta.env.VITE_API_URL}`, // Replace with your actual API base URL
+  baseURL: `${import.meta.env.VITE_API_URL}` || 'https://hybrid.srishticampus.in/project_share_api', // Replace with your actual API base URL
 });
 
 // Request interceptor to add the auth token header to requests
