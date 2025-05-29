@@ -93,7 +93,7 @@ function CreatorMentors() {
 }
 
 function App() {
-  console.log(import.meta.env.VITE_API_URL)
+  console.log("env variable for API:",import.meta.env.VITE_API_URL)
   return (
     <Routes>
       <Route path="/" element={<Layout />} >
