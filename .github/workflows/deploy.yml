@@ -108,14 +108,11 @@ jobs:
 
           # Install backend dependencies
           cd ${{ env.DEPLOY_DIR }}/backend
-          npm install --omit=dev
-
-          # Build server
-          npm run build
+          npm install
 
           # Restart application with PM2
           pm2 delete ${{ env.PM2_APP_NAME }} || true
-          pm2 start "npm run start" --name "${{ env.PM2_APP_NAME }}"
+          pm2 start "npm run dev" --name "${{ env.PM2_APP_NAME }}"
           pm2 save
 
           # Verify deployment
