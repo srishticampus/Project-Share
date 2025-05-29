@@ -112,7 +112,7 @@ jobs:
 
           # Restart application with PM2
           pm2 delete ${{ env.PM2_APP_NAME }} || true
-          pm2 start app.js --name "${{ env.PM2_APP_NAME }}"
+          pm2 start npm --name "${{ env.PM2_APP_NAME }}" -- run dev
           pm2 save
 
           # Verify deployment
