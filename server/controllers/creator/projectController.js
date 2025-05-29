@@ -1,4 +1,4 @@
-import Project from '../../models/Project';
+import Project from '../../models/Project.js';
 
 // Helper function to validate tech stack
 const validateTechStack = (techStack,res) => {
