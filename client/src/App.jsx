@@ -83,6 +83,7 @@ function Privacy() {
 // }
 
 import CreatorApplications from './components/pages/creator/CreatorApplications'; // Import the actual component
+import { API_URL } from './lib/constant';
 
 function CreatorChat() {
   return <div>Creator Chat Page</div>;
@@ -93,7 +94,7 @@ function CreatorMentors() {
 }
 
 function App() {
-  console.log("env variable for API:",import.meta.env.VITE_API_URL)
+  console.log("env variable for API:",API_URL)
   return (
     <Routes>
       <Route path="/" element={<Layout />} >

@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { MoreHorizontal } from "lucide-react" // Import the ellipsis icon
 import apiClient from '@/lib/apiClient';
+import { API_URL } from '@/lib/constant';
 
 function Users() {
   const [users, setUsers] = useState([]);
@@ -117,7 +118,7 @@ function Users() {
               <TableRow key={user.email}>
                 <TableCell>
                   <Avatar >
-                    <AvatarImage src={user.photo && `${import.meta.env.VITE_API_URL}/${user.photo}` }  />
+                    <AvatarImage src={user.photo && `${API_URL}/${user.photo}` }  />
                     <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
                   </Avatar>
                 </TableCell>
