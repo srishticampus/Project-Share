@@ -4,9 +4,9 @@
   "main": "app.js",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "start": "npm run build && node dist/app.cjs"
+    "dev": "nodemon --watch . --exec node --experimental-specifier-resolution=node app.js",
+    "start": "node app.js",
+    "build": "vite build"
   },
   "keywords": [],
   "author": "",
