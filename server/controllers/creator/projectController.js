@@ -1,4 +1,5 @@
 import Project from '../../models/Project.js';
+import User from '../../models/user.js'; // Import the User model
 
 // Helper function to validate tech stack
 const validateTechStack = (techStack,res) => {
