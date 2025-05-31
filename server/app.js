@@ -5,7 +5,9 @@ import logger from "pino-http";
 import { createStream } from "rotating-file-stream";
 import db from "./db_driver.js"; // Assuming this handles DB connection on import
 import apiRouter from "./controllers/index.js"; // Import the main API router
+import dotenv from "dotenv";
 
+dotenv.config();
 export const app = express();
 
 // Middleware Setup
@@ -52,7 +54,7 @@ app.use((err, req, res, next) => {
 
 
 // Replace the Vite-specific check with standard Node.js environment detection
-const PORT = process.env.PORT || 4061;
+const PORT = process.env.VITE_PORT || 4061;
 const isProduction = process.env.NODE_ENV === 'production';
 
 if (isProduction) {
