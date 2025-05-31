@@ -7,7 +7,7 @@ import db from "./db_driver.js"; // Assuming this handles DB connection on impor
 import apiRouter from "./controllers/index.js"; // Import the main API router
 import dotenv from "dotenv";
 
-dotenv.config();
+dotenv.config({path:`.env.${process.env.NODE_ENV}`});
 export const app = express();
 
 // Middleware Setup
@@ -54,7 +54,7 @@ app.use((err, req, res, next) => {
 
 
 // Replace the Vite-specific check with standard Node.js environment detection
-const PORT = process.env.VITE_PORT || 4061;
+let PORT = process.env.VITE_PORT || 4061;
 const isProduction = process.env.NODE_ENV === 'production';
 
 if (isProduction) {
