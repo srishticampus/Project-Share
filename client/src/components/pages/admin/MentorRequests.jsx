@@ -90,14 +90,14 @@ function MentorRequests() {
             <TableBody>
               {mentorRequests.map((request) => (
                 <TableRow key={request._id}>
-                  <TableCell>{request.name}</TableCell>
+                  <TableCell>{request.requester.name}</TableCell>
                   <TableCell>
-                    <Avatar src={request.photo || "https://github.com/shadcn.png"} alt={request.name} />
+                    <Avatar src={request.requester.photo || "https://github.com/shadcn.png"} alt={request.requester.name} />
                   </TableCell>
-                  <TableCell>{request.contactNumber}</TableCell>
-                  <TableCell>{request.email}</TableCell>
-                  <TableCell>{request.areasOfExpertise ? request.areasOfExpertise.join(', ') : 'N/A'}</TableCell>
-                  <TableCell>{request.yearsOfExperience} years</TableCell>
+                  <TableCell>{request.requester.contactNumber}</TableCell>
+                  <TableCell>{request.requester.email}</TableCell>
+                  <TableCell>{request.requester.areasOfExpertise ? request.requester.areasOfExpertise.join(', ') : 'N/A'}</TableCell>
+                  <TableCell>{request.requester.yearsOfExperience} years</TableCell>
                   <TableCell className="space-x-2">
                     <Button onClick={() => handleStatusUpdate(request._id, 'accepted')} className="bg-green-500 hover:bg-green-600 text-white">
                       Approve
