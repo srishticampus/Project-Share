@@ -60,6 +60,7 @@ const isProduction = process.env.NODE_ENV === 'production';
 if (isProduction) {
     app.listen(PORT, () => console.log(`Server running in production on port ${PORT}`));
 } else {
+    PORT = process.env.VITE_PORT || 3000;
     app.listen(PORT, () => console.log(`Server running in development on port ${PORT}`));
 }
 
