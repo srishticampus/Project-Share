@@ -13,13 +13,23 @@ export default function Layout() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Check if the token exists in local storage on component mount
-    const token = localStorage.getItem('token');
-    setIsLoggedIn(!!token); // Set isLoggedIn to true if token exists, false otherwise
+    const checkLoginStatus = () => {
+      const token = localStorage.getItem('token');
+      setIsLoggedIn(!!token);
+      const role = localStorage.getItem('role');
+      setUserRole(role);
+    };
 
-    // Get user role from local storage
-    const role = localStorage.getItem('role');
-    setUserRole(role);
+    // Check status on mount
+    checkLoginStatus();
+
+    // Listen for custom login status change event
+    window.addEventListener('loginStatusChange', checkLoginStatus);
+
+    // Clean up the event listener on component unmount
+    return () => {
+      window.removeEventListener('loginStatusChange', checkLoginStatus);
+    };
   }, []);
 
   const toggleMobileMenu = () => {

@@ -38,6 +38,9 @@ function Login() {
       localStorage.setItem('token', data.token);
       localStorage.setItem('role', data.role); // Store the user's role
 
+      // Dispatch a custom event to notify other components of login status change
+      window.dispatchEvent(new Event('loginStatusChange'));
+
       // Redirect user to dashboard or appropriate page
       if (data.role === 'admin') {
         navigate('/admin');
