@@ -38,6 +38,15 @@ const MentorLogin = () => {
 
         localStorage.setItem('role', userRole);
 
+        // Check if the user's role matches the expected role for this login page
+        if (userRole !== 'mentor') {
+          setError("Unauthorized: Your registered role is not Mentor.");
+          localStorage.removeItem("token"); // Clear token if role mismatch
+          localStorage.removeItem("role"); // Clear role if role mismatch
+          setLoading(false); // Ensure loading is false
+          return; // Stop further execution
+        }
+
         // Redirect to the mentor dashboard
         // Consider using useNavigate from react-router for SPA navigation
         navigate('/mentor');

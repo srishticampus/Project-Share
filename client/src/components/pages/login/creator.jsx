@@ -38,6 +38,15 @@ const CreatorLogin = () => {
 
         localStorage.setItem('role', userRole);
 
+        // Check if the user's role matches the expected role for this login page
+        if (userRole !== 'creator') {
+          setError("Unauthorized: Your registered role is not Creator.");
+          localStorage.removeItem("token"); // Clear token if role mismatch
+          localStorage.removeItem("role"); // Clear role if role mismatch
+          setLoading(false); // Ensure loading is false
+          return; // Stop further execution
+        }
+
         // Redirect to the creator dashboard
         // Consider using useNavigate from react-router for SPA navigation
         navigate('/creator/dashboard');

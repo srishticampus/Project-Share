@@ -37,6 +37,15 @@ const AdminLogin = () => {
 
         localStorage.setItem('role', userRole);
 
+        // Check if the user's role matches the expected role for this login page
+        if (userRole !== 'admin') {
+          setError("Unauthorized: Your registered role is not Admin.");
+          localStorage.removeItem("token"); // Clear token if role mismatch
+          localStorage.removeItem("role"); // Clear role if role mismatch
+          setLoading(false); // Ensure loading is false
+          return; // Stop further execution
+        }
+
         // Redirect to the admin dashboard
         // Consider using useNavigate from react-router for SPA navigation
         navigate('/admin');
