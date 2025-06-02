@@ -4,6 +4,7 @@ import { body, validationResult } from 'express-validator';
 import Message from '../models/Message.js';
 import Notification from '../models/Notification.js';
 import { protect } from '../middleware/auth.js'; //  auth middleware
+import User from '../models/user.js';
 
 const router = express.Router();
 
@@ -37,7 +38,7 @@ router.get('/users', protect, async (req, res) => {
     const userId = req.user.id; // Get the user ID from the auth middleware
 
     // Find all users except the current user
-    const users = await mongoose.model('User').find({ _id: { $ne: userId } });
+    const users = await User.find({ _id: { $ne: userId } });
 
     res.json(users);
   } catch (err) {
