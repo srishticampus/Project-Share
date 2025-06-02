@@ -7,7 +7,7 @@ const router = express.Router();
 // @route   GET api/users/mentors
 // @desc    Get a list of all users with role 'mentor'
 // @access  Private (Accessible by authenticated users like Project Creators/Collaborators)
-router.get('/users/mentors', protect, async (req, res) => {
+router.get('/mentors', protect, async (req, res) => {
   try {
     const mentors = await User.find({ role: 'mentor' }).select('-password'); // Exclude password
     res.json(mentors);
