@@ -10,6 +10,7 @@ import { protect } from '../middleware/auth.js';
 import messageRoutes from './messageController.js';
 import { createApplication, updateApplicationStatus } from './applicationController.js';
 import { submitReport } from './reportController.js';
+import contactFormController from './contactFormController.js'; // Import the new contact form controller
 
 const router = express.Router();
 
@@ -44,6 +45,9 @@ router.use('/messages', messageRoutes);
 
 // Report routes
 router.post('/reports', protect, submitReport); // Protected route for submitting reports
+
+// Contact Form routes
+router.use('/contact', contactFormController); // Use the new contact form routes
 
 // Application routes
 router.post('/applications', protect, createApplication); // Protected route for creating applications

@@ -16,14 +16,14 @@ function Contact() {
     e.preventDefault();
 
     try {
-      const response = await apiClient.post("/messages", {
+      const response = await apiClient.post("/contact", {
         name,
         email,
         subject,
         message,
       });
 
-      if (response.status === 201) {
+      if (response.status === 200 || response.status === 201) { // Assuming 200 OK for success from contactFormController.js
         alert("Message sent successfully!");
         setName("");
         setEmail("");

@@ -12,29 +12,29 @@ import {
 import apiClient from '@/lib/apiClient';
 
 function ContactSubmissions() {
-  const [messages, setMessages] = useState([]);
+  const [submissions, setSubmissions] = useState([]);
 
   useEffect(() => {
-    fetchMessages();
+    fetchSubmissions();
   }, []);
 
-  const fetchMessages = async () => {
+  const fetchSubmissions = async () => {
     try {
-      const data = await apiClient.get('/messages');
-      console.log('API response data type:', typeof data);
-      console.log('API response data:', data);
-      setMessages(data.data);
+      const response = await apiClient.get('/contact'); // Fetch from the new contact endpoint
+      console.log('API response data type:', typeof response.data);
+      console.log('API response data:', response.data);
+      setSubmissions(response.data); // Assuming response.data is the array of submissions
     } catch (error) {
-      console.error(error);
+      console.error("Error fetching contact submissions:", error);
     }
   };
 
   const handleDelete = async (id) => {
     try {
-      await apiClient.delete(`/messages/${id}`);
-      fetchMessages(); // Refresh messages after deletion
+      await apiClient.delete(`/contact/${id}`); // Delete from the new contact endpoint
+      fetchSubmissions(); // Refresh submissions after deletion
     } catch (error) {
-      console.error(error);
+      console.error("Error deleting contact submission:", error);
     }
   };
 
@@ -50,20 +50,20 @@ function ContactSubmissions() {
             <TableHead>Email</TableHead>
             <TableHead>Subject</TableHead>
             <TableHead>Message</TableHead>
-            <TableHead>Created At</TableHead>
+            <TableHead>Submitted At</TableHead> {/* Changed from Created At */}
             <TableHead className="text-right">Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {messages.map((message) => (
-            <TableRow key={message._id}>
-              <TableCell className="font-medium">{message.name}</TableCell>
-              <TableCell>{message.email}</TableCell>
-              <TableCell>{message.subject}</TableCell>
-              <TableCell>{message.message}</TableCell>
-              <TableCell>{new Date(message.createdAt).toLocaleString()}</TableCell>
+          {submissions.map((submission) => (
+            <TableRow key={submission._id}>
+              <TableCell className="font-medium">{submission.name}</TableCell>
+              <TableCell>{submission.email}</TableCell>
+              <TableCell>{submission.subject}</TableCell>
+              <TableCell>{submission.message}</TableCell>
+              <TableCell>{new Date(submission.submittedAt).toLocaleString()}</TableCell> {/* Changed to submittedAt */}
               <TableCell className="text-right">
-                <Button variant="destructive" size="sm" onClick={() => handleDelete(message._id)}>
+                <Button variant="destructive" size="sm" onClick={() => handleDelete(submission._id)}>
                   Delete
                 </Button>
               </TableCell>
