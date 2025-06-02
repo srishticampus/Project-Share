@@ -46,6 +46,9 @@ const AdminLogin = () => {
           return; // Stop further execution
         }
 
+        // Dispatch a custom event to notify other components of login status change
+        window.dispatchEvent(new Event('loginStatusChange'));
+
         // Redirect to the admin dashboard
         // Consider using useNavigate from react-router for SPA navigation
         navigate('/admin');
