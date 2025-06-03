@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useParams } from 'react-router';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+import { Skeleton } from "@/components/ui/skeleton"
 import { getProject } from "@/lib/apiClient";
 import { ArrowLeft } from 'lucide-react';
 import ReportForm from '@/components/ReportForm'; // Import ReportForm
@@ -44,7 +45,44 @@ function ProjectDetails() {
   }, [id]);
 
   if (!project) {
-    return <div>Loading...</div>; // Or display a loading indicator
+    return (
+      <div className="container mx-auto py-10">
+        <div className="mb-6 flex items-center space-x-2">
+          <Skeleton className="h-4 w-4" />
+          <Skeleton className="h-4 w-32" />
+        </div>
+        <Card>
+          <CardHeader>
+            <Skeleton className="h-8 w-3/4" />
+            <Skeleton className="h-4 w-1/2" />
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-4 w-3/4" />
+            <div className="border rounded-md p-4">
+              <Skeleton className="h-6 w-1/4 mb-2" />
+              <Skeleton className="h-4 w-1/2" />
+              <Skeleton className="h-4 w-2/3" />
+              <Skeleton className="h-4 w-full" />
+              <Skeleton className="h-4 w-1/3" />
+            </div>
+            <div className="border rounded-md p-4">
+              <Skeleton className="h-6 w-1/4 mb-2" />
+              <ul className="list-disc pl-5 space-y-2">
+                <li><Skeleton className="h-4 w-full" /></li>
+                <li><Skeleton className="h-4 w-full" /></li>
+                <li><Skeleton className="h-4 w-full" /></li>
+              </ul>
+            </div>
+          </CardContent>
+          <CardFooter className="flex justify-between items-center">
+            <Skeleton className="h-6 w-20" />
+            <Skeleton className="h-10 w-24" />
+          </CardFooter>
+        </Card>
+      </div>
+    );
   }
 
   return (

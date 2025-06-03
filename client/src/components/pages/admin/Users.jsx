@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/table"
 import { Button } from '@/components/ui/button';
 import { Avatar,AvatarImage,AvatarFallback } from "@/components/ui/avatar"
+import { Skeleton } from "@/components/ui/skeleton"
 import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog"
 import {
   DropdownMenu,
@@ -29,12 +30,14 @@ function Users() {
   const [totalPages, setTotalPages] = useState(1);
   const [limit, setLimit] = useState(10);
   const [totalUsers, setTotalUsers] = useState(0);
+  const [loading, setLoading] = useState(true); // Add loading state
 
   useEffect(() => {
     fetchUsers();
   }, [page, limit]);
 
   const fetchUsers = async () => {
+    setLoading(true); // Set loading to true before fetch
     try {
       const response = await apiClient.get(`/admin/users?page=${page}&limit=${limit}`);
       console.log(response.data);
@@ -43,6 +46,8 @@ function Users() {
       setTotalUsers(response.data.totalUsers);
     } catch (error) {
       console.error('Failed to fetch users:', error);
+    } finally {
+      setLoading(false); // Set loading to false after fetch
     }
   };
 
@@ -114,51 +119,73 @@ function Users() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {users && users?.map((user) => (
-              <TableRow key={user.email}>
-                <TableCell>
-                  <Avatar >
-                    <AvatarImage src={user.photo && `${API_URL}/${user.photo}` }  />
-                    <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
-                  </Avatar>
-                </TableCell>
-                <TableCell>{user.name}</TableCell>
-                <TableCell>{user.email}</TableCell>
-                <TableCell>{user.role}</TableCell>
-                <TableCell>{user.contactNumber || 'N/A'}</TableCell>
-                <TableCell>{user.country || 'N/A'}</TableCell>
-                <TableCell>{user.city || 'N/A'}</TableCell>
-                <TableCell>{user.dateOfBirth ? new Date(user.dateOfBirth).toLocaleDateString() : 'N/A'}</TableCell>
-                <TableCell>{user.gender || 'N/A'}</TableCell>
-                <TableCell>{user.isVerified ? 'Yes' : 'No'}</TableCell>
-                <TableCell>
-                  {user.role === 'creator' ? (user.isApproved ? 'Yes' : 'No') : 'N/A'}
-                </TableCell> {/* Display N/A if not a creator */}
-                <TableCell>{user.lastLogin ? new Date(user.lastLogin).toLocaleString() : 'N/A'}</TableCell>
-                <TableCell>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" className="h-8 w-8 p-0">
-                        <span className="sr-only">Open menu</span>
-                        <MoreHorizontal className="h-4 w-4" /> {/* Replaced "Actions" text with icon */}
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                      <DropdownMenuItem onClick={() => handleDeleteUser(user._id)}>Delete</DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => handleToggleVerified(user._id, user.isVerified)}>
-                        {user.isVerified ? 'Unverify' : 'Verify'}
-                      </DropdownMenuItem>
-                      {user.role === 'creator' && (
-                        <DropdownMenuItem onClick={() => handleToggleApproved(user._id, user.isApproved)}>
-                          {user.isApproved ? 'Disapprove' : 'Approve'}
+            {loading ? (
+              // Render skeleton rows when loading
+              Array.from({ length: limit }).map((_, index) => (
+                <TableRow key={index}>
+                  <TableCell><Skeleton className="h-10 w-10 rounded-full" /></TableCell>
+                  <TableCell><Skeleton className="h-4 w-24" /></TableCell>
+                  <TableCell><Skeleton className="h-4 w-32" /></TableCell>
+                  <TableCell><Skeleton className="h-4 w-16" /></TableCell>
+                  <TableCell><Skeleton className="h-4 w-20" /></TableCell>
+                  <TableCell><Skeleton className="h-4 w-20" /></TableCell>
+                  <TableCell><Skeleton className="h-4 w-20" /></TableCell>
+                  <TableCell><Skeleton className="h-4 w-24" /></TableCell>
+                  <TableCell><Skeleton className="h-4 w-16" /></TableCell>
+                  <TableCell><Skeleton className="h-4 w-12" /></TableCell>
+                  <TableCell><Skeleton className="h-4 w-12" /></TableCell>
+                  <TableCell><Skeleton className="h-4 w-32" /></TableCell>
+                  <TableCell><Skeleton className="h-8 w-8" /></TableCell>
+                </TableRow>
+              ))
+            ) : (
+              // Render actual user rows when not loading
+              users && users?.map((user) => (
+                <TableRow key={user.email}>
+                  <TableCell>
+                    <Avatar >
+                      <AvatarImage src={user.photo && `${API_URL}/${user.photo}` }  />
+                      <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+                    </Avatar>
+                  </TableCell>
+                  <TableCell>{user.name}</TableCell>
+                  <TableCell>{user.email}</TableCell>
+                  <TableCell>{user.role}</TableCell>
+                  <TableCell>{user.contactNumber || 'N/A'}</TableCell>
+                  <TableCell>{user.country || 'N/A'}</TableCell>
+                  <TableCell>{user.city || 'N/A'}</TableCell>
+                  <TableCell>{user.dateOfBirth ? new Date(user.dateOfBirth).toLocaleDateString() : 'N/A'}</TableCell>
+                  <TableCell>{user.gender || 'N/A'}</TableCell>
+                  <TableCell>{user.isVerified ? 'Yes' : 'No'}</TableCell>
+                  <TableCell>
+                    {user.role === 'creator' ? (user.isApproved ? 'Yes' : 'No') : 'N/A'}
+                  </TableCell> {/* Display N/A if not a creator */}
+                  <TableCell>{user.lastLogin ? new Date(user.lastLogin).toLocaleString() : 'N/A'}</TableCell>
+                  <TableCell>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" className="h-8 w-8 p-0">
+                          <span className="sr-only">Open menu</span>
+                          <MoreHorizontal className="h-4 w-4" /> {/* Replaced "Actions" text with icon */}
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                        <DropdownMenuItem onClick={() => handleDeleteUser(user._id)}>Delete</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => handleToggleVerified(user._id, user.isVerified)}>
+                          {user.isVerified ? 'Unverify' : 'Verify'}
                         </DropdownMenuItem>
-                      )}
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </TableCell>
-              </TableRow>
-            ))}
+                        {user.role === 'creator' && (
+                          <DropdownMenuItem onClick={() => handleToggleApproved(user._id, user.isApproved)}>
+                            {user.isApproved ? 'Disapprove' : 'Approve'}
+                          </DropdownMenuItem>
+                        )}
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </TableCell>
+                </TableRow>
+              ))
+            )}
           </TableBody>
         </Table>
         <div className="flex items-center justify-between mt-4">

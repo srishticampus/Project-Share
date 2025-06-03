@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Skeleton } from "@/components/ui/skeleton";
 import apiClient from '@/lib/apiClient';
 
 function BrowseProjects() {
@@ -54,7 +55,35 @@ function BrowseProjects() {
   };
 
   if (loading) {
-    return <div className="text-center py-8">Loading projects...</div>;
+    return (
+      <div className="container mx-auto p-6">
+        <Skeleton className="h-10 w-64 mb-6" /> {/* Skeleton for title */}
+        <div className="mb-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+          <Skeleton className="h-10 w-full" /> {/* Skeleton for search input */}
+          <Skeleton className="h-10 w-full" /> {/* Skeleton for category select */}
+          <Skeleton className="h-10 w-full" /> {/* Skeleton for skill select */}
+        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+          {Array.from({ length: 6 }).map((_, index) => (
+            <Card key={index}>
+              <CardHeader>
+                <Skeleton className="h-6 w-3/4 mb-2" />
+                <Skeleton className="h-4 w-1/2" />
+              </CardHeader>
+              <CardContent>
+                <Skeleton className="h-4 w-full mb-2" />
+                <Skeleton className="h-4 w-5/6" />
+                <Skeleton className="h-4 w-2/3" />
+                <div className="mt-4 flex justify-between items-center">
+                  <Skeleton className="h-10 w-24" />
+                  <Skeleton className="h-10 w-28" />
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </div>
+    );
   }
 
   if (error) {

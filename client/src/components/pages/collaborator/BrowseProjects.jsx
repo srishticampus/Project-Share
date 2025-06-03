@@ -4,6 +4,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"; // Assuming a select component for filtering
+import { Skeleton } from "@/components/ui/skeleton";
 import apiClient from '@/lib/apiClient'; // Assuming an API client
 
 function BrowseProjects() {
@@ -11,6 +12,7 @@ function BrowseProjects() {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterCategory, setFilterCategory] = useState('');
   const [filterSkills, setFilterSkills] = useState([]); // Assuming multiselect for skills
+  const [loading, setLoading] = useState(true); // Add loading state
 
   // Dummy data for now
   const dummyProjects = [
@@ -45,6 +47,7 @@ function BrowseProjects() {
 
   useEffect(() => {
     const fetchProjects = async () => {
+      setLoading(true); // Set loading to true before fetch
       try {
         const response = await apiClient.get('/collaborator/projects', {
           params: { searchTerm, category: filterCategory, skills: filterSkills.join(',') }
@@ -53,6 +56,8 @@ function BrowseProjects() {
       } catch (error) {
         console.error('Error fetching projects:', error);
         // TODO: Set error state
+      } finally {
+        setLoading(false); // Set loading to false after fetch
       }
     };
     fetchProjects();
@@ -87,23 +92,45 @@ function BrowseProjects() {
         </div>
 
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {projects.map((project) => (
-            <Card key={project._id}>
-              <CardHeader>
-                <CardTitle>{project.title}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p><strong>Creator:</strong> {project.creator ? project.creator.name : 'N/A'}</p> {/* Display creator's name */}
-                <p><strong>Category:</strong> {project.category}</p>
-                <p><strong>Description:</strong> {project.description}</p>
-                <p><strong>Required Skills:</strong> {project?.skills?.join(', ')}</p> {/* Use optional chaining for skills */}
-                <p><strong>Timeline:</strong> {project.timeline}</p>
-                <Link to={`/collaborator/projects/${project._id}`}>
-                  <Button className="mt-4">View Details</Button>
-                </Link>
-              </CardContent>
-            </Card>
-          ))}
+          {loading ? (
+            // Render skeleton loaders when loading
+            Array.from({ length: 3 }).map((_, index) => (
+              <Card key={index}>
+                <CardHeader>
+                  <Skeleton className="h-6 w-3/4 mb-2" />
+                </CardHeader>
+                <CardContent>
+                  <Skeleton className="h-4 w-1/2 mb-1" />
+                  <Skeleton className="h-4 w-2/3 mb-1" />
+                  <Skeleton className="h-4 w-full mb-1" />
+                  <Skeleton className="h-4 w-5/6 mb-1" />
+                  <Skeleton className="h-4 w-1/3 mb-4" />
+                  <Skeleton className="h-10 w-28" />
+                </CardContent>
+              </Card>
+            ))
+          ) : projects.length === 0 ? (
+            <p className="text-center text-gray-500 col-span-full">No projects found matching your criteria.</p>
+          ) : (
+            // Render actual projects when not loading
+            projects.map((project) => (
+              <Card key={project._id}>
+                <CardHeader>
+                  <CardTitle>{project.title}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p><strong>Creator:</strong> {project.creator ? project.creator.name : 'N/A'}</p> {/* Display creator's name */}
+                  <p><strong>Category:</strong> {project.category}</p>
+                  <p><strong>Description:</strong> {project.description}</p>
+                  <p><strong>Required Skills:</strong> {project?.skills?.join(', ')}</p> {/* Use optional chaining for skills */}
+                  <p><strong>Timeline:</strong> {project.timeline}</p>
+                  <Link to={`/collaborator/projects/${project._id}`}>
+                    <Button className="mt-4">View Details</Button>
+                  </Link>
+                </CardContent>
+              </Card>
+            ))
+          )}
         </div>
       </div>
     </main>
