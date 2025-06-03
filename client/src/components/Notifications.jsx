@@ -34,14 +34,14 @@ function Notifications({ onNotificationClick }) {
         <div
           key={notification._id}
           onClick={() => {
-            navigate(`${currentRole}/chat/${notification.message.sender._id}`);
+            navigate(`${currentRole}/chat/${notification.relatedEntity?.sender?._id}`);
             if (onNotificationClick) {
               onNotificationClick();
             }
           }}
           style={{ cursor: 'pointer' }} // Add a pointer cursor to indicate it's clickable
         >
-          New message from {notification.message.sender.name}
+          New message from {notification.relatedEntity?.sender?.name || 'Unknown Sender'}
         </div>
       ))}
     </div>

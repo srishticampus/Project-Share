@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Skeleton } from "@/components/ui/skeleton";
 import apiClient from '@/lib/apiClient'; // Assuming an API client
 import { API_URL } from '@/lib/constant';
 
@@ -114,7 +115,50 @@ function CollaboratorProfile() {
   };
 
   if (loading) {
-    return <div>Loading profile...</div>;
+    return (
+      <main className="flex-1 px-6 pb-6">
+        <div className="bg-white rounded-lg h-full p-6">
+          <h1 className="text-2xl font-semibold mb-4">My Profile</h1>
+          <Card>
+            <CardHeader>
+              <Skeleton className="h-6 w-3/4 mb-2" />
+            </CardHeader>
+            <CardContent>
+              <div className="grid gap-4">
+                <div>
+                  <Skeleton className="h-5 w-1/2 mb-1" />
+                  <Skeleton className="h-10 w-full" />
+                </div>
+                <div>
+                  <Skeleton className="h-20 w-20 rounded-full object-cover mb-2" />
+                </div>
+                <div>
+                  <Skeleton className="h-5 w-1/2 mb-1" />
+                  <Skeleton className="h-10 w-full" />
+                </div>
+                <div>
+                  <Skeleton className="h-5 w-1/2 mb-1" />
+                  <Skeleton className="h-10 w-full" />
+                </div>
+                <div>
+                  <Skeleton className="h-5 w-1/2 mb-1" />
+                  <Skeleton className="h-10 w-full" />
+                </div>
+                <div>
+                  <Skeleton className="h-5 w-1/2 mb-1" />
+                  <Skeleton className="h-10 w-full" />
+                </div>
+                <div>
+                  <Skeleton className="h-5 w-1/4 mb-1" />
+                  <Skeleton className="h-20 w-full" />
+                </div>
+                <Skeleton className="h-10 w-20" />
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </main>
+    );
   }
 
   if (error) {

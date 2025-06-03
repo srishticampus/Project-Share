@@ -4,6 +4,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
+import { Skeleton } from "@/components/ui/skeleton";
 import apiClient from '@/lib/apiClient'; // Assuming an API client
 
 function ProjectDetails() {
@@ -99,7 +100,43 @@ function ProjectDetails() {
   };
 
   if (loading) {
-    return <div>Loading project details...</div>;
+    return (
+      <main className="flex-1 px-6 pb-6">
+        <div className="bg-white rounded-lg h-full p-6">
+          <h1 className="text-2xl font-semibold mb-4">Project Details: <Skeleton className="h-6 w-1/2 inline-block" /></h1>
+
+          <Card>
+            <CardHeader>
+              <Skeleton className="h-6 w-3/4 mb-2" />
+            </CardHeader>
+            <CardContent>
+              <Skeleton className="h-4 w-1/2 mb-1" />
+              <Skeleton className="h-4 w-2/3 mb-1" />
+              <Skeleton className="h-20 w-full mb-1" />
+              <Skeleton className="h-4 w-5/6 mb-1" />
+              <Skeleton className="h-4 w-1/3 mb-4" />
+              <Skeleton className="h-4 w-1/4 mb-1" />
+              <Skeleton className="h-4 w-1/4 mb-1" />
+            </CardContent>
+          </Card>
+
+          <Card className="mt-6">
+            <CardHeader>
+              <Skeleton className="h-6 w-3/4 mb-2" />
+            </CardHeader>
+            <CardContent>
+              <div className="grid gap-4">
+                <div>
+                  <Skeleton className="h-5 w-1/2 mb-1" />
+                  <Skeleton className="h-20 w-full" />
+                </div>
+                <Skeleton className="h-10 w-full" />
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </main>
+    );
   }
 
   if (error) {

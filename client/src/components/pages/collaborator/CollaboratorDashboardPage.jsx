@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Link } from 'react-router';
+import { Skeleton } from "@/components/ui/skeleton";
 import apiClient from '@/lib/apiClient'; // Assuming an API client
 
 function CollaboratorDashboardPage() {
@@ -29,7 +30,29 @@ function CollaboratorDashboardPage() {
   }, []);
 
   if (loading) {
-    return <div>Loading dashboard data...</div>;
+    return (
+      <main className="flex-1 px-6 pb-6">
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          <Card>
+            <CardHeader>
+              <Skeleton className="h-6 w-3/4 mb-2" />
+            </CardHeader>
+            <CardContent>
+              <Skeleton className="h-4 w-1/2 mb-1" />
+              <Skeleton className="h-4 w-2/3 mb-1" />
+              <Skeleton className="h-4 w-1/3" />
+            </CardContent>
+          </Card>
+
+          <Card>
+            <div className="p-4 flex flex-col space-y-2">
+              <Skeleton className="h-5 w-48" />
+              <Skeleton className="h-5 w-56" />
+            </div>
+          </Card>
+        </div>
+      </main>
+    );
   }
 
   if (error) {

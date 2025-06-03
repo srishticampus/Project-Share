@@ -3,6 +3,7 @@ import { Link } from 'react-router';
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"; // Assuming a select component for task status
+import { Skeleton } from "@/components/ui/skeleton";
 import apiClient from '@/lib/apiClient'; // Assuming an API client
 
 function ActiveProjects() {
@@ -71,7 +72,36 @@ function ActiveProjects() {
   };
 
   if (loading) {
-    return <div>Loading active projects...</div>;
+    return (
+      <main className="flex-1 px-6 pb-6">
+        <div className="bg-white rounded-lg h-full p-6">
+          <h1 className="text-2xl font-semibold mb-4">Active Projects</h1>
+          <div className="grid gap-4 md:grid-cols-1 lg:grid-cols-2">
+            {[...Array(2)].map((_, index) => ( // Render 2 skeleton cards for projects
+              <Card key={index}>
+                <CardHeader>
+                  <Skeleton className="h-6 w-3/4 mb-2" />
+                  <Skeleton className="h-4 w-1/2 mb-1" />
+                  <Skeleton className="h-4 w-1/3" />
+                </CardHeader>
+                <CardContent>
+                  <Skeleton className="h-5 w-2/5 mb-3" />
+                  {[...Array(2)].map((_, taskIndex) => ( // Render 2 skeleton tasks per project
+                    <div key={taskIndex} className="mb-2">
+                      <Skeleton className="h-4 w-3/4 mb-1" />
+                      <div className="flex items-center space-x-2">
+                        <Skeleton className="h-4 w-1/4" />
+                        <Skeleton className="h-8 w-[180px]" />
+                      </div>
+                    </div>
+                  ))}
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </main>
+    );
   }
 
   if (error) {

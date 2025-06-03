@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Skeleton } from "@/components/ui/skeleton";
 import apiClient from '@/lib/apiClient';
 import { Label } from '@/components/ui/label';
 
@@ -73,7 +74,29 @@ function ConnectWithMentors() {
   );
 
   if (loading) {
-    return <div className="text-center py-8">Loading mentors...</div>;
+    return (
+      <div className="container mx-auto p-6">
+        <h1 className="text-3xl font-bold mb-6">Connect with Mentors</h1>
+        <div className="mb-6">
+          <Skeleton className="h-10 w-full max-w-sm" />
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[...Array(3)].map((_, index) => ( // Render 3 skeleton cards for mentors
+            <Card key={index}>
+              <CardHeader>
+                <Skeleton className="h-6 w-3/4 mb-2" />
+                <Skeleton className="h-4 w-1/2 mb-1" />
+                <Skeleton className="h-4 w-1/3" />
+              </CardHeader>
+              <CardContent>
+                <Skeleton className="h-20 w-full mb-4" />
+                <Skeleton className="h-10 w-full" />
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </div>
+    );
   }
 
   if (error) {

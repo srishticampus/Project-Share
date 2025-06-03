@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router';
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import apiClient from '@/lib/apiClient'; // Assuming an API client
 
 function AppliedProjects() {
@@ -47,7 +48,27 @@ function AppliedProjects() {
   }, []);
 
   if (loading) {
-    return <div>Loading applied projects...</div>;
+    return (
+      <main className="flex-1 px-6 pb-6">
+        <div className="bg-white rounded-lg h-full p-6">
+          <h1 className="text-2xl font-semibold mb-4">Applied Projects</h1>
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {[...Array(3)].map((_, index) => (
+              <Card key={index}>
+                <CardHeader>
+                  <Skeleton className="h-6 w-3/4 mb-2" />
+                </CardHeader>
+                <CardContent>
+                  <Skeleton className="h-4 w-1/2 mb-1" />
+                  <Skeleton className="h-4 w-1/3 mb-1" />
+                  <Skeleton className="h-4 w-2/3" />
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </main>
+    );
   }
 
   if (error) {
