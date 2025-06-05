@@ -51,8 +51,12 @@ function CreatorProfile() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await updateUserProfile(editProfileData);
-      setProfileData(editProfileData); // Update displayed data
+      const dataToUpdate = { ...editProfileData };
+      if (dataToUpdate.skills && typeof dataToUpdate.skills === 'string') {
+        dataToUpdate.skills = dataToUpdate.skills.split(',').map(skill => skill.trim()).filter(skill => skill !== '');
+      }
+      await updateUserProfile(dataToUpdate);
+      setProfileData(dataToUpdate); // Update displayed data
       setIsEditMode(false);
     } catch (error) {
       setError(error);
@@ -92,6 +96,15 @@ function CreatorProfile() {
               <div>
                 <Label className="text-lg font-bold" htmlFor="bio">Bio</Label>
                 <Textarea id="bio" name="bio" value={editProfileData.bio || ''} onChange={handleChange} />
+              </div>
+              <div>
+                <Label className="text-lg font-bold" htmlFor="skills">Skills/Expertise (comma-separated)</Label>
+                <Textarea
+                  id="skills"
+                  name="skills"
+                  value={Array.isArray(editProfileData.skills) ? editProfileData.skills.join(', ') : editProfileData.skills || ''}
+                  onChange={handleChange}
+                />
               </div>
               <div className="flex justify-end gap-2">
                 <Button variant="secondary" type="button" onClick={handleCancelClick}>Cancel</Button>

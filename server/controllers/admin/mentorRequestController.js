@@ -8,7 +8,7 @@ const router = express.Router();
 // @route   GET api/admin/mentor-requests
 // @desc    Get all pending mentor requests for admin review
 // @access  Private (Admin only)
-router.get('/mentor-requests', protect, async (req, res) => {
+router.get('/', protect, async (req, res) => {
   try {
     // Ensure only admin can access this route
     if (req.user.role !== 'admin') {
@@ -16,11 +16,12 @@ router.get('/mentor-requests', protect, async (req, res) => {
     }
 
     const requests = await MentorRequest.find({ status: 'pending' })
-      .populate('requester', 'name email photo contactNumber areasOfExpertise yearsOfExperience'); // Populate relevant user details
+      .populate('requester', 'name email photo contactNumber skills yearsOfExperience') // Populate relevant user details for the requester, using 'skills'
+      .populate('mentor', 'name email photo contactNumber areasOfExpertise yearsOfExperience'); // Populate relevant user details for the mentor
 
     res.json(requests);
   } catch (err) {
-    console.error(err.message);
+    console.error("Error fetching mentor requests:", err);
     res.status(500).send('Server error');
   }
 });
@@ -28,7 +29,7 @@ router.get('/mentor-requests', protect, async (req, res) => {
 // @route   PUT api/admin/mentor-requests/:id/status
 // @desc    Update status of a mentor request (approve/reject) and update user role if approved
 // @access  Private (Admin only)
-router.put('/mentor-requests/:id/status', protect, async (req, res) => {
+router.put('/:id/status', protect, async (req, res) => {
   try {
     // Ensure only admin can access this route
     if (req.user.role !== 'admin') {
@@ -64,7 +65,7 @@ router.put('/mentor-requests/:id/status', protect, async (req, res) => {
 
     res.json({ msg: `Mentor request ${status} and user role updated if accepted` });
   } catch (err) {
-    console.error(err.message);
+    console.error(`Error updating mentor request status:`, err);
     res.status(500).send('Server error');
   }
 });

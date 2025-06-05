@@ -78,26 +78,24 @@ function MentorRequests() {
             <TableCaption>A list of pending mentor requests.</TableCaption>
             <TableHeader>
               <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Photo</TableHead>
-                <TableHead>Contact Number</TableHead>
-                <TableHead>Email</TableHead>
-                <TableHead>Expertise</TableHead>
-                <TableHead>Experience</TableHead>
+                <TableHead>Requester Name</TableHead>
+                <TableHead>Requester Email</TableHead>
+                <TableHead>Requester Expertise</TableHead>
+                <TableHead>Mentor Name</TableHead>
+                <TableHead>Mentor Email</TableHead>
+                <TableHead>Mentor Expertise</TableHead>
                 <TableHead>Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {mentorRequests.map((request) => (
                 <TableRow key={request._id}>
-                  <TableCell>{request.requester.name}</TableCell>
-                  <TableCell>
-                    <Avatar src={request.requester.photo || "https://github.com/shadcn.png"} alt={request.requester.name} />
-                  </TableCell>
-                  <TableCell>{request.requester.contactNumber}</TableCell>
-                  <TableCell>{request.requester.email}</TableCell>
-                  <TableCell>{request.requester.areasOfExpertise ? request.requester.areasOfExpertise.join(', ') : 'N/A'}</TableCell>
-                  <TableCell>{request.requester.yearsOfExperience} years</TableCell>
+                  <TableCell>{request.requester?.name || 'N/A'}</TableCell>
+                  <TableCell>{request.requester?.email || 'N/A'}</TableCell>
+                  <TableCell>{request.requester?.skills ? request.requester.skills.join(', ') : 'N/A'}</TableCell>
+                  <TableCell>{request.mentor?.name || 'N/A'}</TableCell>
+                  <TableCell>{request.mentor?.email || 'N/A'}</TableCell>
+                  <TableCell>{request.mentor?.areasOfExpertise ? request.mentor.areasOfExpertise.join(', ') : 'N/A'}</TableCell>
                   <TableCell className="space-x-2">
                     <Button onClick={() => handleStatusUpdate(request._id, 'accepted')} className="bg-green-500 hover:bg-green-600 text-white">
                       Approve
