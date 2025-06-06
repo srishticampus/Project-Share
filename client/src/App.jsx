@@ -58,6 +58,8 @@ import CreateArticle from './components/pages/mentor/CreateArticle';
 import ViewArticles from './components/pages/mentor/ViewArticles';
 import ChatWithMentees from './components/pages/mentor/ChatWithMentees';
 import MentorProjectDetails from './components/pages/mentor/MentorProjectDetails'; // New mentor project details component
+import ViewArticleDetails from './components/pages/mentor/ViewArticleDetails'; // New mentor article details component
+import EditArticle from './components/pages/mentor/EditArticle'; // New mentor edit article component
 import CreatorConnectWithMentors from './components/pages/creator/ConnectWithMentors'; // Renamed to avoid conflict
 
 function Collaborators() {
@@ -163,8 +165,10 @@ function App() {
           <Route path="chat-with-mentees" element={<ChatWithMentees />} /> {/* New mentor route */}
           <Route path="chat/:userId" element={<div className='border rounded-sm mx-6 shadow-sm'><ChatInterfaceWrapper /></div>} /> {/* Nested chat route */}
           <Route path="projects/:projectId" element={<MentorProjectDetails />} /> {/* New mentor project details route */}
-          {/* Add routes for viewing/editing specific articles if needed, e.g., /mentor/articles/:id and /mentor/articles/:id/edit */}
+          <Route path="articles/:articleId" element={<ViewArticleDetails />} /> {/* Route for viewing specific articles */}
+          <Route path="articles/:articleId/edit" element={<EditArticle />} /> {/* Route for editing specific articles */}
         </Route>
+        <Route path="/articles/:articleId" element={<ViewArticleDetails />} /> {/* Route for viewing specific articles */}
 
         {/* Creator Profile route moved outside of CreatorLayout */}
         <Route path="/creator/profile/:id" element={<CreatorProfile />} />

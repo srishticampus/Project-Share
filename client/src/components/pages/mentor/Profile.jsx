@@ -282,7 +282,7 @@ function MentorProfile() {
                       <p className="text-sm text-muted-foreground">Category: {article.category}</p>
                       <p className="text-sm text-muted-foreground">Published: {new Date(article.publicationDate).toLocaleDateString()}</p>
                     </div>
-                    <Link to={`/mentor/articles/${article._id}`}>
+                    <Link to={`/articles/${article._id}`}>
                       <Button variant="outline" size="sm" className="mt-2 md:mt-0">Read Article</Button>
                     </Link>
                   </div>
