@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea'; // Assuming Textarea component exists or will be added
 import { Badge } from '@/components/ui/badge';
-import { PlusCircle, Edit, Trash2 } from 'lucide-react';
+import { PlusCircle, Edit, Trash2, Eye } from 'lucide-react'; // Added Eye icon
 import { getProjects, createProject, updateProject, deleteProject } from '@/components/pages/creator/projectService'; // Import API functions
 
 function ProjectManagement() {
@@ -15,7 +15,9 @@ function ProjectManagement() {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [isViewCollaboratorsDialogOpen, setIsViewCollaboratorsDialogOpen] = useState(false); // New state for collaborators modal
   const [currentProject, setCurrentProject] = useState(null); // For editing/deleting
+  const [selectedCollaborators, setSelectedCollaborators] = useState([]); // New state for collaborators list
   const [newProjectData, setNewProjectData] = useState({ title: '', description: '', techStack: '', status: 'Planning' });
 
   useEffect(() => {
@@ -207,7 +209,57 @@ function ProjectManagement() {
                   <TableCell className="hidden lg:table-cell">
                     {project.techStack.map(tech => <Badge key={tech} variant="secondary" className="mr-1 mb-1">{tech}</Badge>)}
                   </TableCell>
-                  <TableCell className="hidden sm:table-cell text-center">{project.collaborators.length}</TableCell>
+                  <TableCell className="hidden sm:table-cell text-center">
+                    {project.collaborators.length > 0 ? (
+                      <Dialog open={isViewCollaboratorsDialogOpen && currentProject?.id === project.id} onOpenChange={(isOpen) => {
+                        if (!isOpen) {
+                          setIsViewCollaboratorsDialogOpen(false);
+                          setCurrentProject(null);
+                          setSelectedCollaborators([]);
+                        } else {
+                          setCurrentProject(project);
+                          setSelectedCollaborators(project.collaborators);
+                          setIsViewCollaboratorsDialogOpen(true);
+                        }
+                      }}>
+                        <DialogTrigger asChild>
+                          <Button variant="ghost" size="sm" onClick={() => {
+                            setCurrentProject(project);
+                            setSelectedCollaborators(project.collaborators);
+                            setIsViewCollaboratorsDialogOpen(true);
+                          }}>
+                            {project.collaborators.length} <Eye className="ml-1 h-4 w-4" />
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent className="sm:max-w-[425px]">
+                          <DialogHeader>
+                            <DialogTitle>Collaborators for "{currentProject?.title}"</DialogTitle>
+                            <DialogDescription>
+                              List of collaborators currently assigned to this project.
+                            </DialogDescription>
+                          </DialogHeader>
+                          <div className="py-4">
+                            {selectedCollaborators.length > 0 ? (
+                              <ul className="list-disc pl-5 space-y-2">
+                                {selectedCollaborators.map((collaborator, index) => (
+                                  <li key={index}>{collaborator.name || collaborator.email || 'Unknown Collaborator'}</li>
+                                ))}
+                              </ul>
+                            ) : (
+                              <p>No collaborators assigned to this project.</p>
+                            )}
+                          </div>
+                          <DialogFooter>
+                            <DialogClose asChild>
+                              <Button type="button" variant="secondary">Close</Button>
+                            </DialogClose>
+                          </DialogFooter>
+                        </DialogContent>
+                      </Dialog>
+                    ) : (
+                      <span>0</span>
+                    )}
+                  </TableCell>
                   <TableCell className="text-right">
                     {/* Edit Dialog Trigger */}
                     <Dialog open={isEditDialogOpen && currentProject?.id === project.id} onOpenChange={(isOpen) => { if (!isOpen) { setIsEditDialogOpen(false); setCurrentProject(null); } else { openEditDialog(project); } }}>
