@@ -18,7 +18,9 @@ router.post(
     body('name', 'Name is required').not().isEmpty(),
     body('email', 'Please include a valid email').isEmail(),
     // Removed username validation
-    body('password', 'Please enter a password with 6 or more characters').isLength({ min: 6 }),
+    body('password', 'Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character.')
+      .isLength({ min: 8 })
+      .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).*$/),
   ],
   async (req, res) => {
     const errors = validationResult(req);
