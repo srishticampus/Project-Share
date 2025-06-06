@@ -157,4 +157,20 @@ router.delete('/articles/:id', protect, async (req, res) => {
   }
 });
 
+// @route   GET api/mentor/articles/by-mentor/:mentorId
+// @desc    Get all articles by a specific mentor ID
+// @access  Private (Accessible by any authenticated user)
+router.get('/articles/by-mentor/:mentorId', protect, async (req, res) => {
+  try {
+    const articles = await Article.find({ author: req.params.mentorId }).sort({ publicationDate: -1 });
+    res.json(articles);
+  } catch (err) {
+    console.error(err.message);
+    if (err.kind === 'ObjectId') {
+      return res.status(404).json({ msg: 'Mentor not found or invalid ID' });
+    }
+    res.status(500).send('Server error');
+  }
+});
+
 export default router;

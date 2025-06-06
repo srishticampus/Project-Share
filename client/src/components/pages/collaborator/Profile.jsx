@@ -1,37 +1,31 @@
 import React, { useState, useEffect } from 'react';
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { useParams } from 'react-router';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Skeleton } from "@/components/ui/skeleton";
-import apiClient from '@/lib/apiClient'; // Assuming an API client
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import apiClient from '@/lib/apiClient';
 import { API_URL } from '@/lib/constant';
 
 function CollaboratorProfile() {
+  const { id } = useParams(); // Get user ID from URL
   const [profile, setProfile] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [editedProfile, setEditedProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Dummy data for now
-  const dummyProfile = {
-    name: 'Collaborator User',
-    photo: 'profile.jpg', // Placeholder for photo URL
-    contactNumber: '123-456-7890',
-    email: 'collaborator@example.com',
-    skills: ['React', 'Node.js', 'MongoDB'],
-    portfolioLinks: ['https://github.com/collaborator', 'https://linkedin.com/in/collaborator'],
-    bio: 'Experienced collaborator ready to contribute to exciting projects.',
-  };
-
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const response = await apiClient.get('/collaborator/profile');
+        const endpoint = id ? `/users/${id}` : '/collaborator/profile';
+        const response = await apiClient.get(endpoint);
         setProfile(response.data);
-        setEditedProfile(response.data); // Initialize edited state
+        setEditedProfile(response.data);
       } catch (error) {
         console.error('Error fetching profile:', error);
         setError('Failed to fetch profile.');
@@ -40,12 +34,10 @@ function CollaboratorProfile() {
       }
     };
     fetchProfile();
-
-  }, []);
+  }, [id]); // Re-fetch when ID changes
 
   const handleEditToggle = () => {
     setIsEditing(!isEditing);
-    // If cancelling, revert changes
     if (isEditing) {
       setEditedProfile(profile);
     }
@@ -60,7 +52,6 @@ function CollaboratorProfile() {
   };
 
   const handleSkillsChange = (e) => {
-    // Basic comma-separated handling for now
     setEditedProfile({
       ...editedProfile,
       skills: e.target.value.split(',').map(skill => skill.trim()),
@@ -68,7 +59,6 @@ function CollaboratorProfile() {
   };
 
   const handlePortfolioLinksChange = (e) => {
-    // Basic comma-separated handling for now
     setEditedProfile({
       ...editedProfile,
       portfolioLinks: e.target.value.split(',').map(link => link.trim()),
@@ -80,11 +70,10 @@ function CollaboratorProfile() {
     if (file) {
       setEditedProfile({
         ...editedProfile,
-        photo: URL.createObjectURL(file), // Store the URL for preview
+        photo: URL.createObjectURL(file),
       });
     }
   };
-
 
   const handleUpdateProfile = async () => {
     try {
@@ -105,7 +94,7 @@ function CollaboratorProfile() {
         },
       });
 
-      setProfile(editedProfile); // Update main state on success
+      setProfile(editedProfile);
       setIsEditing(false);
       console.log('Profile updated successfully.');
     } catch (error) {
@@ -118,40 +107,30 @@ function CollaboratorProfile() {
     return (
       <main className="flex-1 px-6 pb-6">
         <div className="bg-white rounded-lg h-full p-6">
-          <h1 className="text-2xl font-semibold mb-4">My Profile</h1>
+          <h1 className="text-2xl font-semibold mb-4">
+            {id ? "Collaborator Profile" : "My Profile"}
+          </h1>
           <Card>
             <CardHeader>
               <Skeleton className="h-6 w-3/4 mb-2" />
             </CardHeader>
             <CardContent>
               <div className="grid gap-4">
-                <div>
-                  <Skeleton className="h-5 w-1/2 mb-1" />
-                  <Skeleton className="h-10 w-full" />
+                <div className="flex items-center space-x-4">
+                  <Skeleton className="h-24 w-24 rounded-full" />
+                  <div className="space-y-2">
+                    <Skeleton className="h-6 w-[250px]" />
+                    <Skeleton className="h-4 w-[200px]" />
+                  </div>
                 </div>
-                <div>
-                  <Skeleton className="h-20 w-20 rounded-full object-cover mb-2" />
-                </div>
-                <div>
-                  <Skeleton className="h-5 w-1/2 mb-1" />
-                  <Skeleton className="h-10 w-full" />
-                </div>
-                <div>
-                  <Skeleton className="h-5 w-1/2 mb-1" />
-                  <Skeleton className="h-10 w-full" />
-                </div>
-                <div>
-                  <Skeleton className="h-5 w-1/2 mb-1" />
-                  <Skeleton className="h-10 w-full" />
-                </div>
-                <div>
-                  <Skeleton className="h-5 w-1/2 mb-1" />
-                  <Skeleton className="h-10 w-full" />
-                </div>
-                <div>
-                  <Skeleton className="h-5 w-1/4 mb-1" />
-                  <Skeleton className="h-20 w-full" />
-                </div>
+                <Skeleton className="h-5 w-1/2 mb-1" />
+                <Skeleton className="h-10 w-full" />
+                <Skeleton className="h-5 w-1/2 mb-1" />
+                <Skeleton className="h-10 w-full" />
+                <Skeleton className="h-5 w-1/2 mb-1" />
+                <Skeleton className="h-10 w-full" />
+                <Skeleton className="h-5 w-1/4 mb-1" />
+                <Skeleton className="h-20 w-full" />
                 <Skeleton className="h-10 w-20" />
               </div>
             </CardContent>
@@ -162,25 +141,38 @@ function CollaboratorProfile() {
   }
 
   if (error) {
-    return <div>Error: {error}</div>;
+    return <div className="text-red-500 p-4">Error: {error}</div>;
   }
 
   if (!profile) {
-    return <div>Profile not found.</div>;
+    return <div className="p-4">Profile not found.</div>;
   }
+
+  const isMyProfile = !id; // If no ID in URL, it's the current user's profile
 
   return (
     <main className="flex-1 px-6 pb-6">
       <div className="bg-white rounded-lg h-full p-6">
-        <h1 className="text-2xl font-semibold mb-4">My Profile</h1>
+        <h1 className="text-2xl font-semibold mb-4">
+          {isMyProfile ? "My Profile" : "Collaborator Profile"}
+        </h1>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Profile Information</CardTitle>
+        <Card className="w-full max-w-3xl mx-auto shadow-lg">
+          <CardHeader className="flex flex-col md:flex-row items-center gap-4 p-6">
+            <Avatar className="h-24 w-24 border-2 border-primary">
+              <AvatarImage src={profile.photo ? (profile.photo.startsWith('blob:') ? profile.photo : `${API_URL}/uploads/${profile.photo}`) : `https://ui-avatars.com/api/?name=${profile.name}&background=random`} alt={profile.name} />
+              <AvatarFallback>{profile.name ? profile.name.charAt(0) : 'CN'}</AvatarFallback>
+            </Avatar>
+            <div className="text-center md:text-left">
+              <CardTitle className="text-3xl font-bold">{profile.name}</CardTitle>
+              <CardDescription className="text-lg text-muted-foreground">
+                {profile.bio || "No bio provided."}
+              </CardDescription>
+            </div>
           </CardHeader>
-          <CardContent className=""> 
-            {isEditing ? (
-              <div className="grid gap-4">
+          <CardContent className="p-6 pt-0">
+            {isEditing && isMyProfile ? (
+              <div className="grid gap-6">
                 <div>
                   <Label htmlFor="name">Full Name:</Label>
                   <Input
@@ -190,7 +182,7 @@ function CollaboratorProfile() {
                     onChange={handleInputChange}
                   />
                 </div>
-                 <div>
+                <div>
                   <Label htmlFor="photo">Profile Photo:</Label>
                   <Input
                     id="photo"
@@ -216,12 +208,11 @@ function CollaboratorProfile() {
                 </div>
                 <div>
                   <Label htmlFor="email">Email Address:</Label>
-                   {/* Email is typically not editable or requires a different verification process */}
                   <Input
                     id="email"
                     type="email"
                     value={editedProfile.email}
-                    disabled // Disable email editing for now
+                    disabled
                   />
                 </div>
                 <div>
@@ -257,35 +248,57 @@ function CollaboratorProfile() {
                 </div>
               </div>
             ) : (
-              <div className="grid gap-4">
+              <div className="grid gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <p className="text-sm font-medium text-muted-foreground">Contact Number</p>
+                    <p className="text-lg">{profile.contactNumber || 'N/A'}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-muted-foreground">Email Address</p>
+                    <p className="text-lg">{profile.email || 'N/A'}</p>
+                  </div>
+                </div>
+
                 <div>
-                  <p><strong>Name:</strong> {profile?.name}</p>
+                  <p className="text-sm font-medium text-muted-foreground mb-2">Skills</p>
+                  <div className="flex flex-wrap gap-2">
+                    {profile.skills && profile.skills.length > 0 ? (
+                      profile.skills.map((skill, index) => (
+                        <Badge key={index} variant="secondary" className="px-3 py-1 text-base">
+                          {skill}
+                        </Badge>
+                      ))
+                    ) : (
+                      <p className="text-lg text-muted-foreground">No skills listed.</p>
+                    )}
+                  </div>
                 </div>
-                 <div>
-                  {profile?.photo && (
-                    <img
-                      src={profile.photo.startsWith('blob:') ? profile.photo : `${API_URL}/uploads/${profile.photo}`}
-                      alt="Profile"
-                      className="h-20 w-20 rounded-full object-cover"
-                    />
-                  )}
-                </div>
+
                 <div>
-                  <p><strong>Contact Number:</strong> {profile?.contactNumber}</p>
+                  <p className="text-sm font-medium text-muted-foreground mb-2">Portfolio Links</p>
+                  <div className="space-y-2">
+                    {profile.portfolioLinks && profile.portfolioLinks.length > 0 ? (
+                      profile.portfolioLinks.map((link, index) => (
+                        <a
+                          key={index}
+                          href={link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-blue-600 hover:underline flex items-center gap-2 text-lg"
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-external-link"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
+                          {link}
+                        </a>
+                      ))
+                    ) : (
+                      <p className="text-lg text-muted-foreground">No portfolio links provided.</p>
+                    )}
+                  </div>
                 </div>
-                <div>
-                  <p><strong>Email Address:</strong> {profile?.email}</p>
-                </div>
-                <div>
-                  <p><strong>Skills:</strong> {profile?.skills?.join(', ')}</p>
-                </div>
-                <div>
-                  <p><strong>Portfolio Links:</strong> {profile?.portfolioLinks?.join(', ')}</p>
-                </div>
-                <div>
-                  <p><strong>Bio:</strong> {profile?.bio}</p>
-                </div>
-                <Button onClick={handleEditToggle}>Edit</Button>
+                {isMyProfile && (
+                  <Button onClick={handleEditToggle} className="w-fit">Edit Profile</Button>
+                )}
               </div>
             )}
           </CardContent>

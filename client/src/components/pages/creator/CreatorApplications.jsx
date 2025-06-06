@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router'; // Import Link
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
@@ -62,6 +63,7 @@ function CreatorApplications() {
                   <TableHead>Applicant</TableHead>
                   <TableHead className="hidden md:table-cell">Message</TableHead>
                   <TableHead>Status</TableHead>
+                  <TableHead>Profile</TableHead> {/* New Profile column */}
                   <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
@@ -72,6 +74,15 @@ function CreatorApplications() {
                     <TableCell>{application.applicantId?.name || 'N/A'}</TableCell>
                     <TableCell className="hidden md:table-cell max-w-xs truncate">{application.message}</TableCell>
                     <TableCell>{application.status}</TableCell>
+                    <TableCell>
+                      {application.applicantId?._id ? (
+                        <Link to={`/collaborator/profile/${application.applicantId._id}`}>
+                          <Button variant="outline" size="sm">View Profile</Button>
+                        </Link>
+                      ) : (
+                        'N/A'
+                      )}
+                    </TableCell>
                     <TableCell className="text-right">
                       {application.status === 'Pending' && (
                         <>

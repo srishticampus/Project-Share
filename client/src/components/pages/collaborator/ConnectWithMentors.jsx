@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router'; // Import Link
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -129,7 +130,10 @@ function ConnectWithMentors() {
               </CardHeader>
               <CardContent>
                 <p className="text-gray-700 mb-2 line-clamp-3">{mentor.bio || 'No bio available.'}</p>
-                <div className="mt-4">
+                <div className="mt-4 flex flex-col sm:flex-row gap-2"> {/* Added flex for buttons */}
+                  <Link to={`/mentor/profile/${mentor._id}`}>
+                    <Button variant="outline" size="sm">View Profile</Button>
+                  </Link>
                   <Button onClick={() => handleRequestMentorshipClick(mentor)} className="bg-green-500 hover:bg-green-600 text-white">
                     Request Mentorship
                   </Button>

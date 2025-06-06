@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router'; 
+import { useParams, Link } from 'react-router'; 
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -157,7 +157,16 @@ function ProjectDetails() {
             <CardTitle>Project Information</CardTitle>
           </CardHeader>
           <CardContent>
-            <p><strong>Creator:</strong> {project.creator?.name}</p>
+            <p>
+              <strong>Creator:</strong>{' '}
+              {project.creator ? (
+                <Link to={`/creator/profile/${project.creator._id}`} className="text-blue-600 hover:underline">
+                  {project.creator.name}
+                </Link>
+              ) : (
+                'N/A'
+              )}
+            </p>
             <p><strong>Category:</strong> {project.category}</p>
             <p><strong>Description:</strong> {project.description}</p>
             <p><strong>Required Skills:</strong> {project?.skills?.join(', ')}</p>

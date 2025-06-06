@@ -132,6 +132,9 @@ function App() {
           <Route path="chat/:userId" element={<ChatInterfaceWrapper />} /> {/* Nested chat route */}
         </Route>
 
+        {/* Collaborator Profile route moved outside of CollaboratorLayout */}
+        <Route path="/collaborator/profile/:id" element={<CollaboratorProfile />} />
+
         <Route path="/collaborator" element={<CollaboratorLayout />}>
           <Route path="dashboard" element={<CollaboratorDashboardPage />} />
           <Route path="browse-projects" element={<BrowseProjects />} />
@@ -141,10 +144,13 @@ function App() {
           <Route path="portfolio" element={<Portfolio />} />
           <Route path="chat-with-creators" element={<ChatWithCreators />} />
           <Route path="connect-with-mentors" element={<ConnectWithMentors />} />
-          <Route path="profile" element={<CollaboratorProfile />} />
+          <Route path="profile" element={<CollaboratorProfile />} /> {/* Current user's profile */}
           <Route path="projects/:projectId" element={<CollaboratorProjectDetails />} /> {/* Route for collaborator project details */}
           <Route path="chat/:userId" element={<div className='border rounded-sm mx-6 shadow-sm'><ChatInterfaceWrapper /></div>} /> {/* Nested chat route */}
         </Route>
+
+        {/* Mentor Profile route moved outside of MentorLayout */}
+        <Route path="/mentor/profile/:id" element={<MentorProfile />} />
 
         <Route path="/mentor" element={<MentorLayout />}>
           <Route index element={<MentorDashboardPage />} />
@@ -159,6 +165,9 @@ function App() {
           <Route path="projects/:projectId" element={<MentorProjectDetails />} /> {/* New mentor project details route */}
           {/* Add routes for viewing/editing specific articles if needed, e.g., /mentor/articles/:id and /mentor/articles/:id/edit */}
         </Route>
+
+        {/* Creator Profile route moved outside of CreatorLayout */}
+        <Route path="/creator/profile/:id" element={<CreatorProfile />} />
         <Route path="*" element={<NotFound />} />
       </Route>
 

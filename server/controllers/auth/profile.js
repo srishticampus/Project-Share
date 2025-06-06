@@ -105,9 +105,30 @@ router.put('/profile', protect, [
     if (req.body.email) user.email = req.body.email;
     if (req.body.photo) user.photo = req.body.photo;
     if (req.body.contactNumber) user.contactNumber = req.body.contactNumber;
-    if (req.body.skills) user.skills = req.body.skills;
-    if (req.body.portfolioLinks) user.portfolioLinks = req.body.portfolioLinks;
-    if (req.body.areasOfExpertise) user.areasOfExpertise = req.body.areasOfExpertise;
+    
+    // Handle skills, portfolioLinks, areasOfExpertise as JSON strings if sent that way
+    if (req.body.skills) {
+      try {
+        user.skills = JSON.parse(req.body.skills);
+      } catch (e) {
+        user.skills = req.body.skills; // Fallback if not JSON
+      }
+    }
+    if (req.body.portfolioLinks) {
+      try {
+        user.portfolioLinks = JSON.parse(req.body.portfolioLinks);
+      } catch (e) {
+        user.portfolioLinks = req.body.portfolioLinks; // Fallback if not JSON
+      }
+    }
+    if (req.body.areasOfExpertise) {
+      try {
+        user.areasOfExpertise = JSON.parse(req.body.areasOfExpertise);
+      } catch (e) {
+        user.areasOfExpertise = req.body.areasOfExpertise; // Fallback if not JSON
+      }
+    }
+
     if (req.body.yearsOfExperience) user.yearsOfExperience = req.body.yearsOfExperience;
     if (req.body.credentials) user.credentials = req.body.credentials;
     if (req.body.bio) user.bio = req.body.bio;

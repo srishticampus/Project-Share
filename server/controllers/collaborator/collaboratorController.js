@@ -153,9 +153,6 @@ router.post('/projects/:projectId/apply', async (req, res) => {
 router.get('/my-projects/applied', async (req, res) => {
   try {
     const userId = req.user._id;
-    console.log('User ID:', userId);
-    console.log('req.user:', req.user);
-
     // Find applications by the current user and populate project details
     const applications = await Application.find({ applicantId: userId }).populate({
       path: 'projectId',
@@ -165,28 +162,19 @@ router.get('/my-projects/applied', async (req, res) => {
         select: 'name',
       },
     });
-    console.log("Applications found:", applications);
-    // const populatedApplications = await Application.find({ applicantId: userId }).populate({
-    //   path: 'projectId',
-    //   select: 'title creator category',
-    //   populate: {
-    //     path: 'creator',
-    //     select: 'name',
-    //   }, // Assuming creator is populated in project
-    // });
-    //  console.log("Populated Applications:", populatedApplications);
 
-    // We might want to return a list of projects with application status,
-    // rather than a list of applications. Let's transform the result.
-    const appliedProjects = applications.map(app => {
-      console.log("app.projectId:", app.projectId);
+    // Filter out applications where projectId is null (i.e., project was not found or deleted)
+    const validApplications = applications.filter(app => app.projectId !== null);
+
+    // Transform the result for valid applications
+    const appliedProjects = validApplications.map(app => {
       return {
         _id: app.projectId._id,
         projectTitle: app.projectId.title,
-        creator: app.projectId.creator, // Assuming creator is populated in project
+        creator: app.projectId.creator,
         category: app.projectId.category,
         status: app.status,
-        applicationDate: app.createdAt, // Assuming createdAt is the application date
+        applicationDate: app.createdAt,
       }
     });
 
