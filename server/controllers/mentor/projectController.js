@@ -125,4 +125,49 @@ router.post('/projects/:id/feedback', protect, async (req, res) => {
 });
 
 
+// @route   GET api/mentor/dashboard/recent-projects
+// @desc    Get recent projects for the current mentor (followed or provided feedback on)
+// @access  Private (Mentor only)
+router.get('/dashboard/recent-projects', protect, async (req, res) => {
+  try {
+    const mentorId = req.user.id;
+
+    // Find projects the mentor is following
+    const user = await User.findById(mentorId).select('followedProjects');
+    const followedProjectIds = user ? user.followedProjects : [];
+
+    // Find projects where the mentor has provided feedback
+    const projectsWithFeedback = await Project.find({ 'feedback.mentor': mentorId })
+      .select('title description status updatedAt');
+
+    // Combine followed projects and projects with feedback, then deduplicate
+    const combinedProjectsMap = new Map();
+
+    if (followedProjectIds.length > 0) {
+      const followedProjects = await Project.find({ _id: { $in: followedProjectIds } })
+        .select('title description status updatedAt');
+      followedProjects.forEach(project => {
+        combinedProjectsMap.set(project._id.toString(), project.toObject());
+      });
+    }
+
+    projectsWithFeedback.forEach(project => {
+      combinedProjectsMap.set(project._id.toString(), project.toObject());
+    });
+
+    // Convert map values to an array and sort by updatedAt
+    const recentProjects = Array.from(combinedProjectsMap.values())
+      .sort((a, b) => b.updatedAt - a.updatedAt)
+      .slice(0, 5); // Limit to 5 recent projects
+
+    res.status(200).json({
+      success: true,
+      data: recentProjects
+    });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).send('Server Error');
+  }
+});
+
 export default router;

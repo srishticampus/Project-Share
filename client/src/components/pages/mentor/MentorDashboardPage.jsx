@@ -9,14 +9,25 @@ function MentorDashboardPage() {
     activeMentorships: 0,
     projectsFollowing: 0,
   });
+  const [recentProjects, setRecentProjects] = useState([]); // New state for recent projects
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
-        const response = await apiClient.get('/mentor/dashboard');
-        setDashboardData(response.data);
+        // Fetch dashboard stats
+        const dashboardRes = await apiClient.get('/mentor/dashboard');
+        setDashboardData(dashboardRes.data);
+
+        // Fetch recent projects
+        const recentProjectsRes = await apiClient.get('/mentor/dashboard/recent-projects');
+        if (recentProjectsRes.data.success) {
+          setRecentProjects(recentProjectsRes.data.data);
+        } else {
+          throw new Error(recentProjectsRes.data.error || 'Failed to fetch recent projects');
+        }
+
       } catch (err) {
         console.error("Error fetching mentor dashboard data:", err);
         setError("Failed to load dashboard data.");
@@ -131,6 +142,30 @@ function MentorDashboardPage() {
         <Link to="/mentor/chat-with-mentees" className="text-blue-500 hover:underline">
           Chat with Mentees
         </Link>
+      </div>
+
+      {/* New Card for Recent Projects */}
+      <div className="mt-8">
+        <Card>
+          <CardHeader>
+            <CardTitle>Recent Projects</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {recentProjects.length > 0 ? (
+              <ul className="space-y-2">
+                {recentProjects.map((project) => (
+                  <li key={project._id}>
+                    <Link to={`/projects/${project._id}`} className="text-blue-500 hover:underline">
+                      {project.title} ({project.status})
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p>No recent projects found.</p>
+            )}
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

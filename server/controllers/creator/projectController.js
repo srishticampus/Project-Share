@@ -164,3 +164,24 @@ export const getProjectDashboardStats = async (req, res) => {
     });
   }
 };
+
+export const getRecentCreatorProjects = async (req, res) => {
+  try {
+    const creatorId = req.user._id;
+    const recentProjects = await Project.find({ creator: creatorId })
+      .sort({ updatedAt: -1 }) // Sort by most recently updated
+      .limit(5) // Limit to, for example, 5 recent projects
+      .populate('creator', 'name email')
+      .select('title description status'); // Select relevant fields
+
+    res.status(200).json({
+      success: true,
+      data: recentProjects
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: 'Server Error: ' + error.message
+    });
+  }
+};

@@ -12,6 +12,7 @@ const CreatorDashboardPage = () => {
     completedProjects: 0,
   });
   const [applicationStats, setApplicationStats] = useState([]);
+  const [recentProjects, setRecentProjects] = useState([]); // New state for recent projects
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -39,6 +40,15 @@ const CreatorDashboardPage = () => {
         } else {
           throw new Error(applicationRes.data.error || 'Failed to fetch application stats');
         }
+
+        // Fetch recent projects
+        const recentProjectsRes = await apiClient.get('/creator/dashboard/recent-projects');
+        if (recentProjectsRes.data.success) {
+          setRecentProjects(recentProjectsRes.data.data);
+        } else {
+          throw new Error(recentProjectsRes.data.error || 'Failed to fetch recent projects');
+        }
+
       } catch (err) {
         setError(err.message);
       } finally {
@@ -122,6 +132,28 @@ const CreatorDashboardPage = () => {
               <Link to="/creator/profile" className="text-blue-500 hover:underline">View Profile</Link>
               <Link to="/creator/mentors" className="text-blue-500 hover:underline">Connect with Mentors</Link>
             </div>
+          </Card>
+
+          {/* New Card for Recent Projects */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Recent Projects</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {recentProjects.length > 0 ? (
+                <ul className="space-y-2">
+                  {recentProjects.map((project) => (
+                    <li key={project._id}>
+                      <Link to={`/projects/${project._id}`} className="text-blue-500 hover:underline">
+                        {project.title} ({project.status})
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p>No recent projects found.</p>
+              )}
+            </CardContent>
           </Card>
       </div>
     </main>

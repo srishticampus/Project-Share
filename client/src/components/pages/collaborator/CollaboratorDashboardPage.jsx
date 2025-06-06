@@ -10,23 +10,34 @@ function CollaboratorDashboardPage() {
     activeProjectsCount: 0,
     completedProjectsCount: 0,
   });
+  const [recentProjects, setRecentProjects] = useState([]); // New state for recent projects
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchCounts = async () => {
+    const fetchDashboardData = async () => {
       try {
-        const response = await apiClient.get('/collaborator/dashboard/counts');
-        setCounts(response.data);
+        // Fetch counts
+        const countsRes = await apiClient.get('/collaborator/dashboard/counts');
+        setCounts(countsRes.data);
+
+        // Fetch recent projects
+        const recentProjectsRes = await apiClient.get('/collaborator/dashboard/recent-projects');
+        if (recentProjectsRes.data.success) {
+          setRecentProjects(recentProjectsRes.data.data);
+        } else {
+          throw new Error(recentProjectsRes.data.error || 'Failed to fetch recent projects');
+        }
+
       } catch (err) {
-        console.error('Error fetching dashboard counts:', err);
-        setError('Failed to fetch dashboard counts.');
+        console.error('Error fetching dashboard data:', err);
+        setError('Failed to fetch dashboard data.');
       } finally {
         setLoading(false);
       }
     };
 
-    fetchCounts();
+    fetchDashboardData();
   }, []);
 
   if (loading) {
@@ -50,13 +61,25 @@ function CollaboratorDashboardPage() {
               <Skeleton className="h-5 w-56" />
             </div>
           </Card>
+
+          {/* New Card for Recent Projects */}
+          <Card>
+            <CardHeader>
+              <Skeleton className="h-6 w-3/4 mb-2" />
+            </CardHeader>
+            <CardContent>
+              <Skeleton className="h-4 w-1/2 mb-1" />
+              <Skeleton className="h-4 w-2/3 mb-1" />
+              <Skeleton className="h-4 w-1/3" />
+            </CardContent>
+          </Card>
         </div>
       </main>
     );
   }
 
   if (error) {
-    return <div>Error: {error}</div>;
+    return <main className="flex-1 px-6 pb-6">Error: {error}</main>;
   }
 
   return (
@@ -80,6 +103,28 @@ function CollaboratorDashboardPage() {
               <Link to="/collaborator/profile" className="text-blue-500 hover:underline">View Profile</Link>
               <Link to="/collaborator/connect-with-mentors" className="text-blue-500 hover:underline">Connect with Mentors</Link>
             </div>
+          </Card>
+
+          {/* New Card for Recent Projects */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Recent Projects</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {recentProjects.length > 0 ? (
+                <ul className="space-y-2">
+                  {recentProjects.map((project) => (
+                    <li key={project._id}>
+                      <Link to={`/projects/${project._id}`} className="text-blue-500 hover:underline">
+                        {project.title} ({project.status})
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p>No recent projects found.</p>
+              )}
+            </CardContent>
           </Card>
         </div>
       </main>

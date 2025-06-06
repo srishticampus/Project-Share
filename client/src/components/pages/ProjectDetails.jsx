@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useParams } from 'react-router';
+import { Link, useNavigate, useParams } from 'react-router';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -12,7 +12,7 @@ function ProjectDetails() {
   const { id } = useParams(); // Get the project ID from the URL
   const [project, setProject] = useState(null);
   const [tasks, setTasks] = useState([]);
-
+  const navigate = useNavigate();
   //function to get color class based on status
   const getStatusColor = (status) => {
     switch (status) {
@@ -88,10 +88,10 @@ function ProjectDetails() {
   return (
     <div className="container mx-auto py-10">
       {/* back button */}
-      <Link to="/projects" className="mb-6 flex items-center space-x-2">
+      <Button onClick={() => navigate(-1)} className="mb-6 flex items-center space-x-2">
         <ArrowLeft className="h-4 w-4" />
-        <span>Back to Projects</span>
-      </Link>
+        <span>Back</span>
+      </Button>
       <Card>
         <CardHeader>
           <CardTitle>{project.title}</CardTitle>

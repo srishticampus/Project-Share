@@ -37,3 +37,22 @@ export const deleteProject = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+export const getRecentAdminProjects = async (req, res) => {
+  try {
+    const recentProjects = await Project.find()
+      .sort({ updatedAt: -1 }) // Sort by most recently updated
+      .limit(5) // Limit to, for example, 5 recent projects
+      .select('title description status creator'); // Select relevant fields
+
+    res.status(200).json({
+      success: true,
+      data: recentProjects
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: 'Server Error: ' + error.message
+    });
+  }
+};

@@ -3,6 +3,7 @@ import {
   getAllProjects,
   updateProject,
   deleteProject,
+  getRecentAdminProjects,
 } from './projectController.js';
 import { getDashboardStats } from './dashboardController.js';
 import { getUserGrowth, getUserEngagement, getProjectSuccessRate, getPopularCategories } from './analyticsController.js';
@@ -21,6 +22,9 @@ router.put('/projects/:id', protect, admin, updateProject);
 
 // Delete a project
 router.delete('/projects/:id', protect, admin, deleteProject);
+
+// Get recent projects for admin dashboard
+router.get('/dashboard/recent-projects', protect, admin, getRecentAdminProjects);
 
 // Get dashboard statistics
 router.get('/dashboard', protect, admin, getDashboardStats);

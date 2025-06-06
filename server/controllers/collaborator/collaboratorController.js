@@ -460,6 +460,56 @@ router.post('/mentors/:mentorId/request-mentorship', async (req, res) => {
   }
 });
 
+// @route   GET /api/collaborator/dashboard/recent-projects
+// @desc    Get recent projects for the current collaborator (applied, active, completed)
+// @access  Private
+router.get('/dashboard/recent-projects', async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    // Find projects where the user is a collaborator
+    const projectsAsCollaborator = await Project.find({ collaborators: userId })
+      .sort({ updatedAt: -1 })
+      .limit(5)
+      .select('title description status');
+
+    // Find projects the user has applied to
+    const appliedProjects = await Application.find({ applicant: userId })
+      .populate({
+        path: 'project',
+        select: 'title description status updatedAt',
+      })
+      .sort({ 'project.updatedAt': -1 }) // Sort by project's updatedAt
+      .limit(5);
+
+    // Combine and deduplicate projects
+    const combinedProjectsMap = new Map();
+
+    projectsAsCollaborator.forEach(project => {
+      combinedProjectsMap.set(project._id.toString(), project.toObject());
+    });
+
+    appliedProjects.forEach(app => {
+      if (app.project) {
+        combinedProjectsMap.set(app.project._id.toString(), app.project.toObject());
+      }
+    });
+
+    // Convert map values to an array and sort by updatedAt
+    const recentProjects = Array.from(combinedProjectsMap.values())
+      .sort((a, b) => b.updatedAt - a.updatedAt)
+      .slice(0, 5); // Ensure only top 5 after combining
+
+    res.status(200).json({
+      success: true,
+      data: recentProjects
+    });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).send('Server Error');
+  }
+});
+
 // @route   GET /api/collaborator/profile
 // @desc    Get the current collaborator's profile data
 // @access  Private

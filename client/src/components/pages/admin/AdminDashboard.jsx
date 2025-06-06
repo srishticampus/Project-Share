@@ -8,22 +8,45 @@ function AdminDashboard() {
     totalProjectCreators: 0,
     totalCollaborators: 0,
     totalMentors: 0,
-    recentProjects: [],
     recentReports: [],
   });
+  const [recentProjects, setRecentProjects] = useState([]); // Separate state for recent projects
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
-        const response = await apiClient.get('/admin/dashboard');
-        setDashboardData(response.data);
-      } catch (error) {
-        console.error('Error fetching dashboard data:', error);
+        // Fetch general dashboard stats
+        const dashboardRes = await apiClient.get('/admin/dashboard');
+        setDashboardData(dashboardRes.data);
+
+        // Fetch recent projects specifically
+        const recentProjectsRes = await apiClient.get('/admin/dashboard/recent-projects');
+        if (recentProjectsRes.data.success) {
+          setRecentProjects(recentProjectsRes.data.data);
+        } else {
+          throw new Error(recentProjectsRes.data.error || 'Failed to fetch recent projects');
+        }
+
+      } catch (err) {
+        console.error('Error fetching dashboard data:', err);
+        setError(err.message);
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchDashboardData();
   }, []);
+
+  if (loading) {
+    return <main className="flex-1 px-6 pb-6">Loading dashboard data...</main>;
+  }
+
+  if (error) {
+    return <main className="flex-1 px-6 pb-6">Error: {error}</main>;
+  }
 
   return (
     <main className="flex-1 px-6 pb-6">
@@ -50,11 +73,19 @@ function AdminDashboard() {
           <Card className="md:col-span-2">
             <div className="p-4">
               <h2 className="text-lg font-semibold">Recent Projects</h2>
-              <ul>
-                {dashboardData.recentProjects.map((project) => (
-                  <li key={project._id}>{project.name}</li>
-                ))}
-              </ul>
+              {recentProjects.length > 0 ? (
+                <ul className="space-y-2">
+                  {recentProjects.map((project) => (
+                    <li key={project._id}>
+                      <Link to={`/projects/${project._id}`} className="text-blue-500 hover:underline">
+                        {project.title} ({project.status})
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p>No recent projects found.</p>
+              )}
             </div>
           </Card>
           <Card>
@@ -67,11 +98,6 @@ function AdminDashboard() {
               </ul>
             </div>
           </Card>
-          {/* <Card>
-            <div className="p-4">
-              <Link to="/admin/profile">View Profile</Link>
-            </div>
-          </Card> */}
         </div>
       </div>
     </main>
