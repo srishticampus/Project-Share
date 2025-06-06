@@ -3,7 +3,9 @@ import Project from '../../models/Project.js';
 // Get all projects
 export const getAllProjects = async (req, res) => {
   try {
-    const projects = await Project.find();
+    const projects = await Project.find()
+      .populate('creator', 'name') // Populate creator and select only the name
+      .populate('collaborators', 'name'); // Populate collaborators and select only the name
     res.status(200).json(projects);
   } catch (error) {
     res.status(500).json({ message: error.message });
