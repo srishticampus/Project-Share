@@ -21,6 +21,7 @@ function ConnectWithMentors() {
   const [message, setMessage] = useState('');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [sendingRequest, setSendingRequest] = useState(false);
+  const [sentMentorshipRequests, setSentMentorshipRequests] = useState([]); // New state for sent requests
 
   useEffect(() => {
     const fetchAllMentors = async () => {
@@ -48,8 +49,20 @@ function ConnectWithMentors() {
       }
     };
 
+    const fetchSentMentorshipRequests = async () => {
+      try {
+        const response = await apiClient.get('/mentor/mentorship-requests/sent');
+        // Extract mentor IDs from the sent requests
+        const sentMentorIds = response.data.map(request => request.mentor._id);
+        setSentMentorshipRequests(sentMentorIds);
+      } catch (err) {
+        console.error("Error fetching sent mentorship requests:", err);
+      }
+    };
+
     fetchAllMentors();
     fetchRecommendedMentors();
+    fetchSentMentorshipRequests(); // Fetch sent requests
   }, []);
 
   const handleRequestMentorshipClick = (mentor) => {
@@ -75,6 +88,8 @@ function ConnectWithMentors() {
       setIsDialogOpen(false);
       setMessage('');
       setSelectedMentor(null);
+      // Add the newly requested mentor's ID to the sentMentorshipRequests state
+      setSentMentorshipRequests(prev => [...prev, selectedMentor._id]);
     } catch (err) {
       console.error("Error sending mentorship request:", err);
       setError("Failed to send mentorship request. Please try again.");
@@ -87,6 +102,8 @@ function ConnectWithMentors() {
     mentor.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     (mentor.areasOfExpertise && mentor.areasOfExpertise.some(area => area.toLowerCase().includes(searchTerm.toLowerCase())))
   );
+
+  const isMentorRequested = (mentorId) => sentMentorshipRequests.includes(mentorId);
 
   return (
     <div className="container mx-auto p-6">
@@ -123,8 +140,12 @@ function ConnectWithMentors() {
                   <Link to={`/mentor/profile/${mentor._id}`}>
                     <Button variant="outline" size="sm">View Profile</Button>
                   </Link>
-                  <Button onClick={() => handleRequestMentorshipClick(mentor)} className="bg-green-500 hover:bg-green-600 text-white">
-                    Request Mentorship
+                  <Button
+                    onClick={() => handleRequestMentorshipClick(mentor)}
+                    className="bg-green-500 hover:bg-green-600 text-white"
+                    disabled={isMentorRequested(mentor._id)}
+                  >
+                    {isMentorRequested(mentor._id) ? 'Requested' : 'Request Mentorship'}
                   </Button>
                 </div>
               </CardContent>
@@ -184,8 +205,12 @@ function ConnectWithMentors() {
                   <Link to={`/mentor/profile/${mentor._id}`}>
                     <Button variant="outline" size="sm">View Profile</Button>
                   </Link>
-                  <Button onClick={() => handleRequestMentorshipClick(mentor)} className="bg-green-500 hover:bg-green-600 text-white">
-                    Request Mentorship
+                  <Button
+                    onClick={() => handleRequestMentorshipClick(mentor)}
+                    className="bg-green-500 hover:bg-green-600 text-white"
+                    disabled={isMentorRequested(mentor._id)}
+                  >
+                    {isMentorRequested(mentor._id) ? 'Requested' : 'Request Mentorship'}
                   </Button>
                 </div>
               </CardContent>

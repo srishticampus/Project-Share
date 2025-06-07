@@ -54,7 +54,7 @@ function ActiveMentorships() {
                 )}
                 <p className="text-sm text-gray-500">Started on: {new Date(mentorship.requestDate).toLocaleDateString()}</p>
                 <div className="mt-4">
-                  <Link to={`/chat/${mentorship.requester._id}`}> {/* Link to chat with mentee */}
+                  <Link to={`/mentor/chat/${mentorship.requester._id}`}> {/* Link to chat with mentee */}
                     <Button className="bg-blue-500 hover:bg-blue-600 text-white">
                       Chat
                     </Button>

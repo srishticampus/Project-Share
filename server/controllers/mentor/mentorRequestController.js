@@ -70,6 +70,22 @@ router.post(
   }
 );
 
+// @route   GET api/mentor/mentorship-requests/sent
+// @desc    Get all mentorship requests sent by the logged-in user
+// @access  Private (Any authenticated user)
+router.get('/mentorship-requests/sent', protect, async (req, res) => {
+  try {
+    const requesterId = req.user.id;
+    const requests = await MentorRequest.find({ requester: requesterId })
+      .populate('mentor', 'name email'); // Populate mentor details if needed
+
+    res.json(requests);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server error');
+  }
+});
+
 
 // @route   GET api/mentor/mentorship-requests
 // @desc    Get all pending mentorship requests for the logged-in mentor

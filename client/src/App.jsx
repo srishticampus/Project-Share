@@ -148,7 +148,7 @@ function App() {
           <Route path="connect-with-mentors" element={<ConnectWithMentors />} />
           <Route path="profile" element={<CollaboratorProfile />} /> {/* Current user's profile */}
           <Route path="projects/:projectId" element={<CollaboratorProjectDetails />} /> {/* Route for collaborator project details */}
-          <Route path="chat/:userId" element={<div className='border rounded-sm mx-6 shadow-sm'><ChatInterfaceWrapper /></div>} /> {/* Nested chat route */}
+          <Route path="chat/:userId" element={<ChatInterfaceWrapper />} /> {/* Nested chat route */}
         </Route>
 
         {/* Mentor Profile route moved outside of MentorLayout */}
@@ -163,7 +163,7 @@ function App() {
           <Route path="create-article" element={<CreateArticle />} /> {/* New mentor route */}
           <Route path="articles" element={<ViewArticles />} /> {/* New mentor route */}
           <Route path="chat-with-mentees" element={<ChatWithMentees />} /> {/* New mentor route */}
-          <Route path="chat/:userId" element={<div className='border rounded-sm mx-6 shadow-sm'><ChatInterfaceWrapper /></div>} /> {/* Nested chat route */}
+          <Route path="chat/:userId" element={<ChatInterfaceWrapper />} /> {/* Nested chat route */}
           <Route path="projects/:projectId" element={<MentorProjectDetails />} /> {/* New mentor project details route */}
           <Route path="articles/:articleId" element={<ViewArticleDetails />} /> {/* Route for viewing specific articles */}
           <Route path="articles/:articleId/edit" element={<EditArticle />} /> {/* Route for editing specific articles */}
@@ -191,7 +191,7 @@ function App() {
 
 function ChatInterfaceWrapper() {
   const { userId } = useParams();
-  return <ChatInterface receiverId={userId} />;
+  return <ChatInterface receiverId={userId} className="h-full" />;
 }
 
 export default App;

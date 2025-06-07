@@ -71,7 +71,7 @@ function ChatWithMentees() {
                 )}
                 <p className="text-sm text-gray-500">Mentorship started: {new Date(mentee.requestDate).toLocaleDateString()}</p>
                 <div className="mt-4">
-                  <Link to={`/chat/${mentee.requester._id}`}>
+                  <Link to={`/mentor/chat/${mentee.requester._id}`}>
                     <Button className="bg-blue-500 hover:bg-blue-600 text-white">
                       Chat
                     </Button>

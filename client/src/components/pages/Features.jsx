@@ -1,6 +1,7 @@
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Code, Users, Briefcase, GraduationCap, ChevronDown, Star, CheckCircle, MessageSquare, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Link } from "react-router";
 
 function Features() {
   return (
@@ -126,7 +127,7 @@ function Features() {
       {/* CTA Section */}
       <section className="text-center">
         <h2 className="text-2xl font-bold mb-4">Ready to get started?</h2>
-        <Button>Find a Project</Button>
+        <Button asChild><Link to="/register/collaborator">Find a Project</Link></Button>
       </section>
     </div>
   );

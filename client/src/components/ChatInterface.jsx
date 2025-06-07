@@ -8,7 +8,7 @@ import { MoreHorizontal } from 'lucide-react'; // Import the 3-dot icon
 
 import { useNavigate } from 'react-router';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
-function ChatInterface({ receiverId }) {
+function ChatInterface({ receiverId, className }) {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
   const [error, setError] = useState(null);
@@ -84,7 +84,7 @@ function ChatInterface({ receiverId }) {
   }
 
   return (
-    <div className="flex flex-col h-full">
+    <div className={`flex flex-col h-full ${className}`}>
       {receiverData && (
         <div className="bg-gray-100 p-4 border-b border-gray-200 flex items-center">
           <Button variant="outline"  size="icon" onClick={() => navigate(-1)}>

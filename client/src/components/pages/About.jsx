@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { Link } from "react-router";
 
 function About() {
   return (
@@ -101,7 +102,7 @@ function About() {
       {/* CTA Section */}
       <section className="text-center py-8 bg-primary text-primary-foreground rounded-lg">
         <h2 className="text-2xl font-bold mb-4">Ready to transform your ideas into reality?</h2>
-        <Button variant="secondary" size="lg">Get Started Today</Button>
+        <Button variant="secondary" size="lg" asChild><Link to="/register/creator">Get Started Today</Link></Button>
       </section>
     </div>
   );

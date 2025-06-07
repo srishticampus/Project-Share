@@ -57,20 +57,35 @@ function ChatWithCollaborators() {
           />
         </div>
 
-        <div className="grid gap-4 md:grid-cols-1 lg:grid-cols-2">
-          {users.map((user) => (
-            <Card key={user._id}>
-              <CardContent className="flex items-center justify-between">
-                <div>
-                  <p><strong>Name:</strong> {user.name}</p>
-                </div>
-                <Link to={`/creator/chat/${user._id}`}>
-                  <Button onClick={() => handleChatClick(user._id)}>Chat</Button>
-                </Link>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+        {Object.entries(
+          users.reduce((acc, user) => {
+            const role = user.role || 'unspecified';
+            if (!acc[role]) {
+              acc[role] = [];
+            }
+            acc[role].push(user);
+            return acc;
+          }, {})
+        ).map(([role, usersInRole]) => (
+          <div key={role} className="mb-6">
+            <h2 className="text-xl font-semibold mb-3 capitalize">{role}s</h2>
+            <div className="grid gap-4 md:grid-cols-1 lg:grid-cols-2">
+              {usersInRole.map((user) => (
+                <Card key={user._id}>
+                  <CardContent className="flex items-center justify-between">
+                    <div>
+                      <p><strong>Name:</strong> {user.name}</p>
+                      <p className="text-sm text-gray-500">Role: {user.role}</p>
+                    </div>
+                    <Link to={`/creator/chat/${user._id}`}>
+                      <Button onClick={() => handleChatClick(user._id)}>Chat</Button>
+                    </Link>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        ))}
       </div>
     </main>
   );
