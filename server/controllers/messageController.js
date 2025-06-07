@@ -2,9 +2,9 @@ import express from 'express';
 import mongoose from 'mongoose';
 import { body, validationResult } from 'express-validator';
 import Message from '../models/Message.js';
-import Notification from '../models/Notification.js';
 import { protect } from '../middleware/auth.js'; //  auth middleware
 import User from '../models/user.js';
+import NotificationService from '../services/notificationService.js'; // Import the new service
 
 const router = express.Router();
 
@@ -83,16 +83,13 @@ router.post(
       await User.findByIdAndUpdate(sender, { $inc: { chatActivityCount: 1 } });
       await User.findByIdAndUpdate(receiver, { $inc: { chatActivityCount: 1 } });
 
-      // Create a new notification for the receiver
-      const newNotification = new Notification({
-        user: receiver,
-        message: content, // Store direct message content
-        type: 'message',
-        relatedEntity: message._id, // Link to the actual message document
-        relatedEntityType: 'Message',
-      });
-
-      await newNotification.save();
+      // Create a new notification for the receiver using the service
+      await NotificationService.createNotification(
+        receiver,
+        'message',
+        message._id,
+        'Message'
+      );
 
       res.json(message);
     } catch (err) {
@@ -108,26 +105,32 @@ router.post(
 router.get('/notifications', protect, async (req, res) => {
   try {
     const userId = req.user.id;
-    console.log(`Fetching notifications for user ID: ${userId}`);
-
-    console.log('Executing Notification.find() query...');
-    const notifications = await Notification.find({ user: userId })
-      .populate('user', 'name') // Populates the recipient user (the logged-in user)
-      .populate({
-        path: 'relatedEntity', // This is the Message document
-        populate: {
-          path: 'sender', // Populate the sender within the Message document
-          select: 'name' // Select only the name field of the sender
-        }
-      })
-      .sort({ date: -1 }); // Sort by date
-
-    console.log(`Found ${notifications.length} notifications.`);
-
+    const notifications = await NotificationService.getNotifications(userId);
     res.json(notifications);
   } catch (err) {
     console.error('Error fetching notifications:', err.message);
     res.status(500).send(err.message);
+  }
+});
+
+// @route   PUT api/messages/notifications/:id/read
+// @desc    Mark a notification as read
+// @access  Private
+router.put('/notifications/:id/read', protect, async (req, res) => {
+  try {
+    const notificationId = req.params.id;
+    const userId = req.user.id;
+    await NotificationService.markAsRead(notificationId, userId);
+    res.json({ msg: 'Notification marked as read' });
+  } catch (err) {
+    console.error('Error marking notification as read:', err.message);
+    if (err.message === 'Notification not found') {
+      return res.status(404).json({ msg: err.message });
+    }
+    if (err.message === 'Not authorized to mark this notification as read') {
+      return res.status(401).json({ msg: err.message });
+    }
+    res.status(500).send('Server error');
   }
 });
 

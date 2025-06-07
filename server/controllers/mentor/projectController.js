@@ -2,7 +2,7 @@ import express from 'express';
 import { protect } from '../../middleware/auth.js';
 import Project from '../../models/Project.js';
 import User from '../../models/user.js';
-import Notification from '../../models/Notification.js'; // Import Notification model
+import NotificationService from '../../services/notificationService.js'; // Import NotificationService
 
 const router = express.Router();
 
@@ -105,16 +105,13 @@ router.post('/projects/:id/feedback', protect, async (req, res) => {
     // Create notification for the project creator
     const projectCreator = await User.findById(project.creator);
     if (projectCreator) {
-      const mentorUser = await User.findById(mentorId);
-      const notificationMessage = `${mentorUser.name} has provided feedback on your project "${project.title}".`;
-      const newNotification = new Notification({
-        user: project.creator,
-        message: notificationMessage,
-        type: 'project_feedback',
-        relatedEntity: project._id, // Link to the project
-        relatedEntityType: 'Project',
-      });
-      await newNotification.save();
+      // Create notification for the project creator using the service
+      await NotificationService.createNotification(
+        project.creator,
+        'project_feedback',
+        project._id,
+        'Project'
+      );
     }
 
     res.json({ msg: 'Feedback provided successfully' });

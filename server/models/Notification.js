@@ -6,10 +6,6 @@ const NotificationSchema = new mongoose.Schema({
     ref: "User",
     required: true,
   },
-  message: {
-    type: String, // Changed to String for direct message content
-    required: true,
-  },
   type: {
     type: String,
     enum: ['message', 'mentorship_request', 'mentorship_status_update', 'project_feedback'], // Added new types

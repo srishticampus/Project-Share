@@ -3,8 +3,8 @@ import { protect } from '../../middleware/auth.js';
 import MentorRequest from '../../models/MentorRequest.js';
 import User from '../../models/user.js';
 import Project from '../../models/Project.js'; // Assuming Project model exists
-import Notification from '../../models/Notification.js'; // Import Notification model
 import { body, validationResult } from 'express-validator'; // Import validation
+import NotificationService from '../../services/notificationService.js'; // Import NotificationService
 
 const router = express.Router();
 
@@ -48,19 +48,13 @@ router.post(
 
       const savedRequest = await newRequest.save();
 
-      // Create notification for the mentor
-      const mentorUser = await User.findById(mentor);
-      if (mentorUser) {
-        const notificationMessage = `${req.user.name} has sent you a mentorship request.`;
-        const newNotification = new Notification({
-          user: mentor,
-          message: notificationMessage,
-          type: 'mentorship_request',
-          relatedEntity: savedRequest._id, // Link to the request
-          relatedEntityType: 'MentorRequest',
-        });
-        await newNotification.save();
-      }
+      // Create notification for the mentor using the service
+      await NotificationService.createNotification(
+        mentor,
+        'mentorship_request',
+        savedRequest._id,
+        'MentorRequest'
+      );
 
       res.json(savedRequest);
     } catch (err) {
@@ -127,19 +121,13 @@ router.put('/mentorship-requests/:id/status', protect, async (req, res) => {
     request.status = status;
     await request.save();
 
-    // Create notification for the requester
-    const requesterUser = await User.findById(request.requester._id);
-    if (requesterUser) {
-      const notificationMessage = `Your mentorship request to ${request.mentor.name} has been ${status}.`;
-      const newNotification = new Notification({
-        user: request.requester._id,
-        message: notificationMessage,
-        type: 'mentorship_status_update',
-        relatedEntity: request._id, // Link to the request
-        relatedEntityType: 'MentorRequest',
-      });
-      await newNotification.save();
-    }
+    // Create notification for the requester using the service
+    await NotificationService.createNotification(
+      request.requester._id,
+      'mentorship_status_update',
+      request._id,
+      'MentorRequest'
+    );
 
     res.json({ msg: `Mentorship request ${status}` });
   } catch (err) {
