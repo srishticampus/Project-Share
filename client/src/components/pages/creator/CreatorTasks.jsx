@@ -118,8 +118,21 @@ function CreatorTasks() {
     const handleSaveEditTask = async () => {
         try {
             await apiClient.put(`/creator/tasks/${selectedTask._id}`, editTaskData);
+
+            // Find the full collaborator object from the collaborators list
+            const assignedCollaborator = collaborators.find(
+                (col) => col._id === editTaskData.assignedTo
+            );
+
+            // Create an updated task object, ensuring assignedTo is the full object
+            const updatedTask = {
+                ...selectedTask, // Keep existing properties of the selected task
+                ...editTaskData, // Apply edited data
+                assignedTo: assignedCollaborator || null, // Use the full object or null if unassigned
+            };
+
             // Update the tasks state with the edited task
-            setTasks(tasks.map((task) => (task._id === selectedTask._id ? { ...task, ...editTaskData } : task)));
+            setTasks(tasks.map((task) => (task._id === selectedTask._id ? updatedTask : task)));
             setIsEditTaskDialogOpen(false);
         } catch (error) {
             console.error('Error editing task:', error);

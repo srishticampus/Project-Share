@@ -158,7 +158,7 @@ function CreatorProfile() {
         <Card className="w-full max-w-3xl mx-auto shadow-lg">
           <CardHeader className="flex flex-col md:flex-row items-center gap-4 p-6">
             <Avatar className="h-24 w-24 border-2 border-primary">
-              <AvatarImage src={profileData.photo ? (profileData.photo.startsWith('blob:') ? profileData.photo : `${API_URL}/uploads/${profileData.photo}`) : `https://ui-avatars.com/api/?name=${profileData.name}&background=random`} alt={profileData.name} />
+              <AvatarImage src={profileData.photo ? (profileData.photo.startsWith('blob:') ? profileData.photo : `${API_URL}/${profileData.photo}`) : `https://ui-avatars.com/api/?name=${profileData.name}&background=random`} alt={profileData.name} />
               <AvatarFallback>{profileData.name ? profileData.name.charAt(0) : 'CR'}</AvatarFallback>
             </Avatar>
             <div className="text-center md:text-left">
@@ -184,7 +184,7 @@ function CreatorProfile() {
                   />
                   {editProfileData.photo && (
                     <img
-                      src={editProfileData.photo.startsWith('blob:') ? editProfileData.photo : `${API_URL}/uploads/${editProfileData.photo}`}
+                      src={editProfileData.photo.startsWith('blob:') ? editProfileData.photo : `${API_URL}/${editProfileData.photo}`}
                       alt="Profile Preview"
                       className="mt-2 h-20 w-20 rounded-full object-cover"
                     />

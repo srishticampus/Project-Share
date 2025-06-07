@@ -160,7 +160,7 @@ function CollaboratorProfile() {
         <Card className="w-full max-w-3xl mx-auto shadow-lg">
           <CardHeader className="flex flex-col md:flex-row items-center gap-4 p-6">
             <Avatar className="h-24 w-24 border-2 border-primary">
-              <AvatarImage src={profile.photo ? (profile.photo.startsWith('blob:') ? profile.photo : `${API_URL}/uploads/${profile.photo}`) : `https://ui-avatars.com/api/?name=${profile.name}&background=random`} alt={profile.name} />
+              <AvatarImage src={profile.photo ? (profile.photo.startsWith('blob:') ? profile.photo : `${API_URL}/${profile.photo}`) : `https://ui-avatars.com/api/?name=${profile.name}&background=random`} alt={profile.name} />
               <AvatarFallback>{profile.name ? profile.name.charAt(0) : 'CN'}</AvatarFallback>
             </Avatar>
             <div className="text-center md:text-left">
