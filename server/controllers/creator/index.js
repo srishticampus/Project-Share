@@ -2,8 +2,11 @@ import express from 'express';
 import { createProject, getProjects, getProject, updateProject, deleteProject, getProjectDashboardStats, getRecentCreatorProjects } from './projectController.js';
 import { createTask, assignTask, updateTask, getTasksByProject, deleteTask, editTask } from './taskController.js';
 import { getApplicationsForCreatorProjects, getApplicationDashboardStats } from '../applicationController.js';
+import creatorProfileRoutes from './profileController.js'; // Import creator profile routes
 
 const router = express.Router();
+
+router.use('/', creatorProfileRoutes); // Add creator profile routes
 
 router.post('/projects', createProject);
 router.get('/projects', getProjects);

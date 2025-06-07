@@ -23,7 +23,7 @@ function MentorProfile() {
   useEffect(() => {
     const getProfileAndArticles = async () => {
       try {
-        const profileEndpoint = id ? `/users/${id}` : '/auth/profile';
+        const profileEndpoint = id ? `/user/${id}` : '/auth/profile';
         const profileResponse = await apiClient.get(profileEndpoint);
         setProfileData(profileResponse.data);
         setEditProfileData(profileResponse.data);

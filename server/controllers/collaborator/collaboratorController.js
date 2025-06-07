@@ -550,8 +550,29 @@ router.put('/profile', upload.single('photo'), async (req, res) => {
     // Update user fields
     user.name = name ?? user.name;
     user.contactNumber = contactNumber ?? user.contactNumber;
-    user.skills = skills ?? user.skills;
-    user.portfolioLinks = portfolioLinks ?? user.portfolioLinks;
+    // Handle skills and portfolioLinks as JSON strings if sent that way
+    if (skills) {
+      try {
+        user.skills = JSON.parse(skills);
+      } catch (e) {
+        user.skills = skills.split(',').map(s => s.trim()); // Fallback if not JSON, assume comma-separated
+      }
+    } else {
+      user.skills = user.skills; // Keep existing if not provided
+    }
+
+    if (portfolioLinks) {
+      try {
+        user.portfolioLinks = JSON.parse(portfolioLinks);
+      } catch (e) {
+        user.portfolioLinks = portfolioLinks.split(',').map(l => l.trim()); // Fallback if not JSON, assume comma-separated
+      }
+    } else {
+      user.portfolioLinks = user.portfolioLinks; // Keep existing if not provided
+    }
+
+    user.name = name ?? user.name;
+    user.contactNumber = contactNumber ?? user.contactNumber;
     user.bio = bio ?? user.bio;
 
     if (req.file) {

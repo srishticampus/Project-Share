@@ -22,7 +22,7 @@ function CollaboratorProfile() {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const endpoint = id ? `/users/${id}` : '/collaborator/profile';
+        const endpoint = id ? `/user/${id}` : '/collaborator/profile';
         const response = await apiClient.get(endpoint);
         setProfile(response.data);
         setEditedProfile(response.data);
@@ -191,7 +191,7 @@ function CollaboratorProfile() {
                   />
                   {editedProfile.photo && (
                     <img
-                      src={editedProfile.photo.startsWith('blob:') ? editedProfile.photo : `http://localhost:3000/uploads/${editedProfile.photo}`}
+                      src={editedProfile.photo.startsWith('blob:') ? editedProfile.photo : `${API_URL}/${editedProfile.photo}`}
                       alt="Profile Preview"
                       className="mt-2 h-20 w-20 rounded-full object-cover"
                     />

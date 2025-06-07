@@ -5,11 +5,14 @@ import activeMentorshipRoutes from './activeMentorshipController.js';
 import mentorProjectRoutes from './projectController.js';
 import articleRoutes from './articleController.js'; // Import article routes
 import chatRoutes from './chatController.js'; // Import chat routes
+import mentorProfileRoutes from './profileController.js'; // Import mentor profile routes
 
 const router = express.Router();
 
 // Dashboard routes
 router.use('/', dashboardRoutes);
+// Mentor profile routes
+router.use('/', mentorProfileRoutes);
 // Mentorship request routes
 router.use('/', mentorRequestRoutes);
 // Active mentorship routes
