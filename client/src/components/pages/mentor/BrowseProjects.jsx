@@ -22,15 +22,23 @@ function BrowseProjects() {
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        // This API endpoint will need to be created/modified on the server
-        const response = await apiClient.get('/mentor/browse-projects', {
-          params: {
-            search: searchTerm,
-            category: filterCategory === 'all' ? '' : filterCategory,
-            skill: filterSkill === 'all' ? '' : filterSkill,
-          },
-        });
-        setProjects(response.data);
+        const [projectsResponse, followedProjectsResponse] = await Promise.all([
+          apiClient.get('/mentor/browse-projects', {
+            params: {
+              search: searchTerm,
+              category: filterCategory === 'all' ? '' : filterCategory,
+              skill: filterSkill === 'all' ? '' : filterSkill,
+            },
+          }),
+          apiClient.get('/mentor/projects/followed') // Using the newly created endpoint
+        ]);
+
+        const followedProjectIds = new Set(followedProjectsResponse.data.map(p => p._id));
+
+        setProjects(projectsResponse.data.map(project => ({
+          ...project,
+          isFollowed: followedProjectIds.has(project._id)
+        })));
       } catch (err) {
         console.error("Error fetching projects:", err);
         setError("Failed to load projects.");
@@ -44,13 +52,31 @@ function BrowseProjects() {
 
   const handleFollowProject = async (projectId) => {
     try {
-      // This API endpoint will need to be created on the server
       await apiClient.post(`/mentor/projects/${projectId}/follow`);
-      // Optionally update UI to reflect that the project is now followed
+      setProjects(prevProjects =>
+        prevProjects.map(project =>
+          project._id === projectId ? { ...project, isFollowed: true } : project
+        )
+      );
       alert('Project followed successfully!');
     } catch (err) {
       console.error("Error following project:", err);
       alert('Failed to follow project.');
+    }
+  };
+
+  const handleUnfollowProject = async (projectId) => {
+    try {
+      await apiClient.delete(`/mentor/projects/${projectId}/follow`);
+      setProjects(prevProjects =>
+        prevProjects.map(project =>
+          project._id === projectId ? { ...project, isFollowed: false } : project
+        )
+      );
+      alert('Project unfollowed successfully!');
+    } catch (err) {
+      console.error("Error unfollowing project:", err);
+      alert('Failed to unfollow project.');
     }
   };
 
@@ -143,9 +169,15 @@ function BrowseProjects() {
                   <Link to={`/mentor/projects/${project._id}`}>
                     <Button variant="outline">View Details</Button>
                   </Link>
-                  <Button onClick={() => handleFollowProject(project._id)} variant="default">
-                    Follow Project
-                  </Button>
+                  {project.isFollowed ? (
+                    <Button onClick={() => handleUnfollowProject(project._id)} variant="destructive">
+                      Unfollow Project
+                    </Button>
+                  ) : (
+                    <Button onClick={() => handleFollowProject(project._id)} variant="default">
+                      Follow Project
+                    </Button>
+                  )}
                 </div>
               </CardContent>
             </Card>

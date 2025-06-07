@@ -167,4 +167,56 @@ router.get('/dashboard/recent-projects', protect, async (req, res) => {
   }
 });
 
+// @route   GET api/mentor/projects/followed
+// @desc    Get all projects followed by the current mentor
+// @access  Private (Mentor only)
+router.get('/projects/followed', protect, async (req, res) => {
+  try {
+    const mentorId = req.user.id;
+    const user = await User.findById(mentorId).select('followedProjects');
+
+    if (!user) {
+      return res.status(404).json({ msg: 'Mentor not found' });
+    }
+
+    // Populate the followed projects to get full project objects, not just IDs
+    const followedProjects = await Project.find({ _id: { $in: user.followedProjects } });
+
+    res.json(followedProjects);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server error');
+  }
+});
+
+// @route   DELETE api/mentor/projects/:id/follow
+// @desc    Allow a mentor to unfollow a project
+// @access  Private (Mentor only)
+router.delete('/projects/:id/follow', protect, async (req, res) => {
+  try {
+    const projectId = req.params.id;
+    const mentorId = req.user.id;
+
+    const user = await User.findById(mentorId);
+    if (!user) {
+      return res.status(404).json({ msg: 'Mentor not found' });
+    }
+
+    // Check if following
+    if (!user.followedProjects.includes(projectId)) {
+      return res.status(400).json({ msg: 'Not following this project' });
+    }
+
+    user.followedProjects = user.followedProjects.filter(
+      (id) => id.toString() !== projectId
+    );
+    await user.save();
+
+    res.json({ msg: 'Project unfollowed successfully' });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server error');
+  }
+});
+
 export default router;
