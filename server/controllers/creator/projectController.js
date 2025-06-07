@@ -11,7 +11,7 @@ const validateTechStack = (techStack,res) => {
 
 export const createProject = async (req, res) => {
   try {
-    const { title, description, techStack, status } = req.body;
+    const { title, description, techStack, status, category } = req.body;
     let techstack = validateTechStack(techStack,res);
     if(!techstack){
       return res.status(400).json({ success: false, error: 'Tech stack must be an array' });
@@ -19,6 +19,7 @@ export const createProject = async (req, res) => {
     const project = new Project({
       title,
       description,
+      category, // Added category
       techStack: techstack,
       status,
       creator: req.user._id
@@ -86,7 +87,7 @@ export const getProject = async (req, res) => {
 export const updateProject = async (req, res) => {
   try {
     const updates = Object.keys(req.body);
-    const allowedUpdates = ['title', 'description', 'techStack', 'status'];
+    const allowedUpdates = ['title', 'description', 'techStack', 'status', 'category']; // Added category
     const isValidOperation = updates.every(update => allowedUpdates.includes(update));
 
     if (!isValidOperation) {
@@ -97,10 +98,12 @@ export const updateProject = async (req, res) => {
       { _id: req.params.id, creator: req.user._id },
       { 
         ...req.body,
-        techStack: validateTechStack(req.body.techStack)
+        techStack: validateTechStack(req.body.techStack),
+        category: req.body.category // Added category
       },
       { new: true, runValidators: true }
-    );
+    ).populate('creator', 'name email')
+    .populate('collaborators', 'name role');
 
     if (!project) {
       return res.status(404).json({ success: false, error: 'Project not found' });

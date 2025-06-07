@@ -13,6 +13,11 @@ const ProjectSchema = new mongoose.Schema({
     trim: true,
     maxlength: [500, 'Description cannot exceed 500 characters']
   },
+  category: {
+    type: String,
+    required: [true, 'Category is required'],
+    trim: true,
+  },
   techStack: [{
     type: String,
     trim: true
