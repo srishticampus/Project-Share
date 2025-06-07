@@ -19,6 +19,16 @@ const recommendationService = {
             console.error('Error fetching recommended mentors:', error);
             throw error;
         }
+    },
+
+    getRecommendedProjectsForMentor: async () => {
+        try {
+            const response = await apiClient.get('/recommendations/mentor-projects');
+            return response.data;
+        } catch (error) {
+            console.error('Error fetching recommended projects for mentor:', error);
+            throw error;
+        }
     }
 };
 

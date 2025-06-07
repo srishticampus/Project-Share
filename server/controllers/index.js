@@ -11,7 +11,7 @@ import messageRoutes from './messageController.js';
 import { createApplication, updateApplicationStatus } from './applicationController.js';
 import { submitReport } from './reportController.js';
 import contactFormController from './contactFormController.js'; // Import the new contact form controller
-import { getRecommendedProjectsForCollaborator, getRecommendedMentorsForUser } from './recommendationController.js';
+import { getRecommendedProjectsForCollaborator, getRecommendedMentorsForUser, getRecommendedProjectsForMentor } from './recommendationController.js';
 
 const router = express.Router();
 
@@ -53,6 +53,7 @@ router.use('/contact', contactFormController); // Use the new contact form route
 // Recommendation routes
 router.get('/recommendations/projects', protect, getRecommendedProjectsForCollaborator);
 router.get('/recommendations/mentors', protect, getRecommendedMentorsForUser);
+router.get('/recommendations/mentor-projects', protect, getRecommendedProjectsForMentor);
 
 // Application routes
 router.post('/applications', protect, createApplication); // Protected route for creating applications

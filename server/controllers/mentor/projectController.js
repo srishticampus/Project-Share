@@ -26,7 +26,7 @@ router.get('/browse-projects', protect, async (req, res) => {
     }
 
     if (skill) {
-      query.requiredSkills = { $in: [skill] };
+      query.techStack = { $in: [skill] }; // Filter by techStack instead of requiredSkills
     }
 
     const projects = await Project.find(query).populate('creator', 'name'); // Populate creator's name

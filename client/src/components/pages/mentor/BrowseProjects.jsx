@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import apiClient from '@/lib/apiClient';
+import recommendationService from '@/services/recommendationService'; // Import recommendationService
+import { expertiseOptions } from '@/components/pages/register/mentor'; // Import expertiseOptions
 
 function BrowseProjects() {
   const [projects, setProjects] = useState([]);
@@ -14,14 +16,35 @@ function BrowseProjects() {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterCategory, setFilterCategory] = useState('');
   const [filterSkill, setFilterSkill] = useState('');
+  const [recommendedProjects, setRecommendedProjects] = useState([]); // New state for recommended projects
+  const [loadingRecommendations, setLoadingRecommendations] = useState(true); // New state for loading recommendations
+  const [recommendationError, setRecommendationError] = useState(null); // New state for recommendation error
+  const [availableSkills, setAvailableSkills] = useState([]); // New state for dynamically fetched skills
 
-  // Dummy data for categories and skills - replace with actual data from backend if available
-  const categories = ["Web Development", "Mobile Development", "UI/UX Design", "Data Science"];
-  const skills = ["React", "Node.js", "Python", "Figma", "AWS"];
+  // Use expertiseOptions for categories to ensure consistency
+  const categories = expertiseOptions;
+
+  useEffect(() => {
+    const fetchRecommendedProjects = async () => {
+      try {
+        setLoadingRecommendations(true);
+        const data = await recommendationService.getRecommendedProjectsForMentor();
+        setRecommendedProjects(data);
+      } catch (err) {
+        console.error("Error fetching recommended projects for mentor:", err);
+        setRecommendationError("Failed to load recommended projects.");
+      } finally {
+        setLoadingRecommendations(false);
+      }
+    };
+
+    fetchRecommendedProjects();
+  }, []); // Empty dependency array means this runs once on mount
 
   useEffect(() => {
     const fetchProjects = async () => {
       try {
+        setLoading(true); // Set loading for main projects
         const [projectsResponse, followedProjectsResponse] = await Promise.all([
           apiClient.get('/mentor/browse-projects', {
             params: {
@@ -30,7 +53,7 @@ function BrowseProjects() {
               skill: filterSkill === 'all' ? '' : filterSkill,
             },
           }),
-          apiClient.get('/mentor/projects/followed') // Using the newly created endpoint
+          apiClient.get('/mentor/projects/followed')
         ]);
 
         const followedProjectIds = new Set(followedProjectsResponse.data.map(p => p._id));
@@ -39,11 +62,21 @@ function BrowseProjects() {
           ...project,
           isFollowed: followedProjectIds.has(project._id)
         })));
+
+        // Extract unique tech stacks for skill filtering
+        const uniqueSkills = new Set();
+        projectsResponse.data.forEach(project => {
+          if (project.techStack && Array.isArray(project.techStack)) {
+            project.techStack.forEach(skill => uniqueSkills.add(skill));
+          }
+        });
+        setAvailableSkills(Array.from(uniqueSkills).sort()); // Sort for consistent display
+
       } catch (err) {
         console.error("Error fetching projects:", err);
         setError("Failed to load projects.");
       } finally {
-        setLoading(false);
+        setLoading(false); // Unset loading for main projects
       }
     };
 
@@ -80,7 +113,7 @@ function BrowseProjects() {
     }
   };
 
-  if (loading) {
+  if (loading || loadingRecommendations) {
     return (
       <div className="container mx-auto p-6">
         <Skeleton className="h-10 w-64 mb-6" /> {/* Skeleton for title */}
@@ -112,13 +145,41 @@ function BrowseProjects() {
     );
   }
 
-  if (error) {
-    return <div className="text-center py-8 text-red-500">{error}</div>;
+  if (error || recommendationError) {
+    return <div className="text-center py-8 text-red-500">{error || recommendationError}</div>;
   }
 
   return (
     <div className="container mx-auto p-6">
       <h1 className="text-3xl font-bold mb-6">Browse Projects</h1>
+
+      {recommendedProjects.length > 0 && (
+        <div className="mb-8">
+          <h2 className="text-2xl font-bold mb-4">Recommended Projects for You</h2>
+          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+            {recommendedProjects.map((project) => (
+              <Card key={project._id} className="border-2 border-blue-500 shadow-lg">
+                <CardHeader>
+                  <CardTitle>{project.title}</CardTitle>
+                  <p className="text-sm text-gray-600">Creator: {project.creator ? project.creator.name : 'Unknown'}</p>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-gray-700 mb-2 line-clamp-3">{project.description}</p>
+                  <p className="text-sm text-gray-500">Category: {project.category}</p>
+                  <p className="text-sm text-gray-500">Tech Stack: {project.techStack && Array.isArray(project.techStack) ? project.techStack.join(', ') : 'None'}</p>
+                  <div className="mt-4 flex justify-between items-center">
+                    <Link to={`/mentor/projects/${project._id}`}>
+                      <Button variant="outline">View Details</Button>
+                    </Link>
+                    {/* Follow/Unfollow logic for recommended projects can be added here if needed */}
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+          <hr className="my-8 border-t-2 border-gray-200" />
+        </div>
+      )}
 
       <div className="mb-6 grid grid-cols-1 md:grid-cols-3 gap-4">
         <Input
@@ -144,7 +205,7 @@ function BrowseProjects() {
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All Skills</SelectItem>
-            {skills.map((skill) => (
+            {availableSkills.map((skill) => (
               <SelectItem key={skill} value={skill}>{skill}</SelectItem>
             ))}
           </SelectContent>

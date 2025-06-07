@@ -188,3 +188,35 @@ export const getRecommendedMentorsForUser = async (req, res) => {
         res.status(500).json({ message: 'Server error', error: error.message });
     }
 };
+
+// Get recommended projects for a mentor based on their areas of expertise
+export const getRecommendedProjectsForMentor = async (req, res) => {
+    try {
+        const mentorId = req.user.id; // Assuming user ID is available from auth middleware
+
+        const mentor = await User.findById(mentorId);
+        if (!mentor || mentor.role !== 'mentor') {
+            return res.status(403).json({ message: 'Access denied. Not a mentor.' });
+        }
+
+        const mentorExpertise = mentor.areasOfExpertise || [];
+
+        if (mentorExpertise.length === 0) {
+            return res.status(200).json([]); // No expertise defined, no recommendations
+        }
+
+        // Find projects whose category matches any of the mentor's areas of expertise
+        const recommendedProjects = await Project.find({
+            category: { $in: mentorExpertise },
+            status: { $in: ['Planning', 'In Progress'] } // Only recommend active projects
+        })
+        .populate('creator', 'name email')
+        .lean();
+
+        res.status(200).json(recommendedProjects);
+
+    } catch (error) {
+        console.error('Error getting recommended projects for mentor:', error);
+        res.status(500).json({ message: 'Server error', error: error.message });
+    }
+};
