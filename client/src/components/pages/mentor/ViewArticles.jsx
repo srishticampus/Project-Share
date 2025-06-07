@@ -96,8 +96,6 @@ function ViewArticles() {
               </CardHeader>
               <CardContent>
                 <p className="text-gray-700 mb-2 line-clamp-3">{article.content}</p>
-                <p className="text-sm text-gray-500">Views: {article.views}</p>
-                <p className="text-sm text-gray-500">Comments: {article.comments.length}</p>
                 <div className="mt-4 flex justify-between items-center">
                   <Link to={`/mentor/articles/${article._id}`}>
                     <Button variant="outline">View</Button>

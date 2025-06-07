@@ -21,7 +21,9 @@ router.get('/:senderId/:receiverId', protect, async (req, res) => {
         { sender: senderId, receiver: receiverId },
         { sender: receiverId, receiver: senderId }
       ]
-    }).sort({ timestamp: 1 });
+    })
+    .populate('sender', 'role') // Populate sender with role
+    .sort({ timestamp: 1 });
 
     res.json(messages);
   } catch (err) {

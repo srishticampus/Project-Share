@@ -100,23 +100,26 @@ function ChatInterface({ receiverId }) {
         {messages.map((message) => (
           <div
             key={message._id}
-            className={`mb-2 p-2 rounded-lg relative group ${ // Added relative and group classes
-              message.sender === senderId
+            className={`mb-2 p-2 rounded-lg relative group ${
+              message.sender._id === senderId
                 ? 'bg-blue-100 self-end text-right max-w-max'
                 : 'bg-gray-100 self-start max-w-max'
-            }`}
+            } ${message.sender.role === 'mentor' ? 'border-l-4 border-purple-500' : ''}`}
           >
+            <p className="text-xs text-gray-600">
+              {message.sender._id === senderId ? 'You' : message.sender.name} ({message.sender.role})
+            </p>
             <p className="max-w-prose break-words">{message.content}</p>
             {/* Report Dropdown */}
-            <div className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity"> {/* Added classes for hover effect */}
+            <div className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button size="icon" className="bg-background hover:bg-accent text-foreground w-6 h-6"> {/* Adjusted button size */}
+                  <Button size="icon" className="bg-background hover:bg-accent text-foreground w-6 h-6">
                     <MoreHorizontal className="h-4 w-4" />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                  <DropdownMenuItem onSelect={(e) => e.preventDefault()}> {/* Prevent dropdown closing on form trigger click */}
+                  <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
                     {/* ReportForm Trigger */}
                     <ReportForm
                       className="w-full"

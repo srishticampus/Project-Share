@@ -89,6 +89,8 @@ const MentorRegister = () => {
 
       if (data.token) {
         localStorage.setItem("token", data.token);
+        localStorage.setItem("role", "mentor"); // Set the role for mentor
+        window.dispatchEvent(new Event('loginStatusChange')); // Dispatch event
         navigate("/mentor");
       } else {
         console.warn("Registration successful, but no token received.");

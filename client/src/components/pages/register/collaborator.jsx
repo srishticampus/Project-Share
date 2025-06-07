@@ -68,6 +68,8 @@ const CollaboratorRegister = () => {
 
       if (data.token) {
         localStorage.setItem("token", data.token);
+        localStorage.setItem("role", "collaborator"); // Set the role for collaborator
+        window.dispatchEvent(new Event('loginStatusChange')); // Dispatch event
         navigate("/collaborator/dashboard");
       } else {
         console.warn("Registration successful, but no token received.");

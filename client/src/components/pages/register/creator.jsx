@@ -10,6 +10,7 @@ const CreatorRegister = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState(""); // New state for phone number
   const [photo, setPhoto] = useState(null); // New state for photo file
   const [error, setError] = useState("");
   const [successMessage, setSuccessMessage] = useState(""); // New state for success message
@@ -41,12 +42,13 @@ const CreatorRegister = () => {
     formData.append("name", name);
     formData.append("email", email);
     formData.append("password", password);
+    formData.append("phoneNumber", phoneNumber); // Add phone number to form data
     if (photo) {
       formData.append("photo", photo);
     }
 
     try {
-      console.log("Registration attempt:", { name, email, password, photo: photo ? photo.name : "no photo" });
+      console.log("Registration attempt:", { name, email, password, phoneNumber, photo: photo ? photo.name : "no photo" });
       const response = await apiClient.post("/auth/register/creator", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
@@ -62,6 +64,8 @@ const CreatorRegister = () => {
         // navigate("/login/creator"); // Example: redirect to login
       } else if (data.token) {
         localStorage.setItem("token", data.token);
+        localStorage.setItem("role", "creator"); // Set the role for creator
+        window.dispatchEvent(new Event('loginStatusChange')); // Dispatch event
         navigate("/creator/dashboard");
       } else {
         console.warn("Registration successful, but no token or message received.");
@@ -133,6 +137,19 @@ const CreatorRegister = () => {
               placeholder="Confirm your password"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
+            />
+          </div>
+          <div>
+            <Label htmlFor="phoneNumber" className="block text-sm font-medium text-gray-700">
+              Phone Number
+            </Label>
+            <Input
+              type="tel" // Use type="tel" for phone numbers
+              id="phoneNumber"
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+              placeholder="Enter your phone number"
+              value={phoneNumber}
+              onChange={(e) => setPhoneNumber(e.target.value)}
             />
           </div>
           <div>

@@ -45,7 +45,7 @@ export default function LandingPage() {
     e.preventDefault();
 
     try {
-      const response = await apiClient.post("/messages", {
+      const response = await apiClient.post("/contact", {
         name,
         email,
         subject,

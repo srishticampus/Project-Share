@@ -108,9 +108,6 @@ function Users() {
               <TableHead>Email</TableHead>
               <TableHead>Role</TableHead>
               <TableHead>Contact Number</TableHead>
-              <TableHead>Country</TableHead>
-              <TableHead>City</TableHead>
-              <TableHead>Date of Birth</TableHead>
               <TableHead>Gender</TableHead>
               <TableHead>Verified</TableHead>
               <TableHead>Approved</TableHead> {/* New TableHead for Approved */}
@@ -128,9 +125,6 @@ function Users() {
                   <TableCell><Skeleton className="h-4 w-32" /></TableCell>
                   <TableCell><Skeleton className="h-4 w-16" /></TableCell>
                   <TableCell><Skeleton className="h-4 w-20" /></TableCell>
-                  <TableCell><Skeleton className="h-4 w-20" /></TableCell>
-                  <TableCell><Skeleton className="h-4 w-20" /></TableCell>
-                  <TableCell><Skeleton className="h-4 w-24" /></TableCell>
                   <TableCell><Skeleton className="h-4 w-16" /></TableCell>
                   <TableCell><Skeleton className="h-4 w-12" /></TableCell>
                   <TableCell><Skeleton className="h-4 w-12" /></TableCell>
@@ -152,9 +146,6 @@ function Users() {
                   <TableCell>{user.email}</TableCell>
                   <TableCell>{user.role}</TableCell>
                   <TableCell>{user.contactNumber || 'N/A'}</TableCell>
-                  <TableCell>{user.country || 'N/A'}</TableCell>
-                  <TableCell>{user.city || 'N/A'}</TableCell>
-                  <TableCell>{user.dateOfBirth ? new Date(user.dateOfBirth).toLocaleDateString() : 'N/A'}</TableCell>
                   <TableCell>{user.gender || 'N/A'}</TableCell>
                   <TableCell>{user.isVerified ? 'Yes' : 'No'}</TableCell>
                   <TableCell>

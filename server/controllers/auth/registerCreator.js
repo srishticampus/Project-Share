@@ -31,6 +31,7 @@ router.post(
   [
     body('name', 'Name is required').not().isEmpty(),
     body('email', 'Please include a valid email').isEmail(),
+    body('phoneNumber', 'Please include a valid phone number').optional().isMobilePhone(), // Add phone number validation
     // Removed username validation
     body('password', 'Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character.')
       .isLength({ min: 8 })
@@ -42,7 +43,7 @@ router.post(
       return res.status(400).json({ errors: errors.array() });
     }
 
-    const { name, email, password } = req.body;
+    const { name, email, password, phoneNumber } = req.body;
     const photoPath = req.file ? req.file.path : ''; // Get photo path if uploaded, default to empty string
 
     try {
@@ -59,6 +60,7 @@ router.post(
         name,
         email,
         password,
+        phoneNumber, // Add phone number to user creation
         role: 'creator',
         photo: photoPath, // Save photo path
         isApproved: false, // Set isApproved to false for new creators
