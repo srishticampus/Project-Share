@@ -52,9 +52,26 @@ function ActiveMentorships() {
                     Project: <span className="font-medium">{mentorship.project.title}</span>
                   </p>
                 )}
-                <p className="text-sm text-gray-500">Started on: {new Date(mentorship.requestDate).toLocaleDateString()}</p>
-                <div className="mt-4">
-                  <Link to={`/mentor/chat/${mentorship.requester._id}`}> {/* Link to chat with mentee */}
+                <p className="text-sm text-gray-500 mb-1">Started on: {new Date(mentorship.requestDate).toLocaleDateString()}</p>
+                {mentorship.status && (
+                  <p className="text-sm text-gray-500 mb-1">Status: <span className="font-medium">{mentorship.status}</span></p>
+                )}
+                {mentorship.duration && (
+                  <p className="text-sm text-gray-500 mb-1">Duration: <span className="font-medium">{mentorship.duration}</span></p>
+                )}
+                {mentorship.mentorshipGoals && (
+                  <p className="text-sm text-gray-500 mb-1">Goals: <span className="font-medium">{mentorship.mentorshipGoals}</span></p>
+                )}
+                {mentorship.lastMessageDate && (
+                  <p className="text-sm text-gray-500 mb-1">Last message: {new Date(mentorship.lastMessageDate).toLocaleDateString()}</p>
+                )}
+                <div className="mt-4 flex space-x-2">
+                  <Link to={`/mentor/mentorship-details/${mentorship._id}`}>
+                    <Button variant="outline" className="text-blue-500 border-blue-500 hover:bg-blue-50 hover:text-blue-600">
+                      View Details
+                    </Button>
+                  </Link>
+                  <Link to={`/mentor/chat/${mentorship.requester._id}`}>
                     <Button className="bg-blue-500 hover:bg-blue-600 text-white">
                       Chat
                     </Button>

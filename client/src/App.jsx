@@ -60,6 +60,7 @@ import ChatWithMentees from './components/pages/mentor/ChatWithMentees';
 import MentorProjectDetails from './components/pages/mentor/MentorProjectDetails'; // New mentor project details component
 import ViewArticleDetails from './components/pages/mentor/ViewArticleDetails'; // New mentor article details component
 import EditArticle from './components/pages/mentor/EditArticle'; // New mentor edit article component
+import MentorshipDetails from './components/pages/mentor/MentorshipDetails'; // Import new MentorshipDetails component
 import CreatorConnectWithMentors from './components/pages/creator/ConnectWithMentors'; // Renamed to avoid conflict
 
 function Collaborators() {
@@ -165,6 +166,7 @@ function App() {
           <Route path="chat-with-mentees" element={<ChatWithMentees />} /> {/* New mentor route */}
           <Route path="chat/:userId" element={<ChatInterfaceWrapper />} /> {/* Nested chat route */}
           <Route path="projects/:projectId" element={<MentorProjectDetails />} /> {/* New mentor project details route */}
+          <Route path="mentorship-details/:id" element={<MentorshipDetails />} /> {/* New mentor mentorship details route */}
           <Route path="articles/:articleId" element={<ViewArticleDetails />} /> {/* Route for viewing specific articles */}
           <Route path="articles/:articleId/edit" element={<EditArticle />} /> {/* Route for editing specific articles */}
         </Route>
