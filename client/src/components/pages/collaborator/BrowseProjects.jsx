@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Skeleton } from "@/components/ui/skeleton";
 import apiClient from '@/lib/apiClient';
 import recommendationService from '@/services/recommendationService'; // Import recommendation service
+import { expertiseOptions } from '@/lib/constant'; // Import expertiseOptions
 
 function BrowseProjects() {
   const [projects, setProjects] = useState([]);
@@ -102,6 +103,19 @@ function BrowseProjects() {
             onChange={(e) => setSearchTerm(e.target.value)}
             className="max-w-sm"
           />
+          <Select onValueChange={(value) => setFilterSkills(value ? [value] : [])} value={filterSkills[0] || ""}>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Filter by Skill" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="">All Skills</SelectItem>
+              {expertiseOptions.map((option) => (
+                <SelectItem key={option} value={option}>
+                  {option}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
 
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">

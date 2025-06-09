@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router';
+import { useParams, useNavigate } from 'react-router';
 import apiClient from '@/lib/apiClient';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 
 function MentorProjectDetails() {
   const { projectId } = useParams();
+  const navigate = useNavigate();
   const [project, setProject] = useState(null);
   const [tasks, setTasks] = useState([]); // Add tasks state
   const [loading, setLoading] = useState(true);
@@ -82,8 +83,8 @@ function MentorProjectDetails() {
           )}
           {/* Add more project details here as needed */}
           <div className="mt-6">
-            <Button onClick={() => alert('Mentor specific action for this project!')}>
-              Mentor Action (e.g., Offer Mentorship)
+            <Button onClick={() => navigate(`/mentor/chat/${project.creator._id}`)}>
+              Chat with Creator
             </Button>
           </div>
         </CardContent>

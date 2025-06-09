@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Skeleton } from "@/components/ui/skeleton";
 import apiClient from '@/lib/apiClient';
 import recommendationService from '@/services/recommendationService'; // Import recommendationService
-import { expertiseOptions } from '@/components/pages/register/mentor'; // Import expertiseOptions
+import { expertiseOptions } from '@/lib/constant';
 
 function BrowseProjects() {
   const [projects, setProjects] = useState([]);
@@ -28,8 +28,17 @@ function BrowseProjects() {
     const fetchRecommendedProjects = async () => {
       try {
         setLoadingRecommendations(true);
-        const data = await recommendationService.getRecommendedProjectsForMentor();
-        setRecommendedProjects(data);
+        const [recommendedResponse, followedProjectsResponse] = await Promise.all([
+          recommendationService.getRecommendedProjectsForMentor(),
+          apiClient.get('/mentor/projects/followed')
+        ]);
+
+        const followedProjectIds = new Set(followedProjectsResponse.data.map(p => p._id));
+
+        setRecommendedProjects(recommendedResponse.map(project => ({
+          ...project,
+          isFollowed: followedProjectIds.has(project._id)
+        })));
       } catch (err) {
         console.error("Error fetching recommended projects for mentor:", err);
         setRecommendationError("Failed to load recommended projects.");
@@ -91,6 +100,11 @@ function BrowseProjects() {
           project._id === projectId ? { ...project, isFollowed: true } : project
         )
       );
+      setRecommendedProjects(prevRecommendedProjects =>
+        prevRecommendedProjects.map(project =>
+          project._id === projectId ? { ...project, isFollowed: true } : project
+        )
+      );
       alert('Project followed successfully!');
     } catch (err) {
       console.error("Error following project:", err);
@@ -103,6 +117,11 @@ function BrowseProjects() {
       await apiClient.delete(`/mentor/projects/${projectId}/follow`);
       setProjects(prevProjects =>
         prevProjects.map(project =>
+          project._id === projectId ? { ...project, isFollowed: false } : project
+        )
+      );
+      setRecommendedProjects(prevRecommendedProjects =>
+        prevRecommendedProjects.map(project =>
           project._id === projectId ? { ...project, isFollowed: false } : project
         )
       );
@@ -171,7 +190,15 @@ function BrowseProjects() {
                     <Link to={`/mentor/projects/${project._id}`}>
                       <Button variant="outline">View Details</Button>
                     </Link>
-                    {/* Follow/Unfollow logic for recommended projects can be added here if needed */}
+                    {project.isFollowed ? (
+                      <Button onClick={() => handleUnfollowProject(project._id)} variant="destructive">
+                        Unfollow Project
+                      </Button>
+                    ) : (
+                      <Button onClick={() => handleFollowProject(project._id)} variant="default">
+                        Follow Project
+                      </Button>
+                    )}
                   </div>
                 </CardContent>
               </Card>

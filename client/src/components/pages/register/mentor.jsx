@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea"; // Added Textarea import
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"; // Added Select imports
 import apiClient from '@/lib/apiClient';
+import { expertiseOptions } from '@/lib/constant'; // Import expertiseOptions
 
 const MentorRegister = () => {
   const [name, setName] = useState("");
@@ -21,12 +22,6 @@ const MentorRegister = () => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-
-  const expertiseOptions = [
-    "Web Development", "Mobile Development", "UI/UX Design", "Data Science",
-    "Machine Learning", "Cloud Computing", "Cybersecurity", "DevOps",
-    "Project Management", "Marketing", "Content Creation", "Business Strategy"
-  ];
 
   const handlePhotoChange = (e) => {
     if (e.target.files && e.target.files[0]) {
