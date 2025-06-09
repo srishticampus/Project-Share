@@ -233,9 +233,19 @@ router.get('/my-projects/completed', async (req, res) => {
     const completedProjects = await Project.find({
       collaborators: userId,
       status: 'Completed',
-    }).populate('creator', 'name').populate('category'); // Populate creator name
+    }).populate('creator', 'name').populate('category');
 
-    res.json(completedProjects);
+    // Fetch the current user's portfolio projects
+    const user = await User.findById(userId).select('portfolioProjects');
+    const userPortfolioProjectIds = user ? user.portfolioProjects.map(p => p.toString()) : [];
+
+    // Add a flag to each project indicating if it's in the user's portfolio
+    const projectsWithPortfolioStatus = completedProjects.map(project => ({
+      ...project.toObject(),
+      addToPortfolio: userPortfolioProjectIds.includes(project._id.toString()),
+    }));
+
+    res.json(projectsWithPortfolioStatus);
   } catch (err) {
     console.error(err.message);
     res.status(500).send('Server Error');
@@ -280,25 +290,20 @@ router.get('/portfolio', async (req, res) => {
   try {
     const userId = req.user.id;
 
-    // Fetch user profile data
-    const user = await User.findById(userId).select('skills portfolioLinks bio');
+    // Fetch user profile data and populate portfolioProjects
+    const user = await User.findById(userId)
+      .select('skills portfolioLinks bio portfolioProjects')
+      .populate('portfolioProjects', 'title'); // Populate only the title of the projects
 
     if (!user) {
       return res.status(404).json({ msg: 'User not found' });
     }
 
-    // Find completed projects marked for portfolio
-    const completedProjects = await Project.find({
-      collaborators: userId,
-      status: 'Completed',
-      addToPortfolio: true, // Assuming a field like this exists in the Project model
-    }).select('title'); // Select only the title
-
     const portfolio = {
       skillsShowcase: user.skills,
       portfolioLinks: user.portfolioLinks,
       bio: user.bio,
-      projects: completedProjects,
+      projects: user.portfolioProjects, // Use the populated portfolioProjects
     };
 
     res.json(portfolio);
@@ -330,6 +335,38 @@ router.put('/portfolio', async (req, res) => {
     await user.save();
 
     res.json({ msg: 'Portfolio updated successfully', user });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server Error');
+  }
+});
+
+// @route   PUT /api/collaborator/my-projects/completed/:projectId/toggle-portfolio
+// @desc    Toggle add to portfolio status for a completed project
+// @access  Private
+router.put('/my-projects/completed/:projectId/toggle-portfolio', async (req, res) => {
+  try {
+    const { projectId } = req.params;
+    const { addToPortfolio } = req.body;
+    const userId = req.user.id;
+
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ msg: 'User not found.' });
+    }
+
+    if (addToPortfolio) {
+      // Add project to portfolioProjects if not already present
+      user.portfolioProjects.addToSet(projectId);
+    } else {
+      // Remove project from portfolioProjects
+      user.portfolioProjects.pull(projectId);
+    }
+
+    await user.save();
+
+    res.json({ msg: 'Project portfolio status updated successfully for user.', user });
   } catch (err) {
     console.error(err.message);
     res.status(500).send('Server Error');

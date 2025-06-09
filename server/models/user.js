@@ -83,6 +83,10 @@ const UserSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Project',
   }],
+  portfolioProjects: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Project',
+  }],
 });
 
 UserSchema.set("toJSON", {

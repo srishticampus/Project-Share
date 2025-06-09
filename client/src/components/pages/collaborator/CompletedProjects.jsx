@@ -71,8 +71,7 @@ function CompletedProjects() {
       project._id === projectId ? { ...project, addToPortfolio: isChecked } : project
     ));
     try {
-      // TODO: Implement the correct backend endpoint for updating portfolio toggle
-      await apiClient.put(`/collaborator/my-projects/completed/${projectId}`, { addToPortfolio: isChecked });
+      await apiClient.put(`/collaborator/my-projects/completed/${projectId}/toggle-portfolio`, { addToPortfolio: isChecked });
       console.log(`Add to portfolio toggled for project ${projectId}: ${isChecked}`);
     } catch (error) {
       console.error('Error toggling add to portfolio:', error);
