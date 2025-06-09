@@ -192,7 +192,14 @@ function Portfolio() {
                   {portfolio.projects && portfolio.projects.length > 0 ? (
                     <ul>
                       {portfolio.projects.map(project => (
-                        <li key={project._id}>{project.title}</li>
+                        <li key={project._id}>
+                          <strong>{project.title}</strong>
+                          {project.myContributions && (
+                            <p className="text-sm text-gray-600 ml-4">
+                              My Contributions: {project.myContributions}
+                            </p>
+                          )}
+                        </li>
                       ))}
                     </ul>
                   ) : (

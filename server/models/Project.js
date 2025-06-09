@@ -56,6 +56,17 @@ const ProjectSchema = new mongoose.Schema({
       default: Date.now,
     },
   }],
+  contributions: [{
+    collaborator: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: true,
+    },
+    text: {
+      type: String,
+      default: '',
+    },
+  }],
 }, {
   timestamps: true,
   toJSON: { virtuals: true }

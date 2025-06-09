@@ -56,7 +56,7 @@ function CompletedProjects() {
     ));
     try {
       // TODO: Implement the correct backend endpoint for updating contributions
-      await apiClient.put(`/collaborator/my-projects/completed/${projectId}`, { myContributions: newContribution });
+      await apiClient.put(`/collaborator/my-projects/completed/${projectId}/contributions`, { myContributions: newContribution });
       console.log(`Contribution for project ${projectId} updated successfully.`);
     } catch (error) {
       console.error('Error updating contribution:', error);

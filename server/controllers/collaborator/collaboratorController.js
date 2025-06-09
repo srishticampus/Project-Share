@@ -102,7 +102,7 @@ router.get('/projects/:projectId', async (req, res) => {
     console.error(err.message);
     // Check if the error is due to an invalid ObjectId
     if (err.kind === 'ObjectId') {
-      return res.status(404).json({ msg: 'Project not found' });
+      return res.status(404).json({ msg: 'Project not error' });
     }
     res.status(500).send('Server Error');
   }
@@ -233,19 +233,28 @@ router.get('/my-projects/completed', async (req, res) => {
     const completedProjects = await Project.find({
       collaborators: userId,
       status: 'Completed',
-    }).populate('creator', 'name').populate('category');
+    }).populate('creator', 'name').populate('category').populate('contributions.collaborator', 'name');
 
     // Fetch the current user's portfolio projects
     const user = await User.findById(userId).select('portfolioProjects');
     const userPortfolioProjectIds = user ? user.portfolioProjects.map(p => p.toString()) : [];
 
     // Add a flag to each project indicating if it's in the user's portfolio
-    const projectsWithPortfolioStatus = completedProjects.map(project => ({
-      ...project.toObject(),
-      addToPortfolio: userPortfolioProjectIds.includes(project._id.toString()),
-    }));
+    // And also add the specific contribution of the current collaborator
+    const projectsWithCollaboratorContributions = completedProjects.map(project => {
+      const projectObject = project.toObject();
+      const collaboratorContribution = projectObject.contributions.find(
+        (c) => c.collaborator && c.collaborator._id.toString() === userId
+      );
 
-    res.json(projectsWithPortfolioStatus);
+      return {
+        ...projectObject,
+        myContributions: collaboratorContribution ? collaboratorContribution.text : '',
+        addToPortfolio: userPortfolioProjectIds.includes(project._id.toString()),
+      };
+    });
+
+    res.json(projectsWithCollaboratorContributions);
   } catch (err) {
     console.error(err.message);
     res.status(500).send('Server Error');
@@ -293,17 +302,36 @@ router.get('/portfolio', async (req, res) => {
     // Fetch user profile data and populate portfolioProjects
     const user = await User.findById(userId)
       .select('skills portfolioLinks bio portfolioProjects')
-      .populate('portfolioProjects', 'title'); // Populate only the title of the projects
+      .populate({
+        path: 'portfolioProjects',
+        select: 'title contributions', // Populate title and contributions
+        populate: {
+          path: 'contributions.collaborator', // Populate the collaborator within contributions
+          select: 'name',
+        }
+      });
 
     if (!user) {
       return res.status(404).json({ msg: 'User not found' });
     }
 
+    // Add myContributions to each project in the portfolio
+    const projectsWithMyContributions = user.portfolioProjects.map(project => {
+      const projectObject = project.toObject();
+      const collaboratorContribution = projectObject.contributions.find(
+        (c) => c.collaborator && c.collaborator._id.toString() === userId
+      );
+      return {
+        ...projectObject,
+        myContributions: collaboratorContribution ? collaboratorContribution.text : '',
+      };
+    });
+
     const portfolio = {
       skillsShowcase: user.skills,
       portfolioLinks: user.portfolioLinks,
       bio: user.bio,
-      projects: user.portfolioProjects, // Use the populated portfolioProjects
+      projects: projectsWithMyContributions, // Use the projects with contributions
     };
 
     res.json(portfolio);
@@ -622,6 +650,90 @@ router.put('/profile', upload.single('photo'), async (req, res) => {
     const userResponse = user.toObject();
     delete userResponse.password;
     res.json({ msg: 'Profile updated successfully', user: userResponse });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server Error');
+  }
+});
+
+// @route   PUT /api/collaborator/my-projects/completed/:projectId/contributions
+// @desc    Update a collaborator's contributions to a completed project
+// @access  Private
+router.put('/my-projects/completed/:projectId/contributions', async (req, res) => {
+  try {
+    const { projectId } = req.params;
+    const { myContributions } = req.body; // The new contribution text
+    const userId = req.user.id;
+
+    const project = await Project.findById(projectId);
+
+    if (!project) {
+      return res.status(404).json({ msg: 'Project not found.' });
+    }
+
+    // Ensure the current user is a collaborator on this project
+    if (!project.collaborators.includes(userId)) {
+      return res.status(403).json({ msg: 'Not authorized to update contributions for this project.' });
+    }
+
+    // Find if an entry for this collaborator already exists
+    const existingContributionIndex = project.contributions.findIndex(
+      (c) => c.collaborator.toString() === userId
+    );
+
+    if (existingContributionIndex > -1) {
+      // Update existing contribution
+      project.contributions[existingContributionIndex].text = myContributions;
+    } else {
+      // Add new contribution entry for this collaborator
+      project.contributions.push({ collaborator: userId, text: myContributions });
+    }
+
+    await project.save();
+
+    res.json({ msg: 'Contribution updated successfully.', project });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server Error');
+  }
+});
+
+// @route   PUT /api/collaborator/my-projects/completed/:projectId/contributions
+// @desc    Update a collaborator's contributions to a completed project
+// @access  Private
+router.put('/my-projects/completed/:projectId/contributions', async (req, res) => {
+  try {
+    const { projectId } = req.params;
+    const { myContributions } = req.body; // The new contribution text
+    const userId = req.user.id;
+
+    const project = await Project.findById(projectId);
+
+    if (!project) {
+      return res.status(404).json({ msg: 'Project not found.' });
+    }
+
+    // Ensure the current user is a collaborator on this project
+    if (!project.collaborators.includes(userId)) {
+      return res.status(403).json({ msg: 'Not authorized to update contributions for this project.' });
+    }
+
+    // Find if an entry for this collaborator already exists
+    const existingContributionIndex = project.contributions.findIndex(
+      (c) => c.collaborator.toString() === userId
+    );
+
+    if (existingContributionIndex > -1) {
+      // Update existing contribution
+      project.contributions[existingContributionIndex].text = myContributions;
+    } else {
+      // Add new contribution entry for this collaborator
+      project.contributions.push({ collaborator: userId, text: myContributions });
+    }
+
+    await project.save();
+
+    res.json({ msg: 'Contribution updated successfully.', project });
   } catch (err) {
     console.error(err.message);
     res.status(500).send('Server Error');
