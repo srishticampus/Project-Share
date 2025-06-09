@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import apiClient from '@/lib/apiClient';
+import DOMPurify from 'dompurify';
 
 function ViewArticleDetails() {
   const { articleId } = useParams();
@@ -67,7 +68,15 @@ function ViewArticleDetails() {
           <p className="text-sm text-gray-500">Published: {new Date(article.publicationDate).toLocaleDateString()}</p>
         </CardHeader>
         <CardContent className="pt-4">
-          <div className="prose prose-lg max-w-none text-gray-800 leading-relaxed mb-6" dangerouslySetInnerHTML={{ __html: article.content }}>
+          <div 
+            className="prose prose-lg max-w-none text-gray-800 leading-relaxed mb-6" 
+            dangerouslySetInnerHTML={{ 
+              __html: DOMPurify.sanitize(article.content)
+                .replace(/\n/g, '<br />')
+                .replace(/ {2}/g, '&nbsp;&nbsp;') // Replace two spaces with two non-breaking spaces
+                .replace(/\t/g, '&emsp;') // Replace tabs with em spaces
+            }}
+          >
           </div>
    
           <div className="mt-8 flex justify-end">
