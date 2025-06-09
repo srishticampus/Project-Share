@@ -9,7 +9,7 @@ function Notifications({ onNotificationClick }) {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
   const location = useLocation();
-  const currentRole = location.pathname.split('/')[1];
+  const currentRole = location.pathname.split('/')[1] || localStorage.getItem('role');
 
   const fetchNotifications = async () => {
     try {
