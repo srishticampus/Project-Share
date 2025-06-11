@@ -108,7 +108,7 @@ function BrowseProjects() {
               <SelectValue placeholder="Filter by Skill" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All Skills</SelectItem>
+              <SelectItem>All Skills</SelectItem>
               {expertiseOptions.map((option) => (
                 <SelectItem key={option} value={option}>
                   {option}
