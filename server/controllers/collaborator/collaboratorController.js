@@ -1,4 +1,5 @@
 import express from 'express';
+import mongoose from 'mongoose'; // Import mongoose
 import multer from 'multer';
 import path from 'path';
 import { protect } from '../../middleware/auth.js'; // Import protect middleware
@@ -10,6 +11,30 @@ import MentorRequest from '../../models/MentorRequest.js'; // Assuming MentorReq
 
 const router = express.Router();
 
+// @route   GET /api/collaborator/profile/:id
+// @desc    Get collaborator profile by ID
+// @access  Public (or protected if needed, but for public profiles, it should be accessible)
+router.get('/profile/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: 'Invalid collaborator ID' });
+    }
+
+    const collaborator = await User.findOne({ _id: id, role: 'collaborator' }).select('-password');
+
+    if (!collaborator) {
+      return res.status(404).json({ message: 'Collaborator not found' });
+    }
+
+    res.status(200).json(collaborator);
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).send('Server Error');
+  }
+});
+
 // Protect all collaborator routes
 router.use(protect);
 
@@ -18,10 +43,10 @@ router.use(protect);
 // @access  Private
 router.get('/dashboard/counts', async (req, res) => {
   try {
-    const userId = req.user.id;
+    const userId = req.user._id;
 
     // Count applied projects
-    const appliedProjectsCount = await Application.countDocuments({ applicant: userId });
+    const appliedProjectsCount = await Application.countDocuments({ applicantId: userId });
 
     // Count active projects (where user is a collaborator and project status is Active)
     const activeProjectsCount = await Project.countDocuments({

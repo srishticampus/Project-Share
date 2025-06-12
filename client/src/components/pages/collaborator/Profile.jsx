@@ -22,7 +22,7 @@ function CollaboratorProfile() {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const endpoint = id ? `/user/${id}` : '/collaborator/profile';
+        const endpoint = id ? `/collaborator/profile/${id}` : '/collaborator/profile';
         const response = await apiClient.get(endpoint);
         setProfile(response.data);
         setEditedProfile(response.data);
