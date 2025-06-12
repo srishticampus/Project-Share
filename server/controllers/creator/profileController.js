@@ -6,6 +6,29 @@ import { body, validationResult } from 'express-validator';
 
 const router = express.Router();
 
+// GET /api/creator/profile/:id - Get creator profile by ID
+router.get('/profile/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: 'Invalid creator ID' });
+    }
+
+    const creator = await User.findOne({ _id: id, role: 'creator' });
+
+    if (!creator) {
+      return res.status(404).json({ message: 'Creator not found' });
+    }
+
+    // Return public profile data
+    res.status(200).json(creator);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
+
 // PUT /api/creator/profile - Update creator profile
 router.put('/profile', protect, [
   body('name').optional().isString().trim().escape(),

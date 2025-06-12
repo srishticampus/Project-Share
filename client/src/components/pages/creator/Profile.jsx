@@ -22,7 +22,7 @@ function CreatorProfile() {
   useEffect(() => {
     const getProfile = async () => {
       try {
-        const endpoint = id ? `/user/${id}` : '/auth/profile'; // Adjust endpoint based on ID
+        const endpoint = id ? `/creator/profile/${id}` : '/auth/profile'; // Adjust endpoint based on ID
         const response = await apiClient.get(endpoint);
         setProfileData(response.data);
         setEditProfileData(response.data); // Initialize edit data with fetched data
