@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Badge } from "@/components/ui/badge"; // Import Badge component
 import apiClient from '@/lib/apiClient';
 import recommendationService from '@/services/recommendationService'; // Import recommendation service
 import { expertiseOptions } from '@/lib/constant'; // Import expertiseOptions
@@ -77,7 +78,14 @@ function BrowseProjects() {
             recommendedProjects.map((project) => (
               <Card key={project._id}>
                 <CardHeader>
-                  <CardTitle>{project.title}</CardTitle>
+                  <CardTitle className="flex items-center justify-between">
+                    {project.title}
+                    {project.collaboratorStatus && (
+                      <Badge variant="secondary" className="ml-2">
+                        {project.collaboratorStatus}
+                      </Badge>
+                    )}
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p><strong>Creator:</strong> {project.creator ? project.creator.name : 'N/A'}</p>
@@ -141,7 +149,14 @@ function BrowseProjects() {
             projects.map((project) => (
               <Card key={project._id}>
                 <CardHeader>
-                  <CardTitle>{project.title}</CardTitle>
+                  <CardTitle className="flex items-center justify-between">
+                    {project.title}
+                    {project.collaboratorStatus && (
+                      <Badge variant="secondary" className="ml-2">
+                        {project.collaboratorStatus}
+                      </Badge>
+                    )}
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p><strong>Creator:</strong> {project.creator ? project.creator.name : 'N/A'}</p>

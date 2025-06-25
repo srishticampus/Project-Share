@@ -131,6 +131,9 @@ function ContentModeration() {
             <TableRow>
               <TableHead>Content Type</TableHead>
               <TableHead>Reported By</TableHead>
+              <TableHead>Reporter Email</TableHead>
+              <TableHead>Reporter Role</TableHead>
+              <TableHead>Reporter Contact</TableHead>
               <TableHead>Date Reported</TableHead>
               <TableHead>Reason</TableHead>
               <TableHead>Description</TableHead> {/* Added Description column */}
@@ -143,8 +146,11 @@ function ContentModeration() {
             {reports.map((report) => (
               <TableRow key={report._id}> {/* Use report._id as key */}
                 <TableCell>{report.contentType}</TableCell>
-                <TableCell>{report.reportedBy ? report.reportedBy.name : 'N/A'}</TableCell> {/* Display reportedBy name */}
-                <TableCell>{new Date(report.dateReported).toLocaleDateString()}</TableCell> {/* Format date */}
+                <TableCell>{report.reportedBy ? report.reportedBy.name : 'N/A'}</TableCell>
+                <TableCell>{report.reportedBy ? report.reportedBy.email : 'N/A'}</TableCell>
+                <TableCell>{report.reportedBy ? report.reportedBy.role : 'N/A'}</TableCell>
+                <TableCell>{report.reportedBy ? report.reportedBy.contactNumber : 'N/A'}</TableCell>
+                <TableCell>{new Date(report.dateReported).toLocaleDateString()}</TableCell>
                 <TableCell>{report.reason}</TableCell>
                 <TableCell>{report.description}</TableCell> {/* Display description */}
                 <TableCell>{report.notes || 'N/A'}</TableCell> {/* Display notes, show N/A if no notes */}

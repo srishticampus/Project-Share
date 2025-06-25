@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router";
+import { Eye, EyeOff } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -11,6 +12,7 @@ const CollaboratorRegister = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [contactNumber, setContactNumber] = useState("");
   const [skills, setSkills] = useState(""); // TODO: Implement as multiselect
   const [portfolioLinks, setPortfolioLinks] = useState(""); // TODO: Implement to handle multiple links
@@ -19,6 +21,10 @@ const CollaboratorRegister = () => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
+  const togglePasswordVisibility = () => {
+    setShowPassword((prev) => !prev);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -73,7 +79,7 @@ const CollaboratorRegister = () => {
         navigate("/collaborator/dashboard");
       } else {
         console.warn("Registration successful, but no token received.");
-        setError("Registration complete, but login might be required.");
+        setError("Registration complete, wait for admin approval for login.");
       }
     } catch (err) {
       console.error("Registration error:", err);
@@ -116,31 +122,45 @@ const CollaboratorRegister = () => {
               onChange={(e) => setEmail(e.target.value)}
             />
           </div>
-          <div>
+          <div className="relative">
             <Label htmlFor="password" className="block text-sm font-medium text-gray-700">
               Password
             </Label>
             <Input
-              type="password"
+              type={showPassword ? "text" : "password"}
               id="password"
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm pr-10"
               placeholder="Enter your password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
+            <span
+              className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer"
+              onClick={togglePasswordVisibility}
+              style={{ top: '28px' }}
+            >
+              {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+            </span>
           </div>
-          <div>
+          <div className="relative">
             <Label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
               Confirm Password
             </Label>
             <Input
-              type="password"
+              type={showPassword ? "text" : "password"}
               id="confirmPassword"
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm pr-10"
               placeholder="Confirm your password"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
             />
+            <span
+              className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer"
+              onClick={togglePasswordVisibility}
+              style={{ top: '28px' }}
+            >
+              {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+            </span>
           </div>
            <div>
             <Label htmlFor="contactNumber" className="block text-sm font-medium text-gray-700">

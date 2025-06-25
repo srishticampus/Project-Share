@@ -120,6 +120,9 @@ function ActiveProjects() {
                 <CardTitle>{project.title}</CardTitle>
                 <p className="text-sm text-gray-500">Creator: {project.creator?.name}</p>
                 <p className="text-sm text-gray-500">Category: {project.category}</p>
+                {project.description && (
+                  <p className="text-sm text-gray-600 mt-2">{project.description}</p>
+                )}
               </CardHeader>
               <CardContent>
                 <h3 className="text-lg font-semibold mb-2">My Tasks:</h3>

@@ -1,7 +1,8 @@
 import { Link, Outlet, useNavigate } from "react-router";
-import { Code,  ChevronDown, Menu, User, Bell } from "lucide-react";
+import { Code, ChevronDown, Menu, User, Bell } from "lucide-react";
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge"; // Import Badge component
 import { useState, useEffect } from "react";
 
 import Notifications from '../Notifications';
@@ -10,6 +11,7 @@ export default function Layout() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userRole, setUserRole] = useState(null);
   const [showNotifications, setShowNotifications] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(0); // New state for unread count
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -91,13 +93,21 @@ export default function Layout() {
               {isLoggedIn && (
                 <DropdownMenu open={showNotifications} onOpenChange={setShowNotifications}>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="icon">
+                    <Button variant="ghost" size="icon" className="relative">
                       <Bell className="h-6 w-6" />
+                      {unreadCount > 0 && (
+                        <Badge variant="destructive" className="absolute -top-1 -right-1 h-4 w-4 flex items-center justify-center p-0 text-xs">
+                          {unreadCount}
+                        </Badge>
+                      )}
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end" className="w-80">
                     {/* Notifications component will be rendered here */}
-                    <Notifications onNotificationClick={() => setShowNotifications(false)} />
+                    <Notifications
+                      onNotificationClick={() => setShowNotifications(false)}
+                      onUnreadCountChange={setUnreadCount} // Pass the setter for unread count
+                    />
                   </DropdownMenuContent>
                 </DropdownMenu>
               )}
@@ -204,14 +214,22 @@ export default function Layout() {
                 {isLoggedIn && (
                   <DropdownMenu open={showNotifications} onOpenChange={setShowNotifications}>
                     <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" className="flex items-center gap-1 w-full justify-center">
+                      <Button variant="ghost" className="flex items-center gap-1 w-full justify-center relative">
                         <Bell className="h-6 w-6" />
                         Notifications
+                        {unreadCount > 0 && (
+                          <Badge variant="destructive" className="absolute top-1 right-1/4 h-4 w-4 flex items-center justify-center p-0 text-xs">
+                            {unreadCount}
+                          </Badge>
+                        )}
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end" className="w-full">
                       {/* Notifications component will be rendered here */}
-                      <Notifications onNotificationClick={() => setShowNotifications(false)} />
+                      <Notifications
+                        onNotificationClick={() => setShowNotifications(false)}
+                        onUnreadCountChange={setUnreadCount} // Pass the setter for unread count
+                      />
                     </DropdownMenuContent>
                   </DropdownMenu>
                 )}

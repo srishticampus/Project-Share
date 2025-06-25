@@ -13,26 +13,6 @@ function CompletedProjects() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Dummy data for now
-  const dummyCompletedProjects = [
-    {
-      _id: 'comp1',
-      title: 'Build a Personal Website',
-      creator: 'John Doe',
-      completionDate: '2023-11-15',
-      myContributions: 'Developed the frontend using React and integrated with a headless CMS.',
-      addToPortfolio: true,
-    },
-    {
-      _id: 'comp2',
-      title: 'E-commerce Platform Development',
-      creator: 'Alice Brown',
-      completionDate: '2023-09-30',
-      myContributions: 'Contributed to the backend API development and database design.',
-      addToPortfolio: false,
-    },
-  ];
-
   useEffect(() => {
     const fetchCompletedProjects = async () => {
       try {
@@ -127,7 +107,12 @@ function CompletedProjects() {
                 <CardTitle>{project.title}</CardTitle>
                 <p className="text-sm text-gray-500">Creator: {project.creator?.name}</p>
                 <p className="text-sm text-gray-500">Category: {project.category}</p>
-                <p className="text-sm text-gray-500">Completion Date: {project.completionDate}</p>
+                {project.timeline?.end && (
+                  <p className="text-sm text-gray-500">Completion Date: {new Date(project.timeline.end).toLocaleDateString()}</p>
+                )}
+                {project.description && (
+                  <p className="text-sm text-gray-600 mt-2">{project.description}</p>
+                )}
               </CardHeader>
               <CardContent>
                 <div className="grid gap-2">

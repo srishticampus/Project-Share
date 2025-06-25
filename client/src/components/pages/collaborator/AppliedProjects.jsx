@@ -90,6 +90,9 @@ function AppliedProjects() {
                 <p><strong>Creator:</strong> {application?.creator?.name}</p>
                 <p><strong>Status:</strong> {application.status}</p>
                 <p><strong>Application Date:</strong> {new Date(application.applicationDate).toLocaleString()}</p>
+                {application.project?.description && (
+                  <p className="text-sm text-gray-600 mt-2">{application.project.description}</p>
+                )}
                 {/* TODO: Add a link to view project details if needed */}
                 {/* <Link to={`/collaborator/projects/${application.projectId}`}>View Project Details</Link> */}
               </CardContent>

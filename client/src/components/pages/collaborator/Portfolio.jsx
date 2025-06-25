@@ -5,30 +5,20 @@ import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Skeleton } from "@/components/ui/skeleton";
-import apiClient from '@/lib/apiClient'; // Assuming an API client
+import apiClient from '@/lib/apiClient';
 
-function Portfolio() {
+function Portfolio({ collaboratorId }) { // Accept collaboratorId as a prop
   const [portfolio, setPortfolio] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [editedPortfolio, setEditedPortfolio] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Dummy data for now
-  const dummyPortfolio = {
-    skillsShowcase: ['React', 'Node.js', 'MongoDB', 'TypeScript'],
-    portfolioLinks: ['https://github.com/collaborator', 'https://linkedin.com/in/collaborator'],
-    bio: 'Experienced full-stack developer with a passion for building scalable web applications.',
-    projects: [ // Assuming this lists completed projects marked for portfolio
-      { _id: 'comp1', title: 'Build a Personal Website' },
-      { _id: 'comp2', title: 'E-commerce Platform Development' },
-    ],
-  };
-
   useEffect(() => {
     const fetchPortfolio = async () => {
       try {
-        const response = await apiClient.get('/collaborator/portfolio');
+        const endpoint = collaboratorId ? `/collaborator/portfolio/${collaboratorId}` : '/collaborator/portfolio';
+        const response = await apiClient.get(endpoint);
         setPortfolio(response.data);
         setEditedPortfolio(response.data); // Initialize edited state
       } catch (error) {
@@ -39,8 +29,7 @@ function Portfolio() {
       }
     };
     fetchPortfolio();
-
-  }, []);
+  }, [collaboratorId]); // Re-fetch when collaboratorId changes
 
   const handleEditToggle = () => {
     setIsEditing(!isEditing);
@@ -59,7 +48,6 @@ function Portfolio() {
   };
 
   const handleSkillsChange = (e) => {
-    // Basic comma-separated handling for now
     setEditedPortfolio({
       ...editedPortfolio,
       skillsShowcase: e.target.value.split(',').map(skill => skill.trim()),
@@ -67,13 +55,11 @@ function Portfolio() {
   };
 
   const handlePortfolioLinksChange = (e) => {
-    // Basic comma-separated handling for now
     setEditedPortfolio({
       ...editedPortfolio,
       portfolioLinks: e.target.value.split(',').map(link => link.trim()),
     });
   };
-
 
   const handleUpdatePortfolio = async () => {
     try {
@@ -87,11 +73,13 @@ function Portfolio() {
     }
   };
 
+  const isMyPortfolio = !collaboratorId; // If no ID, it's the current user's portfolio
+
   if (loading) {
     return (
       <main className="flex-1 px-6 pb-6">
         <div className="bg-white rounded-lg h-full p-6">
-          <h1 className="text-2xl font-semibold mb-4">My Portfolio</h1>
+          <h1 className="text-2xl font-semibold mb-4">{isMyPortfolio ? "My Portfolio" : "Collaborator Portfolio"}</h1>
           <Card>
             <CardHeader>
               <Skeleton className="h-6 w-3/4 mb-2" />
@@ -125,24 +113,24 @@ function Portfolio() {
   }
 
   if (error) {
-    return <div>Error: {error}</div>;
+    return <div className="text-red-500 p-4">Error: {error}</div>;
   }
 
   if (!portfolio) {
-    return <div>Portfolio not found.</div>;
+    return <div className="p-4">Portfolio not found.</div>;
   }
 
   return (
     <main className="flex-1 px-6 pb-6">
       <div className="bg-white rounded-lg h-full p-6">
-        <h1 className="text-2xl font-semibold mb-4">My Portfolio</h1>
+        <h1 className="text-2xl font-semibold mb-4">{isMyPortfolio ? "My Portfolio" : "Collaborator Portfolio"}</h1>
 
         <Card>
           <CardHeader>
             <CardTitle>Portfolio Details</CardTitle>
           </CardHeader>
           <CardContent>
-            {isEditing ? (
+            {isEditing && isMyPortfolio ? ( // Only allow editing if it's "My Portfolio"
               <div className="grid gap-4">
                  <div>
                   <Label htmlFor="skillsShowcase">Skills Showcase (Comma-separated):</Label>
@@ -179,21 +167,41 @@ function Portfolio() {
             ) : (
               <div className="grid gap-4">
                 <div>
-                  <p><strong>Skills Showcase:</strong> {portfolio.skillsShowcase.join(', ')}</p>
+                  <p className="text-sm font-medium text-muted-foreground">Skills Showcase</p>
+                  <p className="text-lg">{portfolio.skillsShowcase && portfolio.skillsShowcase.length > 0 ? portfolio.skillsShowcase.join(', ') : 'No skills listed.'}</p>
                 </div>
                 <div>
-                  <p><strong>Portfolio Links:</strong> {portfolio.portfolioLinks.join(', ')}</p>
+                  <p className="text-sm font-medium text-muted-foreground">Portfolio Links</p>
+                  <div className="space-y-2">
+                    {portfolio.portfolioLinks && portfolio.portfolioLinks.length > 0 ? (
+                      portfolio.portfolioLinks.map((link, index) => (
+                        <a
+                          key={index}
+                          href={link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-blue-600 hover:underline flex items-center gap-2 text-lg"
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-external-link"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
+                          {link}
+                        </a>
+                      ))
+                    ) : (
+                      <p className="text-lg text-muted-foreground">No portfolio links provided.</p>
+                    )}
+                  </div>
                 </div>
                 <div>
-                  <p><strong>Bio:</strong> {portfolio.bio}</p>
+                  <p className="text-sm font-medium text-muted-foreground">Bio</p>
+                  <p className="text-lg">{portfolio.bio || "No bio provided."}</p>
                 </div>
                 <div>
-                  <p><strong>Completed Projects:</strong></p>
+                  <p className="text-sm font-medium text-muted-foreground mb-2">Completed Projects</p>
                   {portfolio.projects && portfolio.projects.length > 0 ? (
-                    <ul>
+                    <ul className="list-disc pl-5 space-y-2">
                       {portfolio.projects.map(project => (
                         <li key={project._id}>
-                          <strong>{project.title}</strong>
+                          <strong className="text-lg">{project.title}</strong>
                           {project.myContributions && (
                             <p className="text-sm text-gray-600 ml-4">
                               My Contributions: {project.myContributions}
@@ -203,10 +211,12 @@ function Portfolio() {
                       ))}
                     </ul>
                   ) : (
-                    <p>No completed projects added to portfolio.</p>
+                    <p className="text-lg text-muted-foreground">No completed projects added to portfolio.</p>
                   )}
                 </div>
-                <Button onClick={handleEditToggle}>Edit</Button>
+                {isMyPortfolio && ( // Only show edit button if it's "My Portfolio"
+                  <Button onClick={handleEditToggle}>Edit</Button>
+                )}
               </div>
             )}
           </CardContent>

@@ -13,7 +13,7 @@ const getReports = async (req, res) => {
     }
 
     // Populate reportedBy to get user details if needed
-    const reports = await Report.find(filter).select('contentType reportedBy dateReported reason description status notes').populate('reportedBy', 'name email'); // Explicitly select notes
+    const reports = await Report.find(filter).select('contentType reportedBy dateReported reason description status notes').populate('reportedBy', 'name email role contactNumber'); // Explicitly select notes
     res.status(200).json(reports);
   } catch (error) {
     console.error('Error fetching reports:', error);

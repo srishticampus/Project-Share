@@ -6,6 +6,8 @@ function Analytics() {
   const [userGrowthData, setUserGrowthData] = useState([]);
   const [userEngagementData, setUserEngagementData] = useState([]);
   const [projectSuccessRateData, setProjectSuccessRateData] = useState([]);
+  const [totalProjects, setTotalProjects] = useState(0);
+  const [completedProjects, setCompletedProjects] = useState(0);
   const [popularCategoriesData, setPopularCategoriesData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -22,7 +24,9 @@ function Analytics() {
 
         setUserGrowthData(userGrowthResponse.data);
         setUserEngagementData(userEngagementResponse.data);
-        setProjectSuccessRateData(projectSuccessRateResponse.data);
+        setProjectSuccessRateData(projectSuccessRateResponse.data.successRateData);
+        setTotalProjects(projectSuccessRateResponse.data.totalProjects);
+        setCompletedProjects(projectSuccessRateResponse.data.completedProjects);
         setPopularCategoriesData(popularCategoriesResponse.data);
         setLoading(false);
       } catch (err) {
@@ -41,6 +45,8 @@ function Analytics() {
   if (error) {
     return <main className="flex-1 px-6 pb-6"><div className="bg-white rounded-lg h-full p-6 text-red-500">Error loading analytics: {error.message}</div></main>;
   }
+
+  const successRateValue = projectSuccessRateData.length > 0 ? projectSuccessRateData[0].value : 0;
 
   return (
     <main className="flex-1 px-6 pb-6">
@@ -62,6 +68,11 @@ function Analytics() {
           </div>
           <div className="border p-4 rounded-lg">
             <h2>Project Success Rate</h2>
+            {totalProjects > 0 ? (
+              <p className="text-lg font-semibold mb-2">Success Rate: {successRateValue.toFixed(2)}% ({completedProjects} of {totalProjects} projects completed)</p>
+            ) : (
+              <p className="text-lg font-semibold mb-2">No projects available to calculate success rate.</p>
+            )}
             <ResponsiveContainer width="100%" height={200}>
               <BarChart data={projectSuccessRateData}>
                 <CartesianGrid strokeDasharray="3 3" />

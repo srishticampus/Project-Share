@@ -1,6 +1,7 @@
 import User from '../models/user.js';
 import Project from '../models/Project.js';
 import Task from '../models/Task.js';
+import Application from '../models/Application.js'; // Import Application model
 
 // Helper function to calculate similarity between two sets of skills/keywords
 const calculateSimilarity = (set1, set2) => {
@@ -104,9 +105,27 @@ export const getRecommendedProjectsForCollaborator = async (req, res) => {
             const score = calculateSimilarity(collaboratorSkills.map(s => s.toLowerCase()), relevantProjectKeywords);
 
             if (score > 0) { // Only include projects with some level of match
+                let collaboratorStatus = null;
+
+                // Check if the current user is an active collaborator on the project
+                if (project.collaborators.includes(collaboratorId) && project.status === 'In Progress') {
+                    collaboratorStatus = 'Active';
+                } else {
+                    // Check if the current user has applied to this project
+                    const application = await Application.findOne({
+                        projectId: project._id,
+                        applicantId: collaboratorId,
+                        status: { $in: ['Pending', 'Accepted'] }
+                    });
+                    if (application) {
+                        collaboratorStatus = 'Applied';
+                    }
+                }
+
                 recommendedProjects.push({
                     ...project,
-                    recommendationScore: score
+                    recommendationScore: score,
+                    collaboratorStatus, // Add the status here
                 });
             }
         }

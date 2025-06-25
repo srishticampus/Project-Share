@@ -91,6 +91,7 @@ router.post(
         bio,
         photo: photoPath, // Save photo path
         role: 'collaborator',
+        isApproved: false, // Set isApproved to false for new collaborators
       });
 
       // Hash password
@@ -99,23 +100,8 @@ router.post(
 
       await user.save();
 
-      // Return jsonwebtoken
-      const payload = {
-        user: {
-          id: user.id,
-          role: user.role,
-        },
-      };
-
-      jwt.sign(
-        payload,
-        JWT_SECRET,
-        { expiresIn: 3600 },
-        (err, token) => {
-          if (err) throw err;
-          res.json({ token });
-        }
-      );
+      // Inform the user that their account is pending approval
+      res.status(200).json({ msg: 'Registration successful. Your account is pending admin approval.' });
     } catch (err) {
       console.error(err.message);
       res.status(500).send('Server error');

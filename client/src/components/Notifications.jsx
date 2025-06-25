@@ -4,7 +4,7 @@ import { useNavigate, useLocation } from 'react-router';
 
 const POLLING_INTERVAL = 10000; // Poll every 10 seconds
 
-function Notifications({ onNotificationClick }) {
+function Notifications({ onNotificationClick, onUnreadCountChange }) {
   const [notifications, setNotifications] = useState([]);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
@@ -14,8 +14,31 @@ function Notifications({ onNotificationClick }) {
   const fetchNotifications = async () => {
     try {
       const response = await apiClient.get('/messages/notifications');
-      setNotifications(response.data);
+      const fetchedNotifications = response.data;
+      setNotifications(fetchedNotifications);
       setError(null); // Clear any previous errors
+
+      // Mark newly fetched unread notifications as read
+      const unreadNotificationIds = fetchedNotifications
+        .filter(n => !n.read)
+        .map(n => n._id);
+
+      if (unreadNotificationIds.length > 0) {
+        try {
+          await apiClient.put('/messages/notifications/mark-many-read', {
+            notificationIds: unreadNotificationIds,
+          });
+          // Optimistically update the local state to reflect they are now read
+          setNotifications(prev =>
+            prev.map(n =>
+              unreadNotificationIds.includes(n._id) ? { ...n, read: true } : n
+            )
+          );
+        } catch (markError) {
+          console.error('Error marking notifications as read:', markError);
+          // Optionally, handle this error differently, e.g., show a non-blocking message
+        }
+      }
     } catch (err) {
       console.error('Error fetching notifications:', err);
       setError('Failed to fetch notifications. Please try again later.');
@@ -29,6 +52,13 @@ function Notifications({ onNotificationClick }) {
 
     return () => clearInterval(intervalId); // Cleanup on unmount
   }, []);
+
+  useEffect(() => {
+    const unreadCount = notifications.filter(n => !n.read).length;
+    if (onUnreadCountChange) {
+      onUnreadCountChange(unreadCount);
+    }
+  }, [notifications, onUnreadCountChange]);
 
   const markNotificationAsRead = async (notificationId) => {
     try {

@@ -53,8 +53,8 @@ router.post(
           .json({ errors: [{ msg: 'Invalid Credentials' }] });
       }
 
-      // Check if the user is a creator and not approved
-      if (user.role === 'creator' && !user.isApproved) {
+      // Check if the user is not an admin and not approved
+      if (user.role !== 'admin' && !user.isApproved) {
         return res.status(403).json({ errors: [{ msg: 'Your account is pending admin approval.' }] });
       }
 

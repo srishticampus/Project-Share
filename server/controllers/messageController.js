@@ -134,4 +134,24 @@ router.put('/notifications/:id/read', protect, async (req, res) => {
   }
 });
 
+// @route   PUT api/messages/notifications/mark-many-read
+// @desc    Mark multiple notifications as read
+// @access  Private
+router.put('/notifications/mark-many-read', protect, async (req, res) => {
+  try {
+    const { notificationIds } = req.body; // Expect an array of IDs
+    const userId = req.user.id;
+
+    if (!Array.isArray(notificationIds) || notificationIds.length === 0) {
+      return res.status(400).json({ msg: 'An array of notification IDs is required' });
+    }
+
+    await NotificationService.markManyAsRead(notificationIds, userId);
+    res.json({ msg: 'Notifications marked as read' });
+  } catch (err) {
+    console.error('Error marking many notifications as read:', err.message);
+    res.status(500).send('Server error');
+  }
+});
+
 export default router;

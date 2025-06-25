@@ -108,7 +108,6 @@ function Users() {
               <TableHead>Email</TableHead>
               <TableHead>Role</TableHead>
               <TableHead>Contact Number</TableHead>
-              <TableHead>Gender</TableHead>
               <TableHead>Verified</TableHead>
               <TableHead>Approved</TableHead> {/* New TableHead for Approved */}
               <TableHead>Last Login</TableHead>
@@ -146,18 +145,17 @@ function Users() {
                   <TableCell>{user.email}</TableCell>
                   <TableCell>{user.role}</TableCell>
                   <TableCell>{user.contactNumber || 'N/A'}</TableCell>
-                  <TableCell>{user.gender || 'N/A'}</TableCell>
                   <TableCell>{user.isVerified ? 'Yes' : 'No'}</TableCell>
                   <TableCell>
-                    {user.role === 'creator' ? (user.isApproved ? 'Yes' : 'No') : 'N/A'}
-                  </TableCell> {/* Display N/A if not a creator */}
+                    {user.isApproved ? 'Yes' : 'No'}
+                  </TableCell>
                   <TableCell>{user.lastLogin ? new Date(user.lastLogin).toLocaleString() : 'N/A'}</TableCell>
                   <TableCell>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <Button variant="ghost" className="h-8 w-8 p-0">
                           <span className="sr-only">Open menu</span>
-                          <MoreHorizontal className="h-4 w-4" /> {/* Replaced "Actions" text with icon */}
+                          <MoreHorizontal className="h-4 w-4" />
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
@@ -166,7 +164,7 @@ function Users() {
                         <DropdownMenuItem onClick={() => handleToggleVerified(user._id, user.isVerified)}>
                           {user.isVerified ? 'Unverify' : 'Verify'}
                         </DropdownMenuItem>
-                        {user.role === 'creator' && (
+                        {user.role !== 'admin' && ( // Show for all roles except admin
                           <DropdownMenuItem onClick={() => handleToggleApproved(user._id, user.isApproved)}>
                             {user.isApproved ? 'Disapprove' : 'Approve'}
                           </DropdownMenuItem>

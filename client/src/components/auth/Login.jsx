@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router';
+import { Eye, EyeOff } from 'lucide-react';
 import { Button } from "@/components/ui/button"; // Assuming alias setup in vite/jsconfig
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -16,9 +17,14 @@ import apiClient from '@/lib/apiClient'; // Import the configured axios instance
 function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
+  const togglePasswordVisibility = () => {
+    setShowPassword((prev) => !prev);
+  };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -100,18 +106,25 @@ function Login() {
                   disabled={loading}
                 />
               </div>
-              <div className="flex flex-col space-y-1.5">
+              <div className="relative flex flex-col space-y-1.5">
                 <Label htmlFor="password">Password</Label>
                 <Input
                   id="password"
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   placeholder="Your password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
                   disabled={loading}
+                  className="pr-10"
                 />
-                {/* @TODO: Add Show/Hide password toggle */}
+                <span
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer"
+                  onClick={togglePasswordVisibility}
+                  style={{ top: '28px' }}
+                >
+                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                </span>
                 {/* @TODO: Add "Forgot Password?" link */}
               </div>
             </div>

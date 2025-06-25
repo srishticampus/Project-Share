@@ -35,6 +35,57 @@ router.get('/profile/:id', async (req, res) => {
   }
 });
 
+// @route   GET /api/collaborator/portfolio/:id
+// @desc    Get collaborator portfolio by ID
+// @access  Public
+router.get('/portfolio/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: 'Invalid collaborator ID' });
+    }
+
+    const user = await User.findOne({ _id: id, role: 'collaborator' })
+      .select('skills portfolioLinks bio portfolioProjects')
+      .populate({
+        path: 'portfolioProjects',
+        select: 'title contributions',
+        populate: {
+          path: 'contributions.collaborator',
+          select: 'name',
+        }
+      });
+
+    if (!user) {
+      return res.status(404).json({ msg: 'Collaborator portfolio not found' });
+    }
+
+    const projectsWithMyContributions = user.portfolioProjects.map(project => {
+      const projectObject = project.toObject();
+      const collaboratorContribution = projectObject.contributions.find(
+        (c) => c.collaborator && c.collaborator._id.toString() === id
+      );
+      return {
+        ...projectObject,
+        myContributions: collaboratorContribution ? collaboratorContribution.text : '',
+      };
+    });
+
+    const portfolio = {
+      skillsShowcase: user.skills,
+      portfolioLinks: user.portfolioLinks,
+      bio: user.bio,
+      projects: projectsWithMyContributions,
+    };
+
+    res.status(200).json(portfolio);
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).send('Server Error');
+  }
+});
+
 // Protect all collaborator routes
 router.use(protect);
 
@@ -97,7 +148,32 @@ router.get('/projects', async (req, res) => {
 
     const projects = await Project.find(filter).populate('creator', 'name'); // Populate creator name
 
-    res.json(projects);
+    const projectsWithStatus = await Promise.all(projects.map(async (project) => {
+      const projectObject = project.toObject();
+      let collaboratorStatus = null;
+
+      // Check if the current user is an active collaborator on the project
+      if (project.collaborators.includes(req.user.id) && project.status === 'In Progress') {
+        collaboratorStatus = 'Active';
+      } else {
+        // Check if the current user has applied to this project
+        const application = await Application.findOne({
+          projectId: project._id,
+          applicantId: req.user.id,
+          status: { $in: ['Pending', 'Accepted'] }
+        });
+        if (application) {
+          collaboratorStatus = 'Applied';
+        }
+      }
+
+      return {
+        ...projectObject,
+        collaboratorStatus,
+      };
+    }));
+
+    res.json(projectsWithStatus);
   } catch (err) {
     console.error(err.message);
     res.status(500).send('Server Error');

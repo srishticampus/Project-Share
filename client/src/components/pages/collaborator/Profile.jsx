@@ -10,6 +10,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import apiClient from '@/lib/apiClient';
 import { API_URL } from '@/lib/constant';
+import Portfolio from './Portfolio'; // Import the Portfolio component
 
 function CollaboratorProfile() {
   const { id } = useParams(); // Get user ID from URL
@@ -225,15 +226,6 @@ function CollaboratorProfile() {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="portfolioLinks">Portfolio Links (Comma-separated URLs):</Label>
-                  <Input
-                    id="portfolioLinks"
-                    type="text"
-                    value={editedProfile.portfolioLinks.join(', ')}
-                    onChange={handlePortfolioLinksChange}
-                  />
-                </div>
-                <div>
                   <Label htmlFor="bio">Bio:</Label>
                   <Textarea
                     id="bio"
@@ -275,27 +267,6 @@ function CollaboratorProfile() {
                   </div>
                 </div>
 
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground mb-2">Portfolio Links</p>
-                  <div className="space-y-2">
-                    {profile.portfolioLinks && profile.portfolioLinks.length > 0 ? (
-                      profile.portfolioLinks.map((link, index) => (
-                        <a
-                          key={index}
-                          href={link}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-blue-600 hover:underline flex items-center gap-2 text-lg"
-                        >
-                          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-external-link"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
-                          {link}
-                        </a>
-                      ))
-                    ) : (
-                      <p className="text-lg text-muted-foreground">No portfolio links provided.</p>
-                    )}
-                  </div>
-                </div>
                 {isMyProfile && (
                   <Button onClick={handleEditToggle} className="w-fit">Edit Profile</Button>
                 )}
@@ -303,6 +274,11 @@ function CollaboratorProfile() {
             )}
           </CardContent>
         </Card>
+
+        {/* Render the Portfolio component below the profile card */}
+        <div className="mt-6">
+          <Portfolio collaboratorId={id} />
+        </div>
       </div>
     </main>
   );

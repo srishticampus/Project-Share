@@ -102,7 +102,7 @@ export const getProjectSuccessRate = async (req, res) => {
     // Return data in a format suitable for a chart
     const projectSuccessRateData = [{ name: 'Success Rate', value: successRate }];
 
-    res.status(200).json(projectSuccessRateData);
+    res.status(200).json({ successRateData: projectSuccessRateData, totalProjects, completedProjects });
   } catch (error) {
     console.error('Error fetching project success rate data:', error);
     res.status(500).json({ message: 'Error fetching project success rate data' });

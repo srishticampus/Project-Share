@@ -54,6 +54,25 @@ class NotificationService {
   }
 
   /**
+   * Marks multiple notifications as read.
+   * @param {string[]} notificationIds - An array of notification IDs to mark as read.
+   * @param {string} userId - The ID of the user attempting to mark the notifications as read (for authorization).
+   */
+  static async markManyAsRead(notificationIds, userId) {
+    try {
+      const result = await Notification.updateMany(
+        { _id: { $in: notificationIds }, user: userId, read: false },
+        { $set: { read: true } }
+      );
+      console.log(`${result.modifiedCount} notifications marked as read for user ${userId}.`);
+      return result;
+    } catch (error) {
+      console.error('Error marking many notifications as read:', error);
+      throw error;
+    }
+  }
+
+  /**
    * Fetches notifications for a specific user.
    * @param {string} userId - The ID of the user whose notifications to fetch.
    */
