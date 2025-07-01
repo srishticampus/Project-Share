@@ -133,8 +133,8 @@ function ContentModeration() {
               <TableHead>Reported By</TableHead>
               <TableHead>Reporter Email</TableHead>
               <TableHead>Reporter Role</TableHead>
-              <TableHead>Reporter Contact</TableHead>
               <TableHead>Date Reported</TableHead>
+              <TableHead>Reported Content Details</TableHead>
               <TableHead>Reason</TableHead>
               <TableHead>Description</TableHead> {/* Added Description column */}
               <TableHead>Notes</TableHead> {/* Added Notes column */}
@@ -149,8 +149,23 @@ function ContentModeration() {
                 <TableCell>{report.reportedBy ? report.reportedBy.name : 'N/A'}</TableCell>
                 <TableCell>{report.reportedBy ? report.reportedBy.email : 'N/A'}</TableCell>
                 <TableCell>{report.reportedBy ? report.reportedBy.role : 'N/A'}</TableCell>
-                <TableCell>{report.reportedBy ? report.reportedBy.contactNumber : 'N/A'}</TableCell>
                 <TableCell>{new Date(report.dateReported).toLocaleDateString()}</TableCell>
+                <TableCell>
+                  {report.contentId ? (
+                    report.contentType === 'Project' ? (
+                      <>
+                        <strong>Title:</strong> {report.contentId.title} <br />
+                        <strong>Description:</strong> {report.contentId.description}
+                      </>
+                    ) : report.contentType === 'Message' ? (
+                      <>
+                        <strong>Message:</strong> {report.contentId.text}
+                      </>
+                    ) : (
+                      `Content Type: ${report.contentType}`
+                    )
+                  ) : 'N/A'}
+                </TableCell>
                 <TableCell>{report.reason}</TableCell>
                 <TableCell>{report.description}</TableCell> {/* Display description */}
                 <TableCell>{report.notes || 'N/A'}</TableCell> {/* Display notes, show N/A if no notes */}

@@ -1,4 +1,6 @@
 import Report from '../../models/Report.js'; // Import the Report model
+import Project from '../../models/Project.js';
+import Message from '../../models/Message.js';
 
 // Get all reports (or pending reports for moderation)
 const getReports = async (req, res) => {
@@ -12,8 +14,14 @@ const getReports = async (req, res) => {
       filter = { status: 'pending' }; // Default to pending if no status is provided
     }
 
-    // Populate reportedBy to get user details if needed
-    const reports = await Report.find(filter).select('contentType reportedBy dateReported reason description status notes').populate('reportedBy', 'name email role contactNumber'); // Explicitly select notes
+    // Populate reportedBy and conditionally populate contentId based on contentType
+    const reports = await Report.find(filter)
+      .select('contentType reportedBy dateReported reason description status notes contentId')
+      .populate('reportedBy', 'name email role contactNumber')
+      .populate({
+        path: 'contentId',
+        select: 'title description content' // Select fields relevant to Project and Message. 'content' for Message, 'title' and 'description' for Project.
+      });
     res.status(200).json(reports);
   } catch (error) {
     console.error('Error fetching reports:', error);

@@ -26,8 +26,18 @@ export const getDashboardStats = async (req, res) => {
     // Get recent projects (e.g., last 5 projects)
     const recentProjects = await Project.find().sort({ createdAt: -1 }).limit(5);
 
-    // Get recent reports (e.g., last 3 reports)
-    const recentReports = await Report.find().sort({ createdAt: -1 }).limit(3);
+    // Get recent reports (e.g., last 3 reports) and populate contentId
+    const recentReports = await Report.find()
+      .sort({ createdAt: -1 })
+      .limit(3)
+      .populate({
+        path: 'contentId',
+        select: 'title text' // Select title for Projects, text for Comments/Messages
+      })
+      .populate({
+        path: 'reportedBy',
+        select: 'name email' // Select name and email of the reporter
+      });
 
     // Prepare the response data
     const dashboardData = {

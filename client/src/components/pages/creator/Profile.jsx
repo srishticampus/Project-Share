@@ -57,7 +57,7 @@ function CreatorProfile() {
   const handleSkillsChange = (e) => {
     setEditProfileData(prevData => ({
       ...prevData,
-      skills: e.target.value.split(',').map(skill => skill.trim()).filter(skill => skill !== ''),
+      skills: e.target.value, // Store as a raw string
     }));
   };
 
@@ -78,23 +78,23 @@ function CreatorProfile() {
       formData.append('name', editProfileData.name);
       formData.append('email', editProfileData.email);
       formData.append('bio', editProfileData.bio);
-      // Ensure skills are sent as a JSON string if they are an array
-      if (Array.isArray(editProfileData.skills)) {
-        formData.append('skills', JSON.stringify(editProfileData.skills));
-      } else {
-        formData.append('skills', editProfileData.skills || '');
-      }
+      // Split skills string into an array and then JSON stringify it for the backend
+      const skillsArray = typeof editProfileData.skills === 'string'
+        ? editProfileData.skills.split(',').map(skill => skill.trim()).filter(skill => skill !== '')
+        : (Array.isArray(editProfileData.skills) ? editProfileData.skills : []);
+      formData.append('skills', JSON.stringify(skillsArray));
 
       if (editProfileData.photo && !editProfileData.photo.startsWith('http')) { // Only append if it's a new file
         formData.append('photo', editProfileData.photo);
       }
 
-      await apiClient.put('/creator/profile', formData, { // Assuming this is the correct endpoint for creator profile updates
+      const response = await apiClient.put('/creator/profile', formData, { // Assuming this is the correct endpoint for creator profile updates
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       });
-      setProfileData(editProfileData); // Update displayed data
+      setProfileData(response.data); // Update displayed data with server response
+      setEditProfileData(response.data); // Update edit data with server response
       setIsEditMode(false);
       console.log('Profile updated successfully.');
     } catch (error) {

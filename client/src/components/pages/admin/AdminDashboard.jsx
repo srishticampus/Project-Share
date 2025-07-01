@@ -91,11 +91,29 @@ function AdminDashboard() {
           <Card>
             <div className="p-4">
               <h2 className="text-lg font-semibold">Recent Reports</h2>
-              <ul>
+              <div className="space-y-2">
                 {dashboardData.recentReports.map((report) => (
-                  <li key={report._id}>{report.title}</li>
+                  <Card key={report._id} className="p-3 text-sm">
+                    <div>
+                      <strong>Type:</strong> {report.contentType} - 
+                      {report.contentType === 'Project' && report.contentId && report.contentId.title && (
+                        <span> <strong>Title:</strong> {report.contentId.title}</span>
+                      )}
+                      {(report.contentType === 'Comment' || report.contentType === 'Message') && report.contentId && report.contentId.text && (
+                        <span> <strong>Content:</strong> "{report.contentId.text.substring(0, 50)}..."</span>
+                      )}
+                    </div>
+                    <div>
+                      <strong>Reason:</strong> {report.reason} - <em>{report.description}</em>
+                    </div>
+                    {report.reportedBy && (
+                      <div className="text-xs text-gray-600">
+                        <strong>Reported By:</strong> {report.reportedBy.name} ({report.reportedBy.email})
+                      </div>
+                    )}
+                  </Card>
                 ))}
-              </ul>
+              </div>
             </div>
           </Card>
         </div>

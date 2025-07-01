@@ -84,7 +84,7 @@ function Projects() {
                 <TableHead>Creator</TableHead>
                 <TableHead>Tech Stack</TableHead>
                 <TableHead>Description</TableHead>
-                <TableHead>Tech Stack</TableHead>
+                <TableHead>Category</TableHead>
                 <TableHead>Collaborators</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead>Actions</TableHead>
@@ -97,7 +97,7 @@ function Projects() {
                   <TableCell>{project.creator ? project.creator.name : 'N/A'}</TableCell>
                   <TableCell>{project.techStack && project.techStack.length > 0 ? project.techStack.join(', ') : 'N/A'}</TableCell>
                   <TableCell>{project.description}</TableCell>
-                  <TableCell>{project.techStack && project.techStack.length > 0 ? project.techStack.join(', ') : 'N/A'}</TableCell>
+                  <TableCell>{project.category}</TableCell>
                   <TableCell>{project.collaborators && project.collaborators.length > 0 ? project.collaborators.map(collab => collab.name).join(', ') : 'None'}</TableCell>
                   <TableCell>
                     <Select

@@ -3,8 +3,31 @@ import mongoose from 'mongoose';
 import User from '../../models/user.js'; // Assuming User model is used for creators
 import { protect } from '../../middleware/auth.js';
 import { body, validationResult } from 'express-validator';
+import multer from 'multer';
+import path from 'path';
 
 const router = express.Router();
+
+// Configure Multer for file uploads
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'uploads/'); // Files will be saved in the 'uploads' directory
+  },
+  filename: (req, file, cb) => {
+    cb(null, `${file.fieldname}-${Date.now()}${path.extname(file.originalname)}`);
+  },
+});
+
+// Filter to allow only image files
+const fileFilter = (req, file, cb) => {
+  if (file.mimetype.startsWith('image/')) {
+    cb(null, true);
+  } else {
+    cb(new Error('Only image files are allowed!'), false);
+  }
+};
+
+const upload = multer({ storage, fileFilter });
 
 // GET /api/creator/profile/:id - Get creator profile by ID
 router.get('/profile/:id', async (req, res) => {
@@ -30,12 +53,27 @@ router.get('/profile/:id', async (req, res) => {
 });
 
 // PUT /api/creator/profile - Update creator profile
-router.put('/profile', protect, [
+router.put('/profile', protect, upload.single('photo'), [ // Add upload.single('photo') middleware
   body('name').optional().isString().trim().escape(),
   body('email').optional().isEmail().normalizeEmail(),
-  body('photo').optional().isString().trim().escape(),
   body('bio').optional().isString().trim().escape(),
-  body('skills').optional().isArray(), // Assuming creators have skills
+  body('skills').optional().custom((value, { req }) => {
+    if (!value) {
+      return true; // Optional field, no value means no validation needed
+    }
+    try {
+      const parsedSkills = JSON.parse(value);
+      if (!Array.isArray(parsedSkills)) {
+        throw new Error('Skills must be an array.');
+      }
+      if (!parsedSkills.every(skill => typeof skill === 'string')) {
+        throw new Error('All skills must be strings.');
+      }
+      return true;
+    } catch (e) {
+      throw new Error('Skills must be a valid JSON array of strings.');
+    }
+  }),
   // Add more creator-specific validation rules as needed
 ], async (req, res) => {
   const errors = validationResult(req);
@@ -59,9 +97,16 @@ router.put('/profile', protect, [
     // Update user fields
     if (req.body.name) user.name = req.body.name;
     if (req.body.email) user.email = req.body.email;
-    if (req.body.photo) user.photo = req.body.photo;
     if (req.body.bio) user.bio = req.body.bio;
     
+    // Handle photo upload
+    if (req.file) {
+      user.photo = `/uploads/${req.file.filename}`; // Store the path to the uploaded file
+    } else if (req.body.photo === 'null' || req.body.photo === '') {
+      // If photo is explicitly set to null/empty, clear it
+      user.photo = null;
+    }
+
     // Handle array fields that might be sent as JSON strings
     if (req.body.skills) {
       try {

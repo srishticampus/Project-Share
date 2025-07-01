@@ -25,7 +25,8 @@ const ReportSchema = new mongoose.Schema({
   },
   contentId: {
     type: mongoose.Schema.Types.ObjectId,
-    required: true, // Reference to the reported content (Project, Comment, or Message)
+    required: true,
+    refPath: 'contentType', // Reference to the reported content (Project, Comment, or Message)
   },
   status: { // Added status field
     type: String,
