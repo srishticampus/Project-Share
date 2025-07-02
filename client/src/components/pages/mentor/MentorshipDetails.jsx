@@ -3,6 +3,7 @@ import { useParams,Link } from 'react-router';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import apiClient from '@/lib/apiClient';
+import { API_URL } from '@/lib/constant';
 
 function MentorshipDetails() {
   const { id } = useParams(); // Get mentorship ID from URL
@@ -49,7 +50,7 @@ function MentorshipDetails() {
         <CardContent>
           <div className="flex items-center space-x-4 mb-4">
             {mentorship.requester.photo && (
-              <img src={mentorship.requester.photo} alt="Profile" className="w-16 h-16 rounded-full object-cover" />
+              <img src={`${API_URL}/${mentorship.requester.photo}`} alt="Profile" className="w-16 h-16 rounded-full object-cover" />
             )}
             <div>
               <p className="text-lg font-semibold">{mentorship.requester.name}</p>

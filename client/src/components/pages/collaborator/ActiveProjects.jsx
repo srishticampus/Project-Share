@@ -131,6 +131,9 @@ function ActiveProjects() {
                     {project.myTasks.map((task) => (
                       <li key={task._id} className="mb-2">
                         <p><strong>Task:</strong> {task.title}</p>
+                        {task.description && (
+                          <p className="text-sm text-gray-600 mt-1">{task.description}</p>
+                        )}
                         <div className="flex items-center space-x-2">
                           <span>Status: {task.status}</span>
                           {/* TODO: Implement Select for status update */}

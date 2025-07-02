@@ -16,7 +16,7 @@ function Analytics() {
     const fetchAnalyticsData = async () => {
       try {
         const [userGrowthResponse, userEngagementResponse, projectSuccessRateResponse, popularCategoriesResponse] = await Promise.all([
-          apiClient.get('/admin/analytics/user-growth'),
+          apiClient.get('/admin/analyticspla'),
           apiClient.get('/admin/analytics/user-engagement'),
           apiClient.get('/admin/analytics/project-success-rate'),
           apiClient.get('/admin/analytics/popular-categories'),
