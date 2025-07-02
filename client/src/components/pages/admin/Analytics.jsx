@@ -62,7 +62,10 @@ function Analytics() {
                 <YAxis />
                 <Tooltip />
                 <Legend />
-                <Line type="monotone" dataKey="Active Users" stroke="#82ca9d" activeDot={{ r: 8 }} />
+                <Line type="monotone" dataKey="Logins" stroke="#8884d8" activeDot={{ r: 8 }} />
+                <Line type="monotone" dataKey="Project Interactions" stroke="#82ca9d" activeDot={{ r: 8 }} />
+                <Line type="monotone" dataKey="Task Interactions" stroke="#ffc658" activeDot={{ r: 8 }} />
+                <Line type="monotone" dataKey="Chat Activity" stroke="#ff7300" activeDot={{ r: 8 }} />
               </LineChart>
             </ResponsiveContainer>
           </div>

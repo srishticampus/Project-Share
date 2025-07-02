@@ -117,7 +117,6 @@ function ContentModeration() {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="pending">Pending</SelectItem>
-              <SelectItem value="reviewed">Reviewed</SelectItem>
               <SelectItem value="removed">Removed</SelectItem>
               <SelectItem value="kept">Kept</SelectItem>
               <SelectItem value="resolved">Resolved</SelectItem>

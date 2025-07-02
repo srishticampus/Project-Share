@@ -52,14 +52,6 @@ const UserSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  },
-  updatedAt: {
-    type: Date,
-    default: Date.now,
-  },
   lastLogin: {
     type: Date,
   },
@@ -87,7 +79,7 @@ const UserSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Project',
   }],
-});
+}, { timestamps: true });
 
 UserSchema.set("toJSON", {
   transform: function (doc, ret, options) {
