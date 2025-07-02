@@ -100,15 +100,30 @@ router.post(
 );
 
 // @route   GET api/messages/notifications
-// @desc    Get user's notifications
+// @desc    Get user's notifications (all, read and unread)
 // @access  Private
 router.get('/notifications', protect, async (req, res) => {
   try {
     const userId = req.user.id;
+    // Fetch all notifications (read and unread) for display purposes
     const notifications = await NotificationService.getNotifications(userId);
     res.json(notifications);
   } catch (err) {
     console.error('Error fetching notifications:', err.message);
+    res.status(500).send(err.message);
+  }
+});
+
+// @route   GET api/messages/notifications/unread/count
+// @desc    Get the count of unread notifications for the current user
+// @access  Private
+router.get('/notifications/unread/count', protect, async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const unreadCount = await NotificationService.getUnreadNotificationCount(userId);
+    res.json({ count: unreadCount });
+  } catch (err) {
+    console.error('Error fetching unread notification count:', err.message);
     res.status(500).send(err.message);
   }
 });

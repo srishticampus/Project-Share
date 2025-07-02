@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import apiClient from '@/lib/apiClient';
 import { useNavigate, useLocation } from 'react-router';
 
+
 const POLLING_INTERVAL = 10000; // Poll every 10 seconds
 
 function Notifications({ onNotificationClick, onUnreadCountChange }) {
@@ -18,47 +19,44 @@ function Notifications({ onNotificationClick, onUnreadCountChange }) {
       setNotifications(fetchedNotifications);
       setError(null); // Clear any previous errors
 
-      // Mark newly fetched unread notifications as read
-      const unreadNotificationIds = fetchedNotifications
-        .filter(n => !n.read)
-        .map(n => n._id);
-
-      if (unreadNotificationIds.length > 0) {
-        try {
-          await apiClient.put('/messages/notifications/mark-many-read', {
-            notificationIds: unreadNotificationIds,
-          });
-          // Optimistically update the local state to reflect they are now read
-          setNotifications(prev =>
-            prev.map(n =>
-              unreadNotificationIds.includes(n._id) ? { ...n, read: true } : n
-            )
-          );
-        } catch (markError) {
-          console.error('Error marking notifications as read:', markError);
-          // Optionally, handle this error differently, e.g., show a non-blocking message
-        }
-      }
     } catch (err) {
       console.error('Error fetching notifications:', err);
       setError('Failed to fetch notifications. Please try again later.');
     }
   };
 
-  useEffect(() => {
-    fetchNotifications(); // Initial fetch
+  const fetchUnreadCount = async () => {
+    try {
+      const response = await apiClient.get('/messages/notifications/unread/count');
+      const unreadCount = response.data.count;
+      if (onUnreadCountChange) {
+        onUnreadCountChange(unreadCount);
+      }
+    } catch (err) {
+      console.error('Error fetching unread notification count:', err);
+      // Handle error, but don't block main notification display
+    }
+  };
 
-    const intervalId = setInterval(fetchNotifications, POLLING_INTERVAL);
+  useEffect(() => {
+    fetchNotifications(); // Initial fetch of all notifications for display
+    fetchUnreadCount(); // Initial fetch of unread count for badge
+
+    const intervalId = setInterval(() => {
+      fetchNotifications();
+      fetchUnreadCount();
+    }, POLLING_INTERVAL);
 
     return () => clearInterval(intervalId); // Cleanup on unmount
   }, []);
 
-  useEffect(() => {
-    const unreadCount = notifications.filter(n => !n.read).length;
-    if (onUnreadCountChange) {
-      onUnreadCountChange(unreadCount);
-    }
-  }, [notifications, onUnreadCountChange]);
+  // No longer need this useEffect as unread count is fetched directly
+  // useEffect(() => {
+  //   const unreadCount = notifications.filter(n => !n.read).length;
+  //   if (onUnreadCountChange) {
+  //     onUnreadCountChange(unreadCount);
+  //   }
+  // }, [notifications, onUnreadCountChange]);
 
   const markNotificationAsRead = async (notificationId) => {
     try {

@@ -75,10 +75,16 @@ class NotificationService {
   /**
    * Fetches notifications for a specific user.
    * @param {string} userId - The ID of the user whose notifications to fetch.
+   * @param {boolean} [readStatus=null] - Optional. Filter by read status (true for read, false for unread, null for all).
    */
-  static async getNotifications(userId) {
+  static async getNotifications(userId, readStatus = null) {
     try {
-      const notifications = await Notification.find({ user: userId })
+      let query = { user: userId };
+      if (readStatus !== null) {
+        query.read = readStatus;
+      }
+
+      const notifications = await Notification.find(query)
         .populate('user', 'name') // Populates the recipient user (the logged-in user)
         .populate({
           path: 'relatedEntity',
@@ -96,6 +102,20 @@ class NotificationService {
     } catch (error) {
       console.error('Error fetching notifications:', error);
       throw new Error('Failed to fetch notifications');
+    }
+  }
+
+  /**
+   * Gets the count of unread notifications for a specific user.
+   * @param {string} userId - The ID of the user whose unread notifications to count.
+   */
+  static async getUnreadNotificationCount(userId) {
+    try {
+      const count = await Notification.countDocuments({ user: userId, read: false });
+      return count;
+    } catch (error) {
+      console.error('Error fetching unread notification count:', error);
+      throw new Error('Failed to fetch unread notification count');
     }
   }
 }

@@ -258,7 +258,7 @@ function CreatorTasks() {
                                 <Label htmlFor="dueDate" className="text-right">
                                     Due Date
                                 </Label>
-                                <Input type="date" id="dueDate" name="dueDate" value={newTaskData.dueDate} onChange={handleTaskInputChange} className="col-span-3" />
+                                <Input type="date" id="dueDate" name="dueDate" value={newTaskData.dueDate} onChange={handleTaskInputChange} className="col-span-3" min={new Date().toISOString().split('T')[0]} />
                             </div>
                         </div>
                         <DialogFooter>
@@ -339,7 +339,7 @@ function CreatorTasks() {
                                 <Label htmlFor="dueDate" className="text-right">
                                     Due Date
                                 </Label>
-                                <Input type="date" id="dueDate" name="dueDate" value={editTaskData.dueDate} onChange={handleEditTaskInputChange} className="col-span-3" />
+                                <Input type="date" id="dueDate" name="dueDate" value={editTaskData.dueDate} onChange={handleEditTaskInputChange} className="col-span-3" min={new Date().toISOString().split('T')[0]} />
                             </div>
                         </div>
                         <DialogFooter>

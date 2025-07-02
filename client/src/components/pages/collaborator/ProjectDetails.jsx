@@ -10,30 +10,21 @@ import apiClient from '@/lib/apiClient'; // Assuming an API client
 function ProjectDetails() {
   const { projectId } = useParams();
   const [project, setProject] = useState(null);
+  const [tasks, setTasks] = useState([]); // New state for tasks
   const [applicationMessage, setApplicationMessage] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [currentUser, setCurrentUser] = useState(null);
   const [canApply, setCanApply] = useState(true); // State to control form visibility
 
-  // Dummy data for now
-  const dummyProject = {
-    _id: '1',
-    title: 'Build a Personal Website',
-    creator: 'John Doe',
-    category: 'Web Development',
-    description: 'Looking for a frontend developer to build a personal portfolio website. This project involves creating a responsive and visually appealing website to showcase my skills and projects. The ideal collaborator will have experience with modern frontend frameworks and a good eye for design.',
-    skills: ['React', 'JavaScript', 'CSS', 'HTML', 'Responsive Design'],
-    timeline: '2 weeks',
-    attachments: ['resume.pdf', 'design_mockups.zip'], // Dummy attachments
-  };
-
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Fetch project details
-        const projectResponse = await apiClient.get(`/collaborator/projects/${projectId}`);
-        setProject(projectResponse.data);
+        // Fetch project details and tasks
+        const projectResponse = await apiClient.get(`/projects/${projectId}`);
+        const { project, tasks } = projectResponse.data; // Destructure project and tasks
+        setProject(project);
+        setTasks(tasks); // Set tasks state
 
         // Fetch current user details
         const userResponse = await apiClient.get('/auth/users/me');
@@ -169,17 +160,54 @@ function ProjectDetails() {
             </p>
             <p><strong>Category:</strong> {project.category}</p>
             <p><strong>Description:</strong> {project.description}</p>
-            <p><strong>Required Skills:</strong> {project?.skills?.join(', ')}</p>
-            <p><strong>Timeline:</strong> {project.timeline}</p>
+            <p><strong>Tech Stack:</strong> {project?.techStack?.join(', ')}</p>
+            <p>
+              <strong>Timeline:</strong>{' '}
+              {project.timeline && project.timeline.start && project.timeline.end
+                ? `${new Date(project.timeline.start).toLocaleDateString()} - ${new Date(project.timeline.end).toLocaleDateString()}`
+                : 'N/A'}
+            </p>
             {project.attachments && project.attachments.length > 0 && (
               <div>
                 <p><strong>Attachments:</strong></p>
                 <ul>
                   {project.attachments.map((attachment, index) => (
-                    <li key={index}>{attachment}</li> // TODO: Make attachments downloadable links
+                    <li key={index}>{attachment}</li> 
                   ))}
                 </ul>
               </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Tasks Section */}
+        <Card className="mt-6">
+          <CardHeader>
+            <CardTitle>Project Tasks</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {tasks.length > 0 ? (
+              <div className="grid gap-4">
+                {tasks.map((task) => (
+                  <Card key={task._id} className="p-4">
+                    <CardTitle className="text-lg">{task.title}</CardTitle>
+                    <p className="text-sm text-gray-600">{task.description}</p>
+                    <p className="text-sm mt-2">
+                      <strong>Status:</strong> {task.status}
+                    </p>
+                    {task.assignedTo && (
+                      <p className="text-sm">
+                        <strong>Assigned To:</strong> {task.assignedTo.name}
+                      </p>
+                    )}
+                    <p className="text-sm">
+                      <strong>Created By:</strong> {task.createdBy.name}
+                    </p>
+                  </Card>
+                ))}
+              </div>
+            ) : (
+              <p>No tasks found for this project.</p>
             )}
           </CardContent>
         </Card>
