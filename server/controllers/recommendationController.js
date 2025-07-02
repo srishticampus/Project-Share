@@ -74,9 +74,10 @@ export const getRecommendedProjectsForCollaborator = async (req, res) => {
             return res.status(403).json({ message: 'Access denied. Not a collaborator.' });
         }
 
-        // Ensure skills are parsed correctly if stored as a single comma-separated string in an array
+        // Ensure skills are correctly processed as an array of strings and lowercased
+        // The skills are stored as a single comma-separated string within an array, so we need to split it.
         const collaboratorSkills = (collaborator.skills && collaborator.skills.length > 0)
-            ? collaborator.skills[0].split(',').map(s => s.trim())
+            ? collaborator.skills[0].split(',').map(s => s.trim().toLowerCase())
             : [];
 
         // Find active projects
@@ -89,9 +90,8 @@ export const getRecommendedProjectsForCollaborator = async (req, res) => {
         for (const project of projects) {
             // Get tasks/issues for the project
             const tasks = await Task.find({ project: project._id });
-            const projectTaskKeywords = tasks.flatMap(task => task.description.toLowerCase().split(/\s+/)); // Split descriptions into words
-
             const projectDescriptionKeywords = project.description.toLowerCase().split(/\s+/); // Split description into words
+            const projectTaskKeywords = tasks.flatMap(task => task.description.toLowerCase().split(/\s+/)); // Split descriptions into words
 
             const allProjectKeywords = [
                 ...(project.techStack || []).map(s => s.toLowerCase()), // Ensure techStack is lowercased
@@ -102,9 +102,17 @@ export const getRecommendedProjectsForCollaborator = async (req, res) => {
             // Filter out common words and duplicates, keep only potentially relevant keywords
             const relevantProjectKeywords = [...new Set(allProjectKeywords.filter(word => word.length > 2))]; // Basic filter for short words
 
-            const score = calculateSimilarity(collaboratorSkills.map(s => s.toLowerCase()), relevantProjectKeywords);
+            // Calculate tech stack similarity
+            const projectTechStack = (project.techStack || []).map(s => s.toLowerCase());
+            const techStackScore = calculateSimilarity(collaboratorSkills, projectTechStack);
 
-            if (score > 0) { // Only include projects with some level of match
+            // Calculate keyword similarity (from description and tasks)
+            const keywordScore = calculateSimilarity(collaboratorSkills, relevantProjectKeywords);
+
+            // Combine scores with a weighting (e.g., 70% tech stack, 30% keywords)
+            const combinedScore = (techStackScore * 0.7) + (keywordScore * 0.3);
+
+            if (combinedScore > 0) { // Only include projects with some level of match
                 let collaboratorStatus = null;
 
                 // Check if the current user is an active collaborator on the project
@@ -124,7 +132,7 @@ export const getRecommendedProjectsForCollaborator = async (req, res) => {
 
                 recommendedProjects.push({
                     ...project,
-                    recommendationScore: score,
+                    recommendationScore: combinedScore,
                     collaboratorStatus, // Add the status here
                 });
             }
