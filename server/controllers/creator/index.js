@@ -1,5 +1,5 @@
 import express from 'express';
-import { createProject, getProjects, getProject, updateProject, deleteProject, getProjectDashboardStats, getRecentCreatorProjects } from './projectController.js';
+import { createProject, getProjects, getProject, updateProject, deleteProject, getProjectDashboardStats, getRecentCreatorProjects, getProjectProgress } from './projectController.js';
 import { createTask, assignTask, updateTask, getTasksByProject, deleteTask, editTask } from './taskController.js';
 import { getApplicationsForCreatorProjects, getApplicationDashboardStats } from '../applicationController.js';
 import creatorProfileRoutes from './profileController.js'; // Import creator profile routes
@@ -29,5 +29,6 @@ router.get('/applications', getApplicationsForCreatorProjects);
 router.get('/dashboard/project-stats', getProjectDashboardStats);
 router.get('/dashboard/application-stats', getApplicationDashboardStats);
 router.get('/dashboard/recent-projects', getRecentCreatorProjects);
+router.get('/dashboard/project-progress', getProjectProgress); // New route for project progress
 
 export default router;

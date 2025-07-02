@@ -13,6 +13,7 @@ const CreatorDashboardPage = () => {
   });
   const [applicationStats, setApplicationStats] = useState([]);
   const [recentProjects, setRecentProjects] = useState([]); // New state for recent projects
+  const [projectProgress, setProjectProgress] = useState([]); // New state for project progress
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -49,6 +50,14 @@ const CreatorDashboardPage = () => {
           throw new Error(recentProjectsRes.data.error || 'Failed to fetch recent projects');
         }
 
+        // Fetch project progress
+        const projectProgressRes = await apiClient.get('/creator/dashboard/project-progress');
+        if (projectProgressRes.data.success) {
+          setProjectProgress(projectProgressRes.data.data);
+        } else {
+          throw new Error(projectProgressRes.data.error || 'Failed to fetch project progress');
+        }
+
       } catch (err) {
         setError(err.message);
       } finally {
@@ -66,15 +75,6 @@ const CreatorDashboardPage = () => {
   if (error) {
     return <main className="flex-1 px-6 pb-6">Error: {error}</main>;
   }
-
-  // Dummy data for project progress, as backend for this is not yet implemented
-  const projectProgressData = [
-    { name: 'Week 1', progress: 20 },
-    { name: 'Week 2', progress: 40 },
-    { name: 'Week 3', progress: 60 },
-    { name: 'Week 4', progress: 80 },
-    { name: 'Week 5', progress: 100 },
-  ];
 
   return (
     <main className="flex-1 px-6 pb-6">
@@ -97,7 +97,7 @@ const CreatorDashboardPage = () => {
           <CardContent>
             <ChartContainer config={{}}>
               <ResponsiveContainer width="100%" height={200}>
-                <LineChart data={projectProgressData}>
+                <LineChart data={projectProgress}> {/* Use projectProgress here */}
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="name" />
                   <YAxis />

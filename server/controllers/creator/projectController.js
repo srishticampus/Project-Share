@@ -1,5 +1,6 @@
 import Project from '../../models/Project.js';
 import User from '../../models/user.js'; // Import the User model
+import Task from '../../models/Task.js'; // Import the Task model
 
 // Helper function to validate tech stack
 const validateTechStack = (techStack,res) => {
@@ -149,7 +150,7 @@ export const getProjectDashboardStats = async (req, res) => {
     const creatorId = req.user._id;
 
     const totalProjects = await Project.countDocuments({ creator: creatorId });
-    const activeProjects = await Project.countDocuments({ creator: creatorId, status: 'Active' });
+    const activeProjects = await Project.countDocuments({ creator: creatorId, status: 'In Progress' });
     const completedProjects = await Project.countDocuments({ creator: creatorId, status: 'Completed' });
 
     res.status(200).json({
@@ -185,6 +186,39 @@ export const getRecentCreatorProjects = async (req, res) => {
     res.status(500).json({
       success: false,
       error: 'Server Error: ' + error.message
+    });
+  }
+};
+
+export const getProjectProgress = async (req, res) => {
+  try {
+    const creatorId = req.user._id;
+
+    // Find all projects created by the current creator
+    const projects = await Project.find({ creator: creatorId }).select('_id title');
+
+    const projectProgressData = [];
+
+    for (const project of projects) {
+      const totalTasks = await Task.countDocuments({ project: project._id });
+      const completedTasks = await Task.countDocuments({ project: project._id, status: 'Completed' });
+
+      const progress = totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0;
+
+      projectProgressData.push({
+        name: project.title, // Use project title as the name for the chart
+        progress: parseFloat(progress.toFixed(2)), // Format to 2 decimal places
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      data: projectProgressData,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: 'Server Error: ' + error.message,
     });
   }
 };
