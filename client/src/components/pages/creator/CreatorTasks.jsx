@@ -23,6 +23,9 @@ function CreatorTasks() {
     const [isEditTaskDialogOpen, setIsEditTaskDialogOpen] = useState(false);
     const [editTaskData, setEditTaskData] = useState({ title: '', description: '', assignedTo: '', status: 'Open', priority: 'Medium', dueDate: '' });
     const [selectedTask, setSelectedTask] = useState(null);
+    const [isGenerateAIDialogOpen, setIsGenerateAIDialogOpen] = useState(false);
+    const [aiPrompt, setAiPrompt] = useState('');
+    const [isGeneratingAI, setIsGeneratingAI] = useState(false);
 
     useEffect(() => {
         // Fetch projects on component mount
@@ -84,11 +87,55 @@ function CreatorTasks() {
         try {
             const data = await createTask({ ...newTaskData, project: projectId });
             setTasks([...tasks, data.task]);
-            setNewTaskData({ title: '', description: '', status: 'Open', priority: 'Medium', dueDate: '' });
+            setNewTaskData({ title: '', description: '', assignedTo: '', status: 'Open', priority: 'Medium', dueDate: '' }); // Reset all fields
             setIsCreateTaskDialogOpen(false);
         } catch (error) {
             console.error('Error creating task:', error);
             alert('Failed to create task.');
+        }
+    };
+
+    const handleGenerateWithAI = () => {
+        setIsGenerateAIDialogOpen(true);
+    };
+
+    const handleAIGenerate = async () => {
+        if (!aiPrompt) {
+            alert('Please enter a prompt for AI generation.');
+            return;
+        }
+        if (!projectId) {
+            alert('Please select a project before generating with AI.');
+            return;
+        }
+
+        setIsGeneratingAI(true);
+        try {
+            const selectedProject = projects.find(p => p.id === projectId);
+            const projectDetails = selectedProject ? {
+                title: selectedProject.title,
+                description: selectedProject.description,
+                status: selectedProject.status // Assuming project has a status field
+            } : null;
+
+            const response = await apiClient.post('/gemini/generate-task', {
+                prompt: aiPrompt,
+                projectId: projectId // Pass projectId for context
+            });
+
+            setNewTaskData(prevData => ({
+                ...prevData,
+                title: response.data.title,
+                description: response.data.description,
+            }));
+            setIsGenerateAIDialogOpen(false);
+            setAiPrompt(''); // Clear AI prompt
+            setIsCreateTaskDialogOpen(true); // Open the create task dialog with AI-generated content
+        } catch (error) {
+            console.error('Error generating task with AI:', error);
+            alert(`Failed to generate task with AI: ${error.response?.data?.message || error.message}`);
+        } finally {
+            setIsGeneratingAI(false);
         }
     };
 
@@ -262,6 +309,9 @@ function CreatorTasks() {
                             </div>
                         </div>
                         <DialogFooter>
+                            <Button type="button" variant="outline" onClick={handleGenerateWithAI} disabled={isGeneratingAI}>
+                                {isGeneratingAI ? 'Generating...' : 'Generate with AI'}
+                            </Button>
                             <DialogClose asChild>
                                 <Button type="button" variant="secondary">Cancel</Button>
                             </DialogClose>
@@ -269,6 +319,42 @@ function CreatorTasks() {
                         </DialogFooter>
                     </DialogContent>
                 </Dialog>
+
+                {/* AI Generation Dialog */}
+                <Dialog open={isGenerateAIDialogOpen} onOpenChange={setIsGenerateAIDialogOpen}>
+                    <DialogContent className="sm:max-w-[425px]">
+                        <DialogHeader>
+                            <DialogTitle>Generate Task with AI</DialogTitle>
+                            <DialogDescription>
+                                Enter a brief idea or context for the task.
+                            </DialogDescription>
+                        </DialogHeader>
+                        <div className="grid gap-4 py-4">
+                            <div className="grid grid-cols-4 items-center gap-4">
+                                <Label htmlFor="ai-prompt" className="text-right">
+                                    Prompt
+                                </Label>
+                                <Textarea
+                                    id="ai-prompt"
+                                    name="aiPrompt"
+                                    value={aiPrompt}
+                                    onChange={(e) => setAiPrompt(e.target.value)}
+                                    className="col-span-3"
+                                    placeholder="e.g., 'Implement user login with Google OAuth', 'Fix bug in project creation form'"
+                                />
+                            </div>
+                        </div>
+                        <DialogFooter>
+                            <DialogClose asChild>
+                                <Button type="button" variant="secondary" disabled={isGeneratingAI}>Cancel</Button>
+                            </DialogClose>
+                            <Button type="button" onClick={handleAIGenerate} disabled={isGeneratingAI}>
+                                {isGeneratingAI ? 'Generating...' : 'Generate'}
+                            </Button>
+                        </DialogFooter>
+                    </DialogContent>
+                </Dialog>
+
                 <Dialog open={isEditTaskDialogOpen} onOpenChange={setIsEditTaskDialogOpen}>
                     <DialogContent className="sm:max-w-[425px]">
                         <DialogHeader>

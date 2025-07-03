@@ -4,8 +4,8 @@
   "main": "app.js",
   "type": "module",
   "scripts": {
-    "dev": "nodemon --watch . --exec node --experimental-specifier-resolution=node app.js",
-    "start": "node app.js",
+    "dev": "node --watch --env-file .env.development app.js",
+    "start": "node app.js --env-file .env.production",
     "build": "vite build"
   },
   "keywords": [],
@@ -13,6 +13,7 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@google/generative-ai": "^0.24.1",
     "bcrypt": "^5.1.1",
     "bcryptjs": "^3.0.2",
     "cors": "^2.8.5",

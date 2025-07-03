@@ -7,8 +7,9 @@ import db from "./db_driver.js"; // Assuming this handles DB connection on impor
 import apiRouter from "./controllers/index.js"; // Import the main API router
 import dotenv from "dotenv";
 
-dotenv.config({path:`.env.${process.env.NODE_ENV}`});
+dotenv.config();
 export const app = express();
+
 
 // Middleware Setup
 app.use(cors()); // Enable CORS for all origins (adjust in production)
@@ -30,6 +31,7 @@ app.use(express.json()); // To parse JSON request bodies
 
 import fs from 'fs';
 import path from 'path';
+import { log } from "console";
 
 // Check if uploads directory exists, create if not
 const uploadsDir = path.join(process.cwd(), 'uploads');
