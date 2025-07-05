@@ -1,4 +1,4 @@
-import { generateTaskContent } from '../services/geminiService.js';
+import { generateTaskContent, chatWithGemini } from '../services/geminiService.js';
 import Project from '../models/Project.js'; // Assuming Project model is needed for context
 
 const generateTask = async (req, res) => {
@@ -26,6 +26,24 @@ const generateTask = async (req, res) => {
     }
 };
 
+const chatWithAI = async (req, res) => {
+    const { prompt, history } = req.body;
+    const creatorId = req.user._id; // Assuming req.user is populated by authentication middleware
+
+    if (!prompt) {
+        return res.status(400).json({ message: 'Prompt is required.' });
+    }
+
+    try {
+        const aiResponse = await chatWithGemini(prompt, history, creatorId); // Pass creatorId
+        res.status(200).json({ response: aiResponse });
+    } catch (error) {
+        console.error('Error in chatWithAI controller:', error);
+        res.status(500).json({ message: 'Failed to chat with AI.', error: error.message });
+    }
+};
+
 export {
-    generateTask
+    generateTask,
+    chatWithAI
 };

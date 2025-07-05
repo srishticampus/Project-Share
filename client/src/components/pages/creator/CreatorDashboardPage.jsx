@@ -131,6 +131,7 @@ const CreatorDashboardPage = () => {
             <div className="p-4 flex flex-col space-y-2">
               <Link to="/creator/profile" className="text-blue-500 hover:underline">View Profile</Link>
               <Link to="/creator/mentors" className="text-blue-500 hover:underline">Connect with Mentors</Link>
+              <Link to="/creator/projectshare-ai-chat" className="text-blue-500 hover:underline">Chat with ProjectShare AI</Link>
             </div>
           </Card>
 

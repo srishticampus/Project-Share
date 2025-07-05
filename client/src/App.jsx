@@ -87,6 +87,7 @@ function Privacy() {
 
 import CreatorApplications from './components/pages/creator/CreatorApplications'; // Import the actual component
 import { API_URL } from './lib/constant';
+import GeminiChatInterface from './components/GeminiChatInterface';
 
 function CreatorChat() {
   return <div>Creator Chat Page</div>;
@@ -133,6 +134,7 @@ function App() {
           <Route path="mentors" element={<CreatorConnectWithMentors />} /> {/* Updated to new component */}
           <Route path="profile" element={<CreatorProfile />} />
           <Route path="chat/:userId" element={<ChatInterfaceWrapper />} /> {/* Nested chat route */}
+          <Route path="projectshare-ai-chat" element={<GeminiChatInterface />} /> {/* New ProjectShare AI Chatbot route */}
         </Route>
 
         {/* Collaborator Profile route moved outside of CollaboratorLayout */}

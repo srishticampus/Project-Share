@@ -12,7 +12,7 @@ import { createApplication, updateApplicationStatus } from './applicationControl
 import { submitReport } from './reportController.js';
 import contactFormController from './contactFormController.js'; // Import the new contact form controller
 import { getRecommendedProjectsForCollaborator, getRecommendedMentorsForUser, getRecommendedProjectsForMentor } from './recommendationController.js';
-import { generateTask } from './geminiController.js'; // Import the new gemini controller
+import { generateTask, chatWithAI } from './geminiController.js'; // Import the new gemini controller
 
 const router = express.Router();
 
@@ -25,6 +25,7 @@ router.use('/auth', authRoutes);
 
 // Gemini routes
 router.post('/gemini/generate-task', protect, generateTask);
+router.post('/gemini/chat', protect, chatWithAI);
 
 // Creator routes with authentication
 router.use('/creator', protect, creatorRoutes);
