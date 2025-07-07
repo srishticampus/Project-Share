@@ -102,7 +102,7 @@ router.get('/dashboard/counts', async (req, res) => {
     // Count active projects (where user is a collaborator and project status is Active)
     const activeProjectsCount = await Project.countDocuments({
       collaborators: userId,
-      status: 'Active',
+      status: 'In Progress',
     });
 
     // Count completed projects (where user is a collaborator and project status is Completed)
