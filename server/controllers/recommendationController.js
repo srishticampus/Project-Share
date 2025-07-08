@@ -116,7 +116,7 @@ export const getRecommendedProjectsForCollaborator = async (req, res) => {
                 const keywordScore = calculateSimilarity(collaboratorSkills, relevantProjectKeywords);
 
                 // Combine scores with a weighting (e.g., 70% tech stack, 30% keywords)
-                const combinedScore = (techStackScore * 0.7) + (keywordScore * 0.3);
+                const combinedScore = (techStackScore * 0.8) + (keywordScore * 0.2);
 
                 if (combinedScore > 0) {
                     let collaboratorStatus = null;
