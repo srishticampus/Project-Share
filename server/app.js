@@ -32,6 +32,7 @@ app.use(express.json()); // To parse JSON request bodies
 import fs from 'fs';
 import path from 'path';
 import { log } from "console";
+import mlRecommendationService from './services/mlRecommendationService.js'; // Import the ML service
 
 // Check if uploads directory exists, create if not
 const uploadsDir = path.join(process.cwd(), 'uploads');
@@ -54,6 +55,10 @@ app.use((err, req, res, next) => {
   res.status(500).json({ message: "Server Error", error: err.message }); // Avoid sending stack trace in production
 });
 
+// Initialize ML Recommendation Service
+mlRecommendationService.initialize().catch(error => {
+    console.error('Failed to initialize ML Recommendation Service:', error);
+});
 
 // Replace the Vite-specific check with standard Node.js environment detection
 let PORT = process.env.VITE_PORT || 4061;

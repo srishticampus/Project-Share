@@ -1,7 +1,8 @@
 import User from '../models/user.js';
 import Project from '../models/Project.js';
 import Task from '../models/Task.js';
-import Application from '../models/Application.js'; // Import Application model
+import Application from '../models/Application.js';
+import mlRecommendationService from '../services/mlRecommendationService.js'; // Import the new service
 
 // Helper function to calculate similarity between two sets of skills/keywords
 const calculateSimilarity = (set1, set2) => {
@@ -69,78 +70,85 @@ export const getRecommendedProjectsForCollaborator = async (req, res) => {
     try {
         const collaboratorId = req.user.id; // Assuming user ID is available from auth middleware
 
-        const collaborator = await User.findById(collaboratorId);
-        if (!collaborator || collaborator.role !== 'collaborator') {
-            return res.status(403).json({ message: 'Access denied. Not a collaborator.' });
-        }
-
-        // Ensure skills are correctly processed as an array of strings and lowercased
-        // The skills are stored as a single comma-separated string within an array, so we need to split it.
-        const collaboratorSkills = (collaborator.skills && collaborator.skills.length > 0)
-            ? collaborator.skills[0].split(',').map(s => s.trim().toLowerCase())
-            : [];
-
-        // Find active projects
-        const projects = await Project.find({ status: { $in: ['Planning', 'In Progress'] } })
-            .populate('creator', 'name email')
-            .lean(); // Use .lean() for faster execution if not modifying documents
-
-        const recommendedProjects = [];
-
-        for (const project of projects) {
-            // Get tasks/issues for the project
-            const tasks = await Task.find({ project: project._id });
-            const projectDescriptionKeywords = project.description.toLowerCase().split(/\s+/); // Split description into words
-            const projectTaskKeywords = tasks.flatMap(task => task.description.toLowerCase().split(/\s+/)); // Split descriptions into words
-
-            const allProjectKeywords = [
-                ...(project.techStack || []).map(s => s.toLowerCase()), // Ensure techStack is lowercased
-                ...projectDescriptionKeywords,
-                ...projectTaskKeywords
-            ];
-
-            // Filter out common words and duplicates, keep only potentially relevant keywords
-            const relevantProjectKeywords = [...new Set(allProjectKeywords.filter(word => word.length > 2))]; // Basic filter for short words
-
-            // Calculate tech stack similarity
-            const projectTechStack = (project.techStack || []).map(s => s.toLowerCase());
-            const techStackScore = calculateSimilarity(collaboratorSkills, projectTechStack);
-
-            // Calculate keyword similarity (from description and tasks)
-            const keywordScore = calculateSimilarity(collaboratorSkills, relevantProjectKeywords);
-
-            // Combine scores with a weighting (e.g., 70% tech stack, 30% keywords)
-            const combinedScore = (techStackScore * 0.7) + (keywordScore * 0.3);
-
-            if (combinedScore > 0) { // Only include projects with some level of match
-                let collaboratorStatus = null;
-
-                // Check if the current user is an active collaborator on the project
-                if (project.collaborators.includes(collaboratorId) && project.status === 'In Progress') {
-                    collaboratorStatus = 'Active';
-                } else {
-                    // Check if the current user has applied to this project
-                    const application = await Application.findOne({
-                        projectId: project._id,
-                        applicantId: collaboratorId,
-                        status: { $in: ['Pending', 'Accepted'] }
-                    });
-                    if (application) {
-                        collaboratorStatus = 'Applied';
-                    }
-                }
-
-                recommendedProjects.push({
-                    ...project,
-                    recommendationScore: combinedScore,
-                    collaboratorStatus, // Add the status here
-                });
+        // Use the ML recommendation service
+        let recommendedProjects = await mlRecommendationService.getRecommendedProjectsForCollaborator(collaboratorId);
+        
+        // If ML recommendations are empty, fall back to the old scoring system
+        if (!recommendedProjects || recommendedProjects.length === 0) {
+            console.log('ML recommendations empty, falling back to old scoring system.');
+            const collaborator = await User.findById(collaboratorId);
+            if (!collaborator || collaborator.role !== 'collaborator') {
+                return res.status(403).json({ message: 'Access denied. Not a collaborator.' });
             }
+
+            // Ensure skills are correctly processed as an array of strings and lowercased
+            const collaboratorSkills = (collaborator.skills && collaborator.skills.length > 0)
+                ? collaborator.skills[0].split(',').map(s => s.trim().toLowerCase())
+                : [];
+
+            // Find active projects
+            const projects = await Project.find({ status: { $in: ['Planning', 'In Progress'] } })
+                .populate('creator', 'name email')
+                .lean();
+
+            const fallbackRecommendedProjects = [];
+
+            for (const project of projects) {
+                // Get tasks/issues for the project
+                const tasks = await Task.find({ project: project._id });
+                const projectDescriptionKeywords = project.description.toLowerCase().split(/\s+/);
+                const projectTaskKeywords = tasks.flatMap(task => task.description.toLowerCase().split(/\s+/));
+
+                const allProjectKeywords = [
+                    ...(project.techStack || []).map(s => s.toLowerCase()),
+                    ...projectDescriptionKeywords,
+                    ...projectTaskKeywords
+                ];
+
+                // Filter out common words and duplicates, keep only potentially relevant keywords
+                const relevantProjectKeywords = [...new Set(allProjectKeywords.filter(word => word.length > 2))];
+
+                // Calculate tech stack similarity
+                const projectTechStack = (project.techStack || []).map(s => s.toLowerCase());
+                const techStackScore = calculateSimilarity(collaboratorSkills, projectTechStack);
+
+                // Calculate keyword similarity (from description and tasks)
+                const keywordScore = calculateSimilarity(collaboratorSkills, relevantProjectKeywords);
+
+                // Combine scores with a weighting (e.g., 70% tech stack, 30% keywords)
+                const combinedScore = (techStackScore * 0.7) + (keywordScore * 0.3);
+
+                if (combinedScore > 0) {
+                    let collaboratorStatus = null;
+
+                    // Check if the current user is an active collaborator on the project
+                    if (project.collaborators.includes(collaboratorId) && project.status === 'In Progress') {
+                        collaboratorStatus = 'Active';
+                    } else {
+                        // Check if the current user has applied to this project
+                        const application = await Application.findOne({
+                            projectId: project._id,
+                            applicantId: collaboratorId,
+                            status: { $in: ['Pending', 'Accepted'] }
+                        });
+                        if (application) {
+                            collaboratorStatus = 'Applied';
+                        }
+                    }
+
+                    fallbackRecommendedProjects.push({
+                        ...project,
+                        recommendationScore: combinedScore,
+                        collaboratorStatus,
+                    });
+                }
+            }
+
+            // Sort by score in descending order
+            fallbackRecommendedProjects.sort((a, b) => b.recommendationScore - a.recommendationScore);
+            recommendedProjects = fallbackRecommendedProjects; // Assign fallback recommendations
         }
-
-        // Sort by score in descending order
-        recommendedProjects.sort((a, b) => b.recommendationScore - a.recommendationScore);
-
+        
         res.status(200).json(recommendedProjects);
 
     } catch (error) {
