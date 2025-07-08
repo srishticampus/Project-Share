@@ -3,9 +3,7 @@ import apiClient from '@/lib/apiClient';
 import { useNavigate, useLocation } from 'react-router';
 
 
-const POLLING_INTERVAL = 10000; // Poll every 10 seconds
-
-function Notifications({ onNotificationClick, onUnreadCountChange }) {
+function Notifications({ onNotificationClick }) {
   const [notifications, setNotifications] = useState([]);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
@@ -25,38 +23,15 @@ function Notifications({ onNotificationClick, onUnreadCountChange }) {
     }
   };
 
-  const fetchUnreadCount = async () => {
-    try {
-      const response = await apiClient.get('/messages/notifications/unread/count');
-      const unreadCount = response.data.count;
-      if (onUnreadCountChange) {
-        onUnreadCountChange(unreadCount);
-      }
-    } catch (err) {
-      console.error('Error fetching unread notification count:', err);
-      // Handle error, but don't block main notification display
-    }
-  };
-
   useEffect(() => {
     fetchNotifications(); // Initial fetch of all notifications for display
-    fetchUnreadCount(); // Initial fetch of unread count for badge
 
     const intervalId = setInterval(() => {
       fetchNotifications();
-      fetchUnreadCount();
-    }, POLLING_INTERVAL);
+    }, 10000); // Use a fixed interval or pass it as a prop if needed
 
     return () => clearInterval(intervalId); // Cleanup on unmount
   }, []);
-
-  // No longer need this useEffect as unread count is fetched directly
-  // useEffect(() => {
-  //   const unreadCount = notifications.filter(n => !n.read).length;
-  //   if (onUnreadCountChange) {
-  //     onUnreadCountChange(unreadCount);
-  //   }
-  // }, [notifications, onUnreadCountChange]);
 
   const markNotificationAsRead = async (notificationId) => {
     try {
