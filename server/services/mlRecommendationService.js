@@ -2,97 +2,137 @@ import User from '../models/user.js';
 import Project from '../models/Project.js';
 import Task from '../models/Task.js';
 import Application from '../models/Application.js';
-import pkg from 'natural';
-const { TfIdf, PorterStemmer, WordTokenizer } = pkg; // Import WordTokenizer
 
 class MLRecommendationService {
     constructor() {
-        this.tfidf = new TfIdf();
         this.projectVectors = {}; // Stores TF-IDF vectors for projects
         this.collaboratorVectors = {}; // Stores TF-IDF vectors for collaborators
         this.projectData = {}; // Stores raw project data for quick lookup
         this.collaboratorData = {}; // Stores raw collaborator data for quick lookup
         this.userProjectInteractions = {}; // Stores implicit feedback for collaborative filtering
+        this.corpusTerms = new Set(); // All unique terms across all documents for IDF calculation
+        this.documentTermCounts = {}; // Stores term counts for each document
+        this.documentCount = 0; // Total number of documents in the corpus
+    }
+
+    // Helper to tokenize and lowercase text
+    tokenizeAndProcess(text) {
+        return text.toLowerCase().split(/\s+/).filter(word => word.length > 2); // Filter out short words
+    }
+
+    // Calculate Term Frequency (TF)
+    calculateTf(terms) {
+        const tf = {};
+        const totalTerms = terms.length;
+        if (totalTerms === 0) return tf;
+
+        terms.forEach(term => {
+            tf[term] = (tf[term] || 0) + 1;
+        });
+
+        for (const term in tf) {
+            tf[term] = tf[term] / totalTerms;
+        }
+        return tf;
+    }
+
+    // Calculate Inverse Document Frequency (IDF)
+    calculateIdf(term) {
+        if (this.documentCount === 0) return 0;
+        const termDocumentCount = Object.values(this.documentTermCounts).filter(docTerms => docTerms[term]).length;
+        if (termDocumentCount === 0) return 0;
+        return Math.log(this.documentCount / termDocumentCount);
+    }
+
+    // Build TF-IDF vector for a document
+    buildTfIdfVector(documentId) {
+        const vector = {};
+        const tf = this.documentTermCounts[documentId];
+        if (!tf) return vector;
+
+        for (const term in tf) {
+            const tfValue = tf[term];
+            const idfValue = this.calculateIdf(term);
+            vector[term] = tfValue * idfValue;
+        }
+        return vector;
     }
 
     async initialize() {
         console.log('Initializing ML Recommendation Service...');
+        await this.buildCorpus(); // Build corpus first to calculate IDF
         await this.buildProjectFeatures();
         await this.buildCollaboratorFeatures();
         await this.buildUserProjectInteractions();
         console.log('ML Recommendation Service initialized.');
     }
 
-    async buildProjectFeatures() {
-        console.log('Building project features...');
-        const projects = await Project.find({ status: { $in: ['Planning', 'In Progress'] } }).lean();
-        
-        this.tfidf = new TfIdf(); // Reset TF-IDF for fresh corpus
-        this.projectVectors = {};
-        this.projectData = {};
+    async buildCorpus() {
+        console.log('Building corpus for TF-IDF...');
+        this.corpusTerms = new Set();
+        this.documentTermCounts = {};
+        this.documentCount = 0;
+        this.projectData = {}; // Initialize projectData here to store projectWithTasks
 
+        // Add project documents to corpus
+        const projects = await Project.find({ status: { $in: ['Planning', 'In Progress'] } }).lean();
         for (const project of projects) {
-            // Fetch tasks separately for each project
             const tasks = await Task.find({ project: project._id }).lean();
-            const projectWithTasks = { ...project, tasks }; // Combine project data with its tasks
-            
+            const projectWithTasks = { ...project, tasks }; // Combined here
             const projectText = this.getProjectText(projectWithTasks);
-            // Tokenize and stem before adding to TF-IDF
-            const tokenizer = new WordTokenizer();
-            const projectTokens = tokenizer.tokenize(projectText);
-            const stemmedProjectTerms = projectTokens.map(token => PorterStemmer.stem(token));
-            this.tfidf.addDocument(stemmedProjectTerms, project._id.toString()); // Add array of terms
-            this.projectData[project._id.toString()] = projectWithTasks; // Store combined data
+            const terms = this.tokenizeAndProcess(projectText);
+            
+            this.documentTermCounts[project._id.toString()] = this.calculateTf(terms);
+            this.documentCount++;
+            terms.forEach(term => this.corpusTerms.add(term));
+            this.projectData[project._id.toString()] = projectWithTasks; // Store projectWithTasks here
         }
 
-        // After all documents are added, generate vectors
+        // Add collaborator documents to corpus
+        const collaborators = await User.find({ role: 'collaborator' }).lean();
+        for (const collaborator of collaborators) {
+            const skillsText = this.getCollaboratorSkillsText(collaborator);
+            const terms = this.tokenizeAndProcess(skillsText);
+
+            this.documentTermCounts[collaborator._id.toString()] = this.calculateTf(terms);
+            this.documentCount++;
+            terms.forEach(term => this.corpusTerms.add(term));
+            this.collaboratorData[collaborator._id.toString()] = collaborator; // Store collaborator data here
+        }
+        console.log(`Corpus built with ${this.documentCount} documents and ${this.corpusTerms.size} unique terms.`);
+    }
+
+    async buildProjectFeatures() {
+        console.log('Building project features...');
+        const projects = await Project.find({ status: { $in: ['Planning', 'In Progress'] } }).lean(); // Re-fetch projects to ensure consistency, though projectData should have them
+        
+        this.projectVectors = {};
+        // this.projectData is already populated in buildCorpus
+
         for (const project of projects) {
-            const projectWithTasks = this.projectData[project._id.toString()]; // Retrieve combined data
-            const vector = {};
-            this.tfidf.listTerms(project._id.toString()).forEach(item => { // Use listTerms with the key
-                vector[item.term] = item.tfidf;
-            });
+            // projectWithTasks is already stored in this.projectData from buildCorpus
+            // No need to re-fetch or populate tasks here
+            const vector = this.buildTfIdfVector(project._id.toString());
             this.projectVectors[project._id.toString()] = vector;
         }
         console.log(`Built features for ${Object.keys(this.projectVectors).length} projects.`);
-        // console.log('Sample project vector:', this.projectVectors[Object.keys(this.projectVectors)[0]]); // Log a sample
+        console.log('Sample project vector (first 5 terms):', Object.fromEntries(Object.entries(this.projectVectors[Object.keys(this.projectVectors)[0]] || {}).slice(0, 5)));
     }
 
     async buildCollaboratorFeatures() {
         console.log('Building collaborator features...');
-        const collaborators = await User.find({ role: 'collaborator' }).lean();
-        const tokenizer = new WordTokenizer();
+        const collaborators = await User.find({ role: 'collaborator' }).lean(); // Re-fetch collaborators to ensure consistency, though collaboratorData should have them
 
-        // Add collaborator skills to the TF-IDF corpus
-        for (const collaborator of collaborators) {
-            const skillsText = this.getCollaboratorSkillsText(collaborator);
-            if (skillsText) {
-                const skillsTokens = tokenizer.tokenize(skillsText);
-                const stemmedSkillsTerms = skillsTokens.map(token => PorterStemmer.stem(token));
-                this.tfidf.addDocument(stemmedSkillsTerms, collaborator._id.toString()); // Add array of terms
-            }
-            this.collaboratorData[collaborator._id.toString()] = collaborator;
-        }
+        this.collaboratorVectors = {};
+        // this.collaboratorData is already populated in buildCorpus
 
-        // Generate vectors for collaborators
         for (const collaborator of collaborators) {
-            const skillsText = this.getCollaboratorSkillsText(collaborator);
-            console.log(`Processing collaborator ${collaborator._id}: Skills Text = "${skillsText}"`);
-            if (skillsText) {
-                const vector = {};
-                this.tfidf.listTerms(collaborator._id.toString()).forEach(item => { // Use listTerms with the key
-                    vector[item.term] = item.tfidf;
-                });
-                this.collaboratorVectors[collaborator._id.toString()] = vector;
-                console.log(`Collaborator ${collaborator._id} vector:`, vector);
-            } else {
-                this.collaboratorVectors[collaborator._id.toString()] = {}; // Ensure an empty object is stored
-                console.log(`Collaborator ${collaborator._id} has no skills, storing empty vector.`);
-            }
+            // collaboratorData is already stored in this.collaboratorData from buildCorpus
+            const vector = this.buildTfIdfVector(collaborator._id.toString());
+            this.collaboratorVectors[collaborator._id.toString()] = vector;
         }
         console.log(`Built features for ${Object.keys(this.collaboratorVectors).length} collaborators.`);
-        // console.log('Sample collaborator vector:', this.collaboratorVectors[Object.keys(this.collaboratorVectors)[0]]); // Log a sample
-        console.log('All collaborator vectors:', this.collaboratorVectors); // Log all vectors for debugging
+        console.log('Sample collaborator vector (first 5 terms):', Object.fromEntries(Object.entries(this.collaboratorVectors[Object.keys(this.collaboratorVectors)[0]] || {}).slice(0, 5)));
     }
 
     async buildUserProjectInteractions() {
@@ -124,7 +164,13 @@ class MLRecommendationService {
 
     getCollaboratorSkillsText(collaborator) {
         if (collaborator.skills && collaborator.skills.length > 0) {
-            return collaborator.skills.join(' ').toLowerCase();
+            let processedSkills = [];
+            if (typeof collaborator.skills[0] === 'string' && collaborator.skills[0].includes(',')) {
+                processedSkills = collaborator.skills[0].split(',').map(s => s.trim().toLowerCase()).filter(s => s);
+            } else {
+                processedSkills = collaborator.skills.map(s => s.trim().toLowerCase()).filter(s => s);
+            }
+            return processedSkills.join(' ');
         }
         return '';
     }
@@ -156,32 +202,34 @@ class MLRecommendationService {
 
     async getRecommendedProjectsForCollaborator(collaboratorId) {
         const collaboratorVector = this.collaboratorVectors[collaboratorId];
-        if (!collaboratorVector) {
-            console.warn(`Collaborator vector not found for ID: ${collaboratorId}`);
+        if (!collaboratorVector || Object.keys(collaboratorVector).length === 0) { // Check if vector is empty
+            console.warn(`Collaborator vector not found or empty for ID: ${collaboratorId}`);
             return [];
         }
 
         const recommendations = [];
         const appliedProjects = this.userProjectInteractions[collaboratorId] || new Set();
-        // No need for currentCollaborator.collaborators, as project.collaborators is available
 
         console.log(`Getting recommendations for collaborator: ${collaboratorId}`);
         console.log('Collaborator vector:', collaboratorVector);
         console.log('Applied projects:', appliedProjects);
 
         for (const projectId in this.projectVectors) {
-            const project = this.projectData[projectId]; // Get the full project object
+            const project = this.projectData[projectId];
             
-            // Check if the collaborator is already a part of this project
             const isAlreadyCollaborator = project.collaborators && project.collaborators.some(c => c.toString() === collaboratorId);
 
-            // Skip projects the collaborator has already applied to or is already a part of
-            if (appliedProjects.has(projectId) || isAlreadyCollaborator) {
-                console.log(`Skipping project ${projectId}: Applied (${appliedProjects.has(projectId)}) or Already Collaborator (${isAlreadyCollaborator})`);
+            // if (appliedProjects.has(projectId) || isAlreadyCollaborator) {
+            //     console.log(`Skipping project ${projectId}: Applied (${appliedProjects.has(projectId)}) or Already Collaborator (${isAlreadyCollaborator})`);
+            //     continue;
+            // }
+
+            const projectVector = this.projectVectors[projectId];
+            if (Object.keys(projectVector).length === 0) { // Skip empty project vectors
+                console.log(`Skipping project ${projectId}: Project vector is empty.`);
                 continue;
             }
 
-            const projectVector = this.projectVectors[projectId];
             const score = this.cosineSimilarity(collaboratorVector, projectVector);
 
             console.log(`Project ${projectId}: Score = ${score}`);
@@ -194,14 +242,9 @@ class MLRecommendationService {
             }
         }
 
-        // Sort by score in descending order
         recommendations.sort((a, b) => b.score - a.score);
 
         console.log(`Found ${recommendations.length} recommendations.`);
-
-        // Simple collaborative filtering boost (placeholder for now)
-        // In a more advanced system, this would involve finding similar users and recommending projects they liked.
-        // For now, we'll just return the content-based recommendations.
 
         return recommendations.map(rec => ({ ...rec.project, recommendationScore: rec.score }));
     }
