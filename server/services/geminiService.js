@@ -73,6 +73,24 @@ const tools = [
                     },
                     required: ["userId"]
                 }
+            },
+            {
+                name: "createProject",
+                description: "Create a new project for the logged-in creator. This function should be called when the user explicitly asks to create a project, providing a title and description. If the user provides an unstructured idea, first structure and improve it, then ask the user for confirmation before calling this function.",
+                parameters: {
+                    type: "object",
+                    properties: {
+                        title: {
+                            type: "string",
+                            description: "The title of the new project."
+                        },
+                        description: {
+                            type: "string",
+                            description: "A detailed description of the new project."
+                        }
+                    },
+                    required: ["title", "description"]
+                }
             }
         ]
     }
@@ -80,6 +98,23 @@ const tools = [
 
 // Implement the functions that the tools will call
 const toolFunctions = {
+    createProject: async (title, description, creatorId) => {
+        console.log(`Calling createProject with input: title=${title}, description=${description}, creatorId=${creatorId}`);
+        try {
+            const newProject = new Project({
+                title,
+                description,
+                creator: creatorId,
+                status: 'Planning' // Default status for new projects
+            });
+            await newProject.save();
+            console.log(`createProject output: Project created successfully with ID=${newProject._id}`);
+            return { message: "Project created successfully!", projectId: newProject._id, title: newProject.title };
+        } catch (error) {
+            console.error("Error in createProject:", error);
+            return { error: "Failed to create project." };
+        }
+    },
     getProjectDetails: async (projectId) => {
         console.log(`Calling getProjectDetails with input: projectId=${projectId}`);
         try {
@@ -293,12 +328,13 @@ const generateTaskContent = async (prompt, projectDetails) => {
 
 const chatWithGemini = async (prompt, history = [], creatorId) => { // Add creatorId parameter
     try {
-        const systemInstruction = `You are a helpful project management assistant.
-        When the user asks about their projects, use the 'listUserProjects' tool to show them all available projects. Your name is ProjectShare AI.
+        const systemInstruction = `You are a helpful project management assistant. Your name is ProjectShare AI.
+        When the user asks about their projects, use the 'listUserProjects' tool to show them all available projects.
         Once a project is identified (either by listing or searching), you can use its 'id' with 'getProjectDetails' to retrieve more information. Use it to search or find anything in the project details as well.
         To see tasks for a project, use 'listProjectTasks' with the project's ID.
         To get details about a specific task, use 'getTaskDetails' with the task's ID.
         To get portfolio details of a contributor, use 'getUserPortfolio' with the user's ID obtained from task details.
+        If the user provides an unstructured idea for a project, you should first structure and improve the idea. Then, present the refined project idea (title and description) back to the user and ask for their confirmation before calling the 'createProject' tool. Once confirmed, use the 'createProject' tool with the refined title and description.
         Crucially, you must NEVER ask the user for any IDs (project, task, or user). Always use the 'listUserProjects' or 'searchUserProjects' tools to find project IDs, 'listProjectTasks' to find task IDs, and 'getTaskDetails' to find user IDs, based on the user's natural language input.
         Feel free to make multiple function calls as needed to gather enough information to fulfill the user's request.
         If the user asks about something vaguely,try to find the closest thing to it. It could be a missspelling on the user's part while creating projects/issues/accounts or missspelling during chat. try listing out all projects, finding tasks for them, etc., to find something similar as much as possible. Only then can you tell the user that you weren't able to fulfill the request. for example, if the user asks for a project with the name project manager, use the function to find projects that are similar to the name if not available, like a project named prjshare would qualify. 
@@ -306,10 +342,11 @@ const chatWithGemini = async (prompt, history = [], creatorId) => { // Add creat
         Note that you are also an AI assistant, so help the user through other things like decision making tasks, planning tasks etcif the user requires you to do so.
         Always provide a clear, concise, and conversational response to the user, summarizing the information found or stating clearly if no relevant information was found. Avoid blank responses.
         If a task requires multiple function calls or steps, inform the user that you will need them to send multiple messages, one for each step.
-        For multi-step tasks, ensure you send all necessary context for the next step as part of your response to the user.`;
+        For multi-step tasks, ensure you send all necessary context for the next step as part of your response to the user.
+        After executing any tool, you MUST provide a conversational summary of the results. If a tool returns no data (e.g., no projects found), clearly state that no relevant information was found for the user's query. Do NOT return empty responses or generic "I have processed your request" messages. Always aim to be helpful and informative.`;
 
-        // Add a stronger directive for summarizing tool results and handling no data
-        const enhancedSystemInstruction = systemInstruction + ` After executing any tool, you MUST provide a conversational summary of the results. If a tool returns no data (e.g., no projects found), clearly state that no relevant information was found for the user's query. Do NOT return empty responses or generic "I have processed your request" messages. Always aim to be helpful and informative.`;
+        // The enhancedSystemInstruction is now integrated directly into systemInstruction for clarity and single source of truth.
+        const enhancedSystemInstruction = systemInstruction;
         const model = genAI.getGenerativeModel({
             model: "gemini-2.5-flash", // Use a conversational model
             tools: tools,
@@ -373,6 +410,8 @@ const chatWithGemini = async (prompt, history = [], creatorId) => { // Add creat
                     // Inject creatorId into args if the function expects it
                     if (name === "listUserProjects" || name === "searchUserProjects") {
                         toolResult = await func(creatorId, args.searchText); // Pass creatorId and searchText
+                    } else if (name === "createProject") {
+                        toolResult = await func(args.title, args.description, creatorId); // Pass title, description, and creatorId
                     } else if (name === "listProjectTasks") {
                         toolResult = await func(args.projectId);
                     } else if (name === "getTaskDetails") {
