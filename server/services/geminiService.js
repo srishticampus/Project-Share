@@ -326,9 +326,9 @@ const generateTaskContent = async (prompt, projectDetails) => {
     }
 };
 
-const chatWithGemini = async (prompt, history = [], creatorId) => { // Add creatorId parameter
+const chatWithGemini = async (prompt, history = [], creatorId) => {
     try {
-        const systemInstruction = `You are a helpful project management assistant. Your name is ProjectShare AI.
+        let systemInstruction = `You are a helpful project management assistant. Your name is ProjectShare AI.
         When the user asks about their projects, use the 'listUserProjects' tool to show them all available projects.
         Once a project is identified (either by listing or searching), you can use its 'id' with 'getProjectDetails' to retrieve more information. Use it to search or find anything in the project details as well.
         To see tasks for a project, use 'listProjectTasks' with the project's ID.
@@ -337,6 +337,7 @@ const chatWithGemini = async (prompt, history = [], creatorId) => { // Add creat
         If the user provides an unstructured idea for a project, you should first structure and improve the idea. Then, present the refined project idea (title and description) back to the user and ask for their confirmation before calling the 'createProject' tool. Once confirmed, use the 'createProject' tool with the refined title and description.
         Crucially, you must NEVER ask the user for any IDs (project, task, or user). Always use the 'listUserProjects' or 'searchUserProjects' tools to find project IDs, 'listProjectTasks' to find task IDs, and 'getTaskDetails' to find user IDs, based on the user's natural language input.
         Feel free to make multiple function calls as needed to gather enough information to fulfill the user's request.
+        Since our tools need IDs, send any IDs you get from the APIs as part of your chat message so that you can read them when you want to do any queries with them at any point. When summarizing tool results, explicitly mention any relevant IDs (e.g., project IDs, task IDs, user IDs) so they become part of the conversational history.
         If the user asks about something vaguely,try to find the closest thing to it. It could be a missspelling on the user's part while creating projects/issues/accounts or missspelling during chat. try listing out all projects, finding tasks for them, etc., to find something similar as much as possible. Only then can you tell the user that you weren't able to fulfill the request. for example, if the user asks for a project with the name project manager, use the function to find projects that are similar to the name if not available, like a project named prjshare would qualify. 
         Always remember that the user usually will not tell you anything exactly. Like project names, descriptions, etc. so you should always be prepared to handle that by using the search api or the listing api to find the closest thing to what they are looking for.
         Note that you are also an AI assistant, so help the user through other things like decision making tasks, planning tasks etcif the user requires you to do so.
@@ -345,8 +346,11 @@ const chatWithGemini = async (prompt, history = [], creatorId) => { // Add creat
         For multi-step tasks, ensure you send all necessary context for the next step as part of your response to the user.
         After executing any tool, you MUST provide a conversational summary of the results. If a tool returns no data (e.g., no projects found), clearly state that no relevant information was found for the user's query. Do NOT return empty responses or generic "I have processed your request" messages. Always aim to be helpful and informative.`;
 
-        // The enhancedSystemInstruction is now integrated directly into systemInstruction for clarity and single source of truth.
-        const enhancedSystemInstruction = systemInstruction;
+        // Dynamically add creatorId to the system instruction for context
+        if (creatorId) {
+            systemInstruction += ` The current logged-in user's ID is: ${creatorId}. Use this ID for any operations that require the creator's context, such as creating projects or listing user-specific data.`;
+        }
+
         const model = genAI.getGenerativeModel({
             model: "gemini-2.5-flash", // Use a conversational model
             tools: tools,
@@ -355,7 +359,7 @@ const chatWithGemini = async (prompt, history = [], creatorId) => { // Add creat
                     mode: "AUTO", // AUTO, ANY, NONE
                 },
             },
-            systemInstruction: enhancedSystemInstruction,
+            systemInstruction: systemInstruction, // Use the dynamically enhanced systemInstruction
         });
 
         const chat = model.startChat({
