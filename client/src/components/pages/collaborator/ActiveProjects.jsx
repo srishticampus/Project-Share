@@ -134,6 +134,11 @@ function ActiveProjects() {
                         {task.description && (
                           <p className="text-sm text-gray-600 mt-1">{task.description}</p>
                         )}
+                        {task.dueDate && (
+                          <p className="text-sm text-gray-600 mt-1">
+                            <strong>Due Date:</strong> {new Date(task.dueDate).toLocaleDateString()}
+                          </p>
+                        )}
                         <div className="flex items-center space-x-2">
                           <span>Status: {task.status}</span>
                           {/* TODO: Implement Select for status update */}

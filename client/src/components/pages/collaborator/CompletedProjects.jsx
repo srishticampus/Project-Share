@@ -107,9 +107,7 @@ function CompletedProjects() {
                 <CardTitle>{project.title}</CardTitle>
                 <p className="text-sm text-gray-500">Creator: {project.creator?.name}</p>
                 <p className="text-sm text-gray-500">Category: {project.category}</p>
-                {project.timeline?.end && (
-                  <p className="text-sm text-gray-500">Completion Date: {new Date(project.timeline.end).toLocaleDateString()}</p>
-                )}
+               
                 {project.description && (
                   <p className="text-sm text-gray-600 mt-2">{project.description}</p>
                 )}
