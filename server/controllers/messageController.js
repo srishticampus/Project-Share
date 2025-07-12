@@ -40,7 +40,7 @@ router.get('/users', protect, async (req, res) => {
     const userId = req.user.id; // Get the user ID from the auth middleware
 
     // Find all users except the current user
-    const users = await User.find({ _id: { $ne: userId } });
+    const users = await User.find({ _id: { $ne: userId },isApproved: true })
 
     res.json(users);
   } catch (err) {

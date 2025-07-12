@@ -40,7 +40,7 @@ function ChatWithCreators() {
     return (
       <main className="flex-1 px-6 pb-6">
         <div className="bg-white rounded-lg h-full p-6">
-          <h1 className="text-2xl font-semibold mb-4">Chat with Project Creators</h1>
+          <h1 className="text-2xl font-semibold mb-4">Chat with Members</h1>
           <div className="flex space-x-4 mb-6">
             <Skeleton className="h-10 w-64" /> {/* Skeleton for search input */}
           </div>

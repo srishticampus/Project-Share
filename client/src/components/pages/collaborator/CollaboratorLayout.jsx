@@ -70,7 +70,7 @@ const menuItems = [
     icon: Briefcase,
   },
   {
-    text: "Chat with Creators",
+    text: "Chat with Members",
     path: "/collaborator/chat-with-creators",
     icon: MessageSquare,
   },

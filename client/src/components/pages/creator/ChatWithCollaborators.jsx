@@ -45,7 +45,7 @@ function ChatWithCollaborators() {
   return (
     <main className="flex-1 px-6 pb-6 ">
       <div className="bg-white rounded-lg  p-6">
-        <h1 className="text-2xl font-semibold mb-4">Chat with Project Collaborators</h1>
+        <h1 className="text-2xl font-semibold mb-4">Chat with Members</h1>
 
         <div className="flex space-x-4 mb-6">
           <Input
