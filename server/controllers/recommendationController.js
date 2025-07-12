@@ -195,7 +195,7 @@ export const getRecommendedMentorsForUser = async (req, res) => {
 
 
         // Find all mentors
-        const mentors = await User.find({ role: 'mentor' });
+        const mentors = await User.find({ role: 'mentor',isApproved:true });
 
         const recommendedMentors = [];
 
