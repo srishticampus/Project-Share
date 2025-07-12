@@ -7,7 +7,8 @@ import {
   ListChecks,
   MessageSquarePlus,
   Users,
-  UserPlus
+  UserPlus,
+  Sparkles
 } from "lucide-react";
 import {
   Sidebar,
@@ -63,6 +64,11 @@ const menuItems = [
     path: "/creator/mentors",
     icon: UserPlus,
   },
+  {
+    text:"ProjectShare AI",
+    path: "/creator/projectshare-ai-chat",
+    icon: Sparkles,
+  }
 ];
 
 function AppSidebar() {
