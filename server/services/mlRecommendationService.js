@@ -75,7 +75,7 @@ class MLRecommendationService {
         this.projectData = {}; // Initialize projectData here to store projectWithTasks
 
         // Add project documents to corpus
-        const projects = await Project.find({ status: { $in: ['Planning', 'In Progress'] } }).lean();
+        const projects = await Project.find({ status: { $in: ['Planning', 'In Progress'] } }).populate('creator').lean();
         for (const project of projects) {
             const tasks = await Task.find({ project: project._id }).lean();
             const projectWithTasks = { ...project, tasks }; // Combined here
