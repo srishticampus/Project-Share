@@ -89,7 +89,7 @@ const tools = [
                             description: "A detailed description of the new project."
                         }
                     },
-                    required: ["title", "description"]
+                    required: ["title", "description","category"]
                 }
             }
         ]
@@ -98,13 +98,14 @@ const tools = [
 
 // Implement the functions that the tools will call
 const toolFunctions = {
-    createProject: async (title, description, creatorId) => {
+    createProject: async (title, description,category, creatorId) => {
         console.log(`Calling createProject with input: title=${title}, description=${description}, creatorId=${creatorId}`);
         try {
             const newProject = new Project({
                 title,
                 description,
                 creator: creatorId,
+                category,
                 status: 'Planning' // Default status for new projects
             });
             await newProject.save();

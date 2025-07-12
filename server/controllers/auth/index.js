@@ -5,6 +5,7 @@ import registerCreator from './registerCreator.js';
 import registerCollaborator from './registerCollaborator.js';
 import registerMentor from './registerMentor.js';
 import profile from './profile.js';
+import passwordReset from './passwordReset.js';
 
 const router = express.Router();
 
@@ -14,5 +15,6 @@ router.use(registerCreator);
 router.use(registerCollaborator);
 router.use(registerMentor);
 router.use(profile);
+router.use(passwordReset);
 
 export default router;

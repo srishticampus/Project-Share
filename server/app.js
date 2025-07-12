@@ -60,14 +60,13 @@ mlRecommendationService.initialize().catch(error => {
     console.error('Failed to initialize ML Recommendation Service:', error);
 });
 
-// Replace the Vite-specific check with standard Node.js environment detection
-let PORT = process.env.VITE_PORT || 4061;
+// Use standard Node.js environment detection for PORT
+let PORT = process.env.PORT || 3000; // Default to 3000 if PORT is not set
 const isProduction = process.env.NODE_ENV === 'production';
 
 if (isProduction) {
     app.listen(PORT, () => console.log(`Server running in production on port ${PORT}`));
 } else {
-    PORT = process.env.VITE_PORT || 3000;
     app.listen(PORT, () => console.log(`Server running in development on port ${PORT}`));
 }
 

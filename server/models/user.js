@@ -79,6 +79,8 @@ const UserSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Project',
   }],
+  resetPasswordToken: String,
+  resetPasswordExpire: Date,
 }, { timestamps: true });
 
 UserSchema.set("toJSON", {
