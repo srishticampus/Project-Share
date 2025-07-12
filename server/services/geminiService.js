@@ -118,7 +118,7 @@ const toolFunctions = {
     getProjectDetails: async (projectId) => {
         console.log(`Calling getProjectDetails with input: projectId=${projectId}`);
         try {
-            const project = await Project.findById(projectId).lean();
+            const project = await Project.findById(projectId).populate('creator collaborators').lean();
             if (!project) {
                 console.log(`getProjectDetails output: Project not found for projectId=${projectId}`);
                 return { error: "Project not found." };
