@@ -112,23 +112,18 @@ const toolFunctions = {
             return { message: "Project created successfully!", projectId: newProject._id, title: newProject.title };
         } catch (error) {
             console.error("Error in createProject:", error);
-            return { error: "Failed to create project." };
+            return { error: "Failed to create project.",error: error };
         }
     },
     getProjectDetails: async (projectId) => {
         console.log(`Calling getProjectDetails with input: projectId=${projectId}`);
         try {
-            const project = await Project.findById(projectId);
+            const project = await Project.findById(projectId).lean();
             if (!project) {
                 console.log(`getProjectDetails output: Project not found for projectId=${projectId}`);
                 return { error: "Project not found." };
             }
-            const result = {
-                title: project.title,
-                description: project.description,
-                status: project.status,
-                // Add other relevant project details
-            };
+            const result = project;
             console.log(`getProjectDetails output:`, result);
             return result;
         } catch (error) {
@@ -347,9 +342,9 @@ const chatWithGemini = async (prompt, history = [], creatorId) => {
         After executing any tool, you MUST provide a conversational summary of the results. If a tool returns no data (e.g., no projects found), clearly state that no relevant information was found for the user's query. Do NOT return empty responses or generic "I have processed your request" messages. Always aim to be helpful and informative.`;
 
         // Dynamically add creatorId to the system instruction for context
-        if (creatorId) {
-            systemInstruction += ` The current logged-in user's ID is: ${creatorId}. Use this ID for any operations that require the creator's context, such as creating projects or listing user-specific data.`;
-        }
+        // if (creatorId) {
+        //     systemInstruction += ` The current logged-in user's ID is: ${creatorId}. Use this ID for any operations that require the creator's context, such as creating projects or listing user-specific data.`;
+        // }
 
         const model = genAI.getGenerativeModel({
             model: "gemini-2.5-flash", // Use a conversational model
