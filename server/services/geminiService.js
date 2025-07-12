@@ -415,7 +415,7 @@ const chatWithGemini = async (prompt, history = [], creatorId) => {
                     if (name === "listUserProjects" || name === "searchUserProjects") {
                         toolResult = await func(creatorId, args.searchText); // Pass creatorId and searchText
                     } else if (name === "createProject") {
-                        toolResult = await func(args.title, args.description, creatorId); // Pass title, description, and creatorId
+                        toolResult = await func(args.title, args.description,args.category, creatorId); // Pass title, description, category, and creatorId
                     } else if (name === "listProjectTasks") {
                         toolResult = await func(args.projectId);
                     } else if (name === "getTaskDetails") {
