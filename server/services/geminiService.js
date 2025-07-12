@@ -87,6 +87,10 @@ const tools = [
                         description: {
                             type: "string",
                             description: "A detailed description of the new project."
+                        },
+                        category: {
+                            type: "string",
+                            description: "The category of the new project. Something like 'AI', 'ML', 'Data Science', 'Web Development', etc."
                         }
                     },
                     required: ["title", "description","category"]
