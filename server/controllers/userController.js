@@ -9,7 +9,7 @@ const router = express.Router();
 // @access  Private (Accessible by authenticated users like Project Creators/Collaborators)
 router.get('/mentors', protect, async (req, res) => {
   try {
-    const mentors = await User.find({ role: 'mentor' }).select('-password'); // Exclude password
+    const mentors = await User.find({ role: 'mentor',isVerified:true }).select('-password'); // Exclude password
     res.json(mentors);
   } catch (err) {
     console.error(err.message);
