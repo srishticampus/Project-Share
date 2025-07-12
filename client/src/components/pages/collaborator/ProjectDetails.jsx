@@ -161,12 +161,6 @@ function ProjectDetails() {
             <p><strong>Category:</strong> {project.category}</p>
             <p><strong>Description:</strong> {project.description}</p>
             <p><strong>Tech Stack:</strong> {project?.techStack?.join(', ')}</p>
-            <p>
-              <strong>Timeline:</strong>{' '}
-              {project.timeline && project.timeline.start && project.timeline.end
-                ? `${new Date(project.timeline.start).toLocaleDateString()} - ${new Date(project.timeline.end).toLocaleDateString()}`
-                : 'N/A'}
-            </p>
             {project.attachments && project.attachments.length > 0 && (
               <div>
                 <p><strong>Attachments:</strong></p>
@@ -203,6 +197,11 @@ function ProjectDetails() {
                     <p className="text-sm">
                       <strong>Created By:</strong> {task.createdBy.name}
                     </p>
+                    {task.dueDate && (
+                          <p className="text-sm text-gray-600 mt-1">
+                            <strong>Due Date:</strong> {new Date(task.dueDate).toLocaleDateString()}
+                          </p>
+                        )}
                   </Card>
                 ))}
               </div>
