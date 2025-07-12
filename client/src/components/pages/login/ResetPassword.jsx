@@ -3,7 +3,7 @@ import { Link, useParams, useNavigate } from "react-router"; // Import useParams
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import axios from 'axios'; // Import axios for API calls
+import axios from '@/lib/apiClient'; // Import axios for API calls
 
 const ResetPassword = () => {
   const [password, setPassword] = useState('');
@@ -28,7 +28,7 @@ const ResetPassword = () => {
     }
 
     try {
-      const res = await axios.post(`/api/auth/reset-password/${token}`, { password });
+      const res = await axios.post(`/auth/reset-password/${token}`, { password });
       setMessage(res.data.msg);
       setTimeout(() => {
         navigate('/login/admin'); // Redirect to login page after successful reset
