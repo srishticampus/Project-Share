@@ -12,7 +12,9 @@ const ResetPassword = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const { token } = useParams(); // Get token from URL parameters
+  const { token } = new Proxy(new URLSearchParams(window.location.search), {
+  get: (searchParams, prop) => searchParams.get(prop),
+}); // Get token from URL parameters
   const navigate = useNavigate(); // Initialize useNavigate
 
   const handleSubmit = async (e) => {
