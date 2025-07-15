@@ -34,7 +34,7 @@ router.post(
 
       // Set token and expiry on user model
       user.resetPasswordToken = resetToken;
-      user.resetPasswordExpire = Date.now() + 3600000; // 1 hour
+      user.resetPasswordExpire = new Date(Date.now() + 3600000); // 1 hour
 
       await user.save();
 
