@@ -52,9 +52,8 @@ function ConnectWithMentors() {
     const fetchSentMentorshipRequests = async () => {
       try {
         const response = await apiClient.get('/mentor/mentorship-requests/sent');
-        // Extract mentor IDs from the sent requests
-        const sentMentorIds = response.data.map(request => request.mentor._id);
-        setSentMentorshipRequests(sentMentorIds);
+        // Store the full request objects to access status
+        setSentMentorshipRequests(response.data);
       } catch (err) {
         console.error("Error fetching sent mentorship requests:", err);
       }
@@ -88,8 +87,8 @@ function ConnectWithMentors() {
       setIsDialogOpen(false);
       setMessage('');
       setSelectedMentor(null);
-      // Add the newly requested mentor's ID to the sentMentorshipRequests state
-      setSentMentorshipRequests(prev => [...prev, selectedMentor._id]);
+      // Add the newly requested mentor's ID and a 'pending' status to the sentMentorshipRequests state
+      setSentMentorshipRequests(prev => [...prev, { mentor: { _id: selectedMentor._id }, status: 'pending' }]);
     } catch (err) {
       console.error("Error sending mentorship request:", err);
       setError("Failed to send mentorship request. Please try again.");
@@ -103,7 +102,10 @@ function ConnectWithMentors() {
     (mentor.areasOfExpertise && mentor.areasOfExpertise.some(area => area.toLowerCase().includes(searchTerm.toLowerCase())))
   );
 
-  const isMentorRequested = (mentorId) => sentMentorshipRequests.includes(mentorId);
+  const getMentorshipRequestStatus = (mentorId) => {
+    const request = sentMentorshipRequests.find(req => req.mentor._id === mentorId);
+    return request ? request.status : null;
+  };
 
   return (
     <div className="container mx-auto p-6">
@@ -143,11 +145,16 @@ function ConnectWithMentors() {
                   <Button
                     onClick={() => handleRequestMentorshipClick(mentor)}
                     className="bg-green-500 hover:bg-green-600 text-white"
-                    disabled={isMentorRequested(mentor._id)}
+                    disabled={getMentorshipRequestStatus(mentor._id)}
                   >
-                    {isMentorRequested(mentor._id) ? 'Requested' : 'Request Mentorship'}
+                    {getMentorshipRequestStatus(mentor._id) ? getMentorshipRequestStatus(mentor._id).charAt(0).toUpperCase() + getMentorshipRequestStatus(mentor._id).slice(1) : 'Request Mentorship'}
                   </Button>
                 </div>
+                {getMentorshipRequestStatus(mentor._id) && (
+                  <p className={`text-sm mt-2 font-semibold ${getMentorshipRequestStatus(mentor._id) === 'approved' ? 'text-green-600' : getMentorshipRequestStatus(mentor._id) === 'rejected' ? 'text-red-600' : 'text-yellow-600'}`}>
+                    Status: {getMentorshipRequestStatus(mentor._id).charAt(0).toUpperCase() + getMentorshipRequestStatus(mentor._id).slice(1)}
+                  </p>
+                )}
               </CardContent>
             </Card>
           ))
@@ -208,11 +215,16 @@ function ConnectWithMentors() {
                   <Button
                     onClick={() => handleRequestMentorshipClick(mentor)}
                     className="bg-green-500 hover:bg-green-600 text-white"
-                    disabled={isMentorRequested(mentor._id)}
+                    disabled={getMentorshipRequestStatus(mentor._id)}
                   >
-                    {isMentorRequested(mentor._id) ? 'Requested' : 'Request Mentorship'}
+                    {getMentorshipRequestStatus(mentor._id) ? getMentorshipRequestStatus(mentor._id).charAt(0).toUpperCase() + getMentorshipRequestStatus(mentor._id).slice(1) : 'Request Mentorship'}
                   </Button>
                 </div>
+                {getMentorshipRequestStatus(mentor._id) && (
+                  <p className={`text-sm mt-2 font-semibold ${getMentorshipRequestStatus(mentor._id) === 'approved' ? 'text-green-600' : getMentorshipRequestStatus(mentor._id) === 'rejected' ? 'text-red-600' : 'text-yellow-600'}`}>
+                    Status: {getMentorshipRequestStatus(mentor._id).charAt(0).toUpperCase() + getMentorshipRequestStatus(mentor._id).slice(1)}
+                  </p>
+                )}
               </CardContent>
             </Card>
           ))}
