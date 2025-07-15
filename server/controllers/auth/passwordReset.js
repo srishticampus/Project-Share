@@ -39,7 +39,7 @@ router.post(
       await user.save();
 
       // Create reset URL
-      const resetUrl = `${req.protocol}://${req.get('host')}/reset-password?token=${resetToken}`;
+      const resetUrl = `${process.env.FRONTEND_URL}reset-password?token=${resetToken}`;
 
       const message = `
         You are receiving this because you (or someone else) has requested the reset of a password.
