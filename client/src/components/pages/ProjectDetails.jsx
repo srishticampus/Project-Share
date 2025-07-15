@@ -105,7 +105,7 @@ function ProjectDetails() {
               <p>Name: {project.creator.name}</p>
               <p>Email: {project.creator.email}</p>
               <p>Bio: {project.creator.bio}</p>
-              <p>Links: {project?.creator?.portfolioLinks?.map((link) => <a href={link} target="_blank" rel="noreferrer">{link}</a>)}</p>
+              {/* <p>Links: {project?.creator?.portfolioLinks?.map((link) => <a href={link} target="_blank" rel="noreferrer">{link}</a>)}</p> */}
             </div>
           )}
           {tasks && tasks.length > 0 && (
@@ -120,8 +120,8 @@ function ProjectDetails() {
                         <p className="text-sm font-semibold">Created by:</p>
                         <p className="text-sm">Username: {task.createdBy.name}</p>
                         <p className="text-sm">Email: {task.createdBy.email}</p>
-                        <p className="text-sm">Bio: {task.createdBy.bio}</p>
-                        <p className="text-sm">Portfolio Links: {task.createdBy?.portfolioLinks?.map((link) => <a href={link} target="_blank" rel="noreferrer">{link}</a>)}</p>
+                        {/* <p className="text-sm">Bio: {task.createdBy.bio}</p> */}
+                        {/* <p className="text-sm">Portfolio Links: {task.createdBy?.portfolioLinks?.map((link) => <a href={link} target="_blank" rel="noreferrer">{link}</a>)}</p> */}
                       </div>
                     )}
                   </li>
